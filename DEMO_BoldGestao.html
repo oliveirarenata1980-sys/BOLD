@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Bold Gestão</title>
+<meta name="theme-color" content="#1a1f4b">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<style>
+:root {
+  --dark:#1a1f4b; --mid:#253080; --blue:#4da6d6; --light-blue:#e8f4fb;
+  --white:#fff; --bg:#f0f4f9; --card:#fff;
+  --text:#1a1f4b; --soft:#6b7a99; --border:#e2eaf4;
+  --green:#27ae60; --green-l:#e6f9ef;
+  --red:#e74c3c; --red-l:#fdecea;
+  --amber:#f39c12; --amber-l:#fef9e7;
+  --purple:#8e44ad; --purple-l:#f5eafb;
+  --nav:64px; --head:60px;
+  --r:14px; --r-sm:10px;
+  --sh:0 2px 12px rgba(26,31,75,.09);
+  --sh-lg:0 8px 32px rgba(26,31,75,.16);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text)}
+
+/* ══════ LOGIN ══════ */
+#loginScreen{
+  position:fixed;inset:0;z-index:1000;
+  background:linear-gradient(155deg,#0e1235 0%,#1a1f4b 45%,#153d6b 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 20px;
+}
+.lg-logo{text-align:center;margin-bottom:36px}
+.lg-logo .bname{font-size:40px;font-weight:900;color:#fff;letter-spacing:3px}
+.lg-logo .bname span{color:var(--blue)}
+.lg-logo .bsub{font-size:11px;color:rgba(255,255,255,.4);letter-spacing:4px;text-transform:uppercase;margin-top:4px}
+.lg-dots{display:flex;gap:6px;justify-content:center;margin-bottom:32px}
+.lg-dots span{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.15)}
+.lg-dots span.on{background:var(--blue);width:18px;border-radius:3px}
+.lg-box{width:100%;max-width:360px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.11);border-radius:20px;padding:28px 22px}
+.lg-box h2{font-size:20px;color:#fff;font-weight:800;margin-bottom:3px}
+.lg-box p{font-size:13px;color:rgba(255,255,255,.45);margin-bottom:24px}
+.lg-f{margin-bottom:14px}
+.lg-f label{display:block;font-size:11px;color:rgba(255,255,255,.55);margin-bottom:6px;letter-spacing:.5px;font-weight:600}
+.lg-f input{width:100%;padding:13px 15px;background:rgba(255,255,255,.09);border:1.5px solid rgba(255,255,255,.13);border-radius:10px;font-size:15px;color:#fff;outline:none}
+.lg-f input:focus{border-color:var(--blue);background:rgba(77,166,214,.12)}
+.lg-f input::placeholder{color:rgba(255,255,255,.28)}
+.lg-btn{width:100%;padding:14px;background:var(--blue);color:#fff;font-size:16px;font-weight:800;border:none;border-radius:10px;cursor:pointer;margin-top:6px;letter-spacing:.5px;transition:.2s}
+.lg-btn:active{transform:scale(.98);opacity:.9}
+.lg-hint{text-align:center;font-size:11px;color:rgba(255,255,255,.25);margin-top:20px}
+.lg-perfis{display:flex;gap:10px;margin-bottom:18px}
+.lg-perf{flex:1;padding:10px 8px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;text-align:center;cursor:pointer;transition:.2s}
+.lg-perf.sel{border-color:var(--blue);background:rgba(77,166,214,.12)}
+.lg-perf .pi{font-size:20px;margin-bottom:4px}
+.lg-perf .pn{font-size:11px;color:rgba(255,255,255,.7);font-weight:600}
+
+/* ══════ APP ══════ */
+#appScreen{display:none;height:100%;flex-direction:column}
+#appScreen.on{display:flex}
+
+/* ══════ HEADER ══════ */
+.hdr{
+  height:var(--head);background:var(--dark);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;flex-shrink:0;
+  box-shadow:0 2px 10px rgba(0,0,0,.3);
+}
+.hdr-l{display:flex;align-items:center;gap:10px;cursor:pointer}
+.hdr-av{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue),#2980b9);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:15px;color:#fff;flex-shrink:0;
+}
+.hdr-name{font-size:14px;font-weight:700;color:#fff;line-height:1.2}
+.hdr-cargo{font-size:11px;color:rgba(255,255,255,.4)}
+.hdr-r{display:flex;align-items:center;gap:14px}
+.nb{position:relative;cursor:pointer}
+.nb svg{width:22px;height:22px;fill:rgba(255,255,255,.65)}
+.nbb{position:absolute;top:-4px;right:-5px;min-width:16px;height:16px;padding:0 3px;border-radius:8px;background:var(--red);color:#fff;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid var(--dark)}
+.brand-lbl{font-size:14px;font-weight:900;color:var(--blue);letter-spacing:1px}
+
+/* ══════ CONTENT ══════ */
+.cnt{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:calc(var(--nav) + 10px);-webkit-overflow-scrolling:touch}
+.page{display:none;padding:14px 14px 0}
+.page.on{display:block}
+
+/* ══════ NAV ══════ */
+.bnav{
+  height:var(--nav);background:var(--white);
+  border-top:1px solid var(--border);
+  display:flex;align-items:stretch;flex-shrink:0;
+  box-shadow:0 -3px 14px rgba(26,31,75,.07);
+}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;position:relative;transition:.15s}
+.ni svg{width:21px;height:21px;fill:var(--soft);transition:fill .2s}
+.ni span{font-size:9.5px;color:var(--soft);font-weight:500;transition:color .2s}
+.ni.on svg{fill:var(--blue)}
+.ni.on span{color:var(--blue);font-weight:800}
+.ni.on::before{content:'';position:absolute;top:0;left:20%;right:20%;height:3px;background:var(--blue);border-radius:0 0 4px 4px}
+
+/* ══════ COMPONENTES ══════ */
+.stitle{font-size:11px;font-weight:800;color:var(--soft);text-transform:uppercase;letter-spacing:1.2px;margin:18px 0 10px}
+.card{background:var(--white);border-radius:var(--r);box-shadow:var(--sh);margin-bottom:10px;overflow:hidden}
+.cp{padding:16px}
+
+/* METRIC 2x2 */
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px}
+.mc{background:var(--white);border-radius:var(--r);padding:15px 13px;box-shadow:var(--sh)}
+.mc .ico{font-size:22px;margin-bottom:6px}
+.mc .lbl{font-size:10px;color:var(--soft);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.mc .val{font-size:24px;font-weight:900;line-height:1}
+.mc .sub{font-size:11px;margin-top:5px;font-weight:600}
+.mc.bl .val,.mc.bl .sub{color:var(--blue)}
+.mc.gr .val,.mc.gr .sub{color:var(--green)}
+.mc.am .val,.mc.am .sub{color:var(--amber)}
+.mc.pu .val,.mc.pu .sub{color:var(--purple)}
+
+/* BIG HERO CARD */
+.hero{
+  background:linear-gradient(135deg,var(--dark) 0%,var(--mid) 60%,#1a5f8a 100%);
+  border-radius:var(--r);padding:20px;box-shadow:var(--sh-lg);margin-bottom:10px;
+  position:relative;overflow:hidden;
+}
+.hero::after{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:rgba(77,166,214,.08);pointer-events:none}
+.hero .hl{font-size:11px;color:rgba(255,255,255,.45);margin-bottom:3px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.hero .hv{font-size:36px;font-weight:900;color:var(--blue)}
+.hero .hs{font-size:13px;color:rgba(255,255,255,.6);margin-top:4px}
+.hero .hr{position:absolute;right:20px;top:20px;text-align:right}
+.hero .hr .pct{font-size:28px;font-weight:900;color:#fff}
+.hero .hr .pctl{font-size:11px;color:rgba(255,255,255,.4)}
+.pbar{background:rgba(255,255,255,.12);border-radius:10px;height:7px;margin-top:14px;overflow:hidden}
+.pfill{height:100%;background:var(--blue);border-radius:10px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.hero-chips{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.hchip{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.13);border-radius:20px;padding:5px 12px;font-size:11px;color:rgba(255,255,255,.7);font-weight:600}
+
+/* CHART */
+.chart-wrap{padding:0 16px 16px}
+.chart-title{font-size:12px;font-weight:700;color:var(--soft);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px}
+.bars{display:flex;align-items:flex-end;gap:8px;height:80px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar-fill{width:100%;border-radius:4px 4px 0 0;transition:height 1s cubic-bezier(.4,0,.2,1);min-height:4px}
+.bar-lbl{font-size:10px;color:var(--soft);font-weight:600}
+.bar-val{font-size:10px;font-weight:800;color:var(--blue)}
+
+/* LIST ITEM */
+.li{display:flex;align-items:center;gap:11px;padding:13px 16px;border-bottom:1px solid var(--border)}
+.li:last-child{border-bottom:none}
+.li-ic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.li-inf{flex:1;min-width:0}
+.li-t{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li-s{font-size:12px;color:var(--soft);margin-top:2px}
+.li-r{text-align:right;flex-shrink:0}
+.li-v{font-size:14px;font-weight:800}
+.li-tg{font-size:11px;margin-top:3px}
+
+/* BADGE */
+.bg{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
+.bg-gr{background:var(--green-l);color:var(--green)}
+.bg-re{background:var(--red-l);color:var(--red)}
+.bg-am{background:var(--amber-l);color:var(--amber)}
+.bg-bl{background:var(--light-blue);color:var(--blue)}
+.bg-dk{background:var(--dark);color:var(--blue)}
+.bg-pu{background:var(--purple-l);color:var(--purple)}
+
+/* QA GRID */
+.qa{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:4px}
+.qi{background:var(--white);border-radius:12px;padding:12px 6px;text-align:center;box-shadow:var(--sh);cursor:pointer;transition:.15s}
+.qi:active{transform:scale(.93)}
+.qi .qi-i{font-size:24px;margin-bottom:4px}
+.qi .qi-l{font-size:10px;font-weight:700;color:var(--soft)}
+
+/* ESTOQUE */
+.ei{background:var(--white);border-radius:var(--r);margin-bottom:9px;box-shadow:var(--sh);overflow:hidden}
+.ei-h{display:flex;align-items:center;gap:12px;padding:14px 15px 10px}
+.ei-img{width:48px;height:48px;border-radius:10px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.ei-n{font-size:14px;font-weight:700}
+.ei-c{font-size:12px;color:var(--soft);margin-top:2px}
+.ei-f{padding:9px 15px;background:var(--bg);display:flex;align-items:center;justify-content:space-between}
+.ei-q{font-size:13px;color:var(--soft)}
+.ei-q strong{color:var(--text);font-size:15px}
+.qc{display:flex;align-items:center;gap:8px}
+.qb{width:30px;height:30px;border-radius:8px;background:var(--dark);color:var(--blue);border:none;font-size:17px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s}
+.qb:active{transform:scale(.9)}
+.qn{font-size:16px;font-weight:900;min-width:26px;text-align:center}
+.ei-price{font-size:13px;font-weight:800;color:var(--green);margin-left:auto;padding-right:2px}
+
+/* FILTERS */
+.filters{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;margin-bottom:12px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.flt{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:700;border:none;cursor:pointer;white-space:nowrap;transition:.15s}
+.flt.on{background:var(--dark);color:var(--blue)}
+.flt.off{background:var(--white);color:var(--soft);box-shadow:var(--sh)}
+
+/* PEDIDO */
+.pc{background:var(--white);border-radius:var(--r);margin-bottom:9px;box-shadow:var(--sh);overflow:hidden;cursor:pointer;transition:.15s}
+.pc:active{transform:scale(.99)}
+.pc-h{padding:13px 15px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.pc-id{font-size:13px;font-weight:900;color:var(--dark)}
+.pc-d{font-size:11px;color:var(--soft)}
+.pc-b{padding:11px 15px}
+.pc-cl{font-size:15px;font-weight:800;margin-bottom:3px}
+.pc-pr{font-size:12px;color:var(--soft);margin-bottom:8px}
+.pc-addr{font-size:12px;color:var(--soft);display:flex;align-items:center;gap:4px}
+.pc-f{padding:9px 15px;background:var(--bg);display:flex;align-items:center;justify-content:space-between}
+.pc-tot{font-size:16px;font-weight:900}
+.pc-upd{padding:7px 16px;background:var(--dark);color:var(--blue);border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:.15s}
+.pc-upd:active{transform:scale(.95)}
+
+/* COMISSÃO */
+.com-hero{
+  background:linear-gradient(135deg,var(--dark),var(--mid));
+  border-radius:var(--r);padding:22px 18px;
+  text-align:center;margin-bottom:10px;box-shadow:var(--sh-lg);
+}
+.ch-l{font-size:12px;color:rgba(255,255,255,.45);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;font-weight:700}
+.ch-v{font-size:42px;font-weight:900;color:var(--blue)}
+.ch-s{font-size:13px;color:rgba(255,255,255,.55);margin-top:5px}
+.ch-cs{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.ch-c{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.13);border-radius:20px;padding:5px 14px;font-size:12px;color:rgba(255,255,255,.7);font-weight:700}
+.gen{display:flex;align-items:center;padding:13px 15px;border-bottom:1px solid var(--border)}
+.gen:last-child{border-bottom:none}
+.gd{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;color:#fff;flex-shrink:0;margin-right:12px}
+.gi{flex:1}
+.gn{font-size:14px;font-weight:700}
+.gp{font-size:12px;color:var(--soft)}
+.gv{font-size:15px;font-weight:900}
+.gpb{margin:0 15px 12px}
+.gpb-l{display:flex;justify-content:space-between;font-size:11px;color:var(--soft);margin-bottom:4px}
+.gpb-t{background:var(--bg);height:5px;border-radius:10px;overflow:hidden}
+.gpb-f{height:100%;border-radius:10px;transition:width 1.2s}
+
+/* REDE */
+.rs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.rsi{background:var(--white);border-radius:12px;padding:13px 10px;text-align:center;box-shadow:var(--sh)}
+.rsi-v{font-size:22px;font-weight:900}
+.rsi-l{font-size:10px;color:var(--soft);margin-top:3px;font-weight:700;text-transform:uppercase}
+.mb{background:var(--white);border-radius:var(--r);margin-bottom:8px;box-shadow:var(--sh);overflow:hidden}
+.mb-r{display:flex;align-items:center;gap:11px;padding:12px 14px}
+.mb-av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:#fff;flex-shrink:0}
+.mb-n{font-size:14px;font-weight:800}
+.mb-c{font-size:12px;color:var(--soft);margin-top:1px}
+.mb-bw{padding:0 14px 12px}
+.mb-bl{display:flex;justify-content:space-between;font-size:11px;color:var(--soft);margin-bottom:4px}
+.mb-bt{background:var(--bg);height:5px;border-radius:10px;overflow:hidden}
+.mb-bf{height:100%;border-radius:10px;transition:width 1.2s}
+
+/* METAS */
+.mt-card{background:var(--white);border-radius:var(--r);padding:18px;box-shadow:var(--sh);margin-bottom:10px}
+.mt-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.mt-title{font-size:15px;font-weight:800}
+.mt-dead{font-size:12px;color:var(--soft);margin-top:3px}
+.mt-pct{font-size:28px;font-weight:900}
+.mt-bar{background:var(--bg);height:8px;border-radius:10px;overflow:hidden;margin-bottom:10px}
+.mt-fill{height:100%;border-radius:10px;transition:width 1.2s}
+.mt-detail{display:flex;justify-content:space-between}
+.mt-d-item{text-align:center}
+.mt-d-v{font-size:14px;font-weight:800}
+.mt-d-l{font-size:11px;color:var(--soft);margin-top:2px}
+
+/* PERFIL */
+.pf-hero{
+  background:linear-gradient(135deg,var(--dark),var(--mid));
+  padding:28px 20px 24px;text-align:center;margin:-14px -14px 14px;
+}
+.pf-av{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#2980b9);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:28px;color:#fff;margin:0 auto 10px;border:3px solid rgba(255,255,255,.2)}
+.pf-name{font-size:20px;font-weight:900;color:#fff}
+.pf-cargo{font-size:13px;color:rgba(255,255,255,.5);margin-top:3px}
+.pf-chips{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.pf-chip{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:12px;color:rgba(255,255,255,.75);font-weight:700}
+.pf-item{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer}
+.pf-item:last-child{border-bottom:none}
+.pf-ic{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.pf-label{font-size:14px;font-weight:600;flex:1}
+.pf-arrow{font-size:18px;color:var(--soft)}
+
+/* MODAL */
+.mover{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.55);display:none;align-items:flex-end;justify-content:center}
+.mover.on{display:flex}
+.modal{background:#fff;border-radius:22px 22px 0 0;width:100%;max-height:88vh;overflow-y:auto;padding:18px 18px 30px;animation:su .3s ease}
+@keyframes su{from{transform:translateY(50px);opacity:0}to{transform:translateY(0);opacity:1}}
+.mh{width:40px;height:4px;background:#dde3ef;border-radius:2px;margin:0 auto 18px}
+.modal h3{font-size:19px;font-weight:900;margin-bottom:16px}
+.mf{margin-bottom:14px}
+.mf label{display:block;font-size:11px;font-weight:700;color:var(--soft);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.mf input,.mf select,.mf textarea{width:100%;padding:13px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;color:var(--text);outline:none;background:#fff;font-family:inherit}
+.mf input:focus,.mf select:focus,.mf textarea:focus{border-color:var(--blue)}
+.mf textarea{resize:none;height:80px}
+.m2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.minfo{background:var(--light-blue);border-radius:10px;padding:13px 14px;margin-bottom:14px}
+.minfo-l{font-size:11px;font-weight:700;color:var(--blue);margin-bottom:3px;text-transform:uppercase}
+.minfo-v{font-size:14px;color:var(--text);font-weight:700}
+.mbtn{width:100%;padding:14px;background:var(--blue);color:#fff;font-size:16px;font-weight:800;border:none;border-radius:11px;cursor:pointer;transition:.2s;margin-top:4px}
+.mbtn:active{transform:scale(.98)}
+.mbtn-out{background:#fff;color:var(--blue);border:2px solid var(--blue);margin-top:10px}
+
+/* SEARCH */
+.srch{display:flex;align-items:center;gap:10px;background:#fff;border-radius:12px;padding:11px 14px;box-shadow:var(--sh);margin-bottom:12px}
+.srch input{flex:1;border:none;outline:none;font-size:14px;color:var(--text);background:transparent}
+.srch span{font-size:18px}
+
+/* TOAST */
+.toast{position:fixed;bottom:82px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--dark);color:#fff;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:700;box-shadow:var(--sh-lg);z-index:999;opacity:0;transition:all .3s;white-space:nowrap;pointer-events:none}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ALERT BANNER */
+.alert-banner{background:var(--amber-l);border:1.5px solid var(--amber);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:10px;cursor:pointer}
+.ab-ic{font-size:20px}
+.ab-txt{font-size:13px;font-weight:700;color:#8a6000;flex:1}
+.ab-close{font-size:18px;color:var(--amber);cursor:pointer}
+
+/* RANKING */
+.rank-item{display:flex;align-items:center;gap:12px;padding:12px 15px;border-bottom:1px solid var(--border)}
+.rank-item:last-child{border-bottom:none}
+.rk-num{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0}
+.rk-1{background:#ffd700;color:#7a5c00}
+.rk-2{background:#c0c0c0;color:#4a4a4a}
+.rk-3{background:#cd7f32;color:#fff}
+.rk-n{background:var(--bg);color:var(--soft)}
+.rk-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#fff;flex-shrink:0}
+.rk-inf{flex:1}
+.rk-name{font-size:14px;font-weight:700}
+.rk-sub{font-size:12px;color:var(--soft)}
+.rk-val{font-size:14px;font-weight:900;color:var(--blue)}
+
+/* SCROLL INDICATOR */
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:4px 0}
+
+/* CARGO PROGRESS TRACKER */
+.cpt{background:var(--dark);border-radius:var(--r);padding:16px;margin-bottom:10px}
+.cpt-title{font-size:12px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+.cpt-steps{display:flex;align-items:center;gap:0}
+.cpt-step{flex:1;text-align:center;position:relative}
+.cpt-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 5px;font-size:10px;font-weight:800;position:relative;z-index:1}
+.cpt-dot.done{background:var(--blue);color:#fff}
+.cpt-dot.now{background:var(--white);color:var(--dark);box-shadow:0 0 0 3px var(--blue)}
+.cpt-dot.next{background:rgba(255,255,255,.1);color:rgba(255,255,255,.3)}
+.cpt-step::after{content:'';position:absolute;top:14px;left:50%;width:100%;height:2px;z-index:0}
+.cpt-step.done::after{background:var(--blue)}
+.cpt-step.now::after{background:rgba(255,255,255,.15)}
+.cpt-step.next::after{background:rgba(255,255,255,.08)}
+.cpt-step:last-child::after{display:none}
+.cpt-lbl{font-size:10px;font-weight:700;color:rgba(255,255,255,.5)}
+.cpt-step.done .cpt-lbl{color:var(--blue)}
+.cpt-step.now .cpt-lbl{color:#fff}
+
+/* TABS */
+.tabs{display:flex;background:var(--bg);border-radius:10px;padding:3px;margin-bottom:12px}
+.tab{flex:1;padding:8px;text-align:center;font-size:12px;font-weight:700;color:var(--soft);border-radius:8px;cursor:pointer;transition:.2s}
+.tab.on{background:#fff;color:var(--dark);box-shadow:var(--sh)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="lg-logo">
+    <div class="bname">BOLD<span>.</span></div>
+    <div class="bsub">Sistema do Associado</div>
+  </div>
+  <div class="lg-dots">
+    <span class="on"></span><span></span><span></span>
+  </div>
+  <div class="lg-box">
+    <h2>Entrar na conta</h2>
+    <p>Selecione seu perfil de acesso</p>
+    <div class="lg-perfis">
+      <div class="lg-perf sel" onclick="selPerf(this,'Coordenadora','👑')">
+        <div class="pi">👑</div><div class="pn">Coordenadora</div>
+      </div>
+      <div class="lg-perf" onclick="selPerf(this,'Supervisor','⭐')">
+        <div class="pi">⭐</div><div class="pn">Supervisor</div>
+      </div>
+      <div class="lg-perf" onclick="selPerf(this,'Associado','🚀')">
+        <div class="pi">🚀</div><div class="pn">Associado</div>
+      </div>
+    </div>
+    <div class="lg-f">
+      <label>E-mail</label>
+      <input type="email" id="lgEmail" placeholder="seu@email.com" value="renata@boldlife.com">
+    </div>
+    <div class="lg-f">
+      <label>Senha</label>
+      <input type="password" id="lgSenha" placeholder="••••••••" value="123456">
+    </div>
+    <button class="lg-btn" onclick="login()">Entrar no Bold Gestão</button>
+  </div>
+  <div class="lg-hint">DEMO — Bold Life Gestão v2.0 · RSo Soluções Digitais</div>
+</div>
+
+<!-- APP -->
+<div id="appScreen">
+
+  <div class="hdr">
+    <div class="hdr-l" onclick="navTo('pagePerfil','ni-pf')">
+      <div class="hdr-av" id="hav">R</div>
+      <div>
+        <div class="hdr-name" id="hname">Renata Silva</div>
+        <div class="hdr-cargo" id="hcargo">Coordenadora · 155 pessoas</div>
+      </div>
+    </div>
+    <div class="hdr-r">
+      <div class="nb" onclick="openM('mNotif')">
+        <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+        <div class="nbb" id="notifCount">4</div>
+      </div>
+      <div class="brand-lbl">BOLD</div>
+    </div>
+  </div>
+
+  <div class="cnt">
+
+    <!-- ══ DASHBOARD ══ -->
+    <div id="pageDash" class="page on">
+
+      <div class="alert-banner" id="alertBanner">
+        <span class="ab-ic">⚠️</span>
+        <span class="ab-txt">Vitamina C com estoque crítico (2 un.) — reabastecer!</span>
+        <span class="ab-close" onclick="document.getElementById('alertBanner').style.display='none'">✕</span>
+      </div>
+
+      <!-- Cargo tracker -->
+      <div class="cpt">
+        <div class="cpt-title">Sua Jornada de Cargo</div>
+        <div class="cpt-steps">
+          <div class="cpt-step done"><div class="cpt-dot done">✓</div><div class="cpt-lbl">Líder</div></div>
+          <div class="cpt-step done"><div class="cpt-dot done">✓</div><div class="cpt-lbl">Superv.</div></div>
+          <div class="cpt-step now"><div class="cpt-dot now">●</div><div class="cpt-lbl">Coord.</div></div>
+          <div class="cpt-step next"><div class="cpt-dot next">○</div><div class="cpt-lbl">Gerente</div></div>
+          <div class="cpt-step next"><div class="cpt-dot next">○</div><div class="cpt-lbl">Diretor</div></div>
+        </div>
+      </div>
+
+      <!-- Hero comissão -->
+      <div class="hero">
+        <div class="hl">Comissão — Março 2026</div>
+        <div class="hv">R$ 1.550,00</div>
+        <div class="hs">Volume de rede: R$ 31.000 · 5% de comissão</div>
+        <div class="hr">
+          <div class="pct">77%</div>
+          <div class="pctl">da meta</div>
+        </div>
+        <div class="pbar"><div class="pfill" style="width:77%"></div></div>
+        <div class="hero-chips">
+          <div class="hchip">🎯 Meta: R$2.000</div>
+          <div class="hchip">📈 +18% vs fev</div>
+          <div class="hchip">💳 Saque: 5 abr</div>
+        </div>
+      </div>
+
+      <!-- Métricas -->
+      <div class="mg">
+        <div class="mc bl">
+          <div class="ico">👥</div>
+          <div class="lbl">Minha Rede</div>
+          <div class="val">155</div>
+          <div class="sub">+12 este mês</div>
+        </div>
+        <div class="mc gr">
+          <div class="ico">🛒</div>
+          <div class="lbl">Pedidos Abertos</div>
+          <div class="val">9</div>
+          <div class="sub">2 entregar hoje</div>
+        </div>
+        <div class="mc am">
+          <div class="ico">📦</div>
+          <div class="lbl">Itens Estoque</div>
+          <div class="val">47</div>
+          <div class="sub">1 item crítico</div>
+        </div>
+        <div class="mc pu">
+          <div class="ico">💰</div>
+          <div class="lbl">Vendas no Mês</div>
+          <div class="val">R$3.2k</div>
+          <div class="sub">11 vendas</div>
+        </div>
+      </div>
+
+      <!-- Gráfico -->
+      <div class="card">
+        <div style="padding:14px 16px 8px;display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:14px;font-weight:800">Evolução de Comissões</div>
+          <span class="bg bg-gr">+41% em 6m</span>
+        </div>
+        <div class="chart-wrap">
+          <div class="bars" id="chartBars"></div>
+          <div style="display:flex;justify-content:space-between;margin-top:6px" id="chartLabels"></div>
+        </div>
+      </div>
+
+      <!-- Ações rápidas -->
+      <div class="stitle">Ações Rápidas</div>
+      <div class="qa">
+        <div class="qi" onclick="openM('mNovoPedido')"><div class="qi-i">🛒</div><div class="qi-l">Novo Pedido</div></div>
+        <div class="qi" onclick="navTo('pageEstoque','ni-est')"><div class="qi-i">📦</div><div class="qi-l">Estoque</div></div>
+        <div class="qi" onclick="openM('mConvidar')"><div class="qi-i">➕</div><div class="qi-l">Convidar</div></div>
+        <div class="qi" onclick="navTo('pageRede','ni-red')"><div class="qi-i">🌐</div><div class="qi-l">Minha Rede</div></div>
+      </div>
+
+      <!-- Pedidos recentes -->
+      <div class="stitle">Pedidos Recentes</div>
+      <div class="card">
+        <div class="li" onclick="openM('mDetPedido','0047','Carlos Mendes','Ômega 3 × 2','R$ 276,00','Em rota','Av. Brasil, 1240 · Ipatinga/MG')">
+          <div class="li-ic" style="background:#fef9e7">🛒</div>
+          <div class="li-inf"><div class="li-t">Carlos Mendes</div><div class="li-s">Ômega 3 Premium × 2</div></div>
+          <div class="li-r"><div class="li-v" style="color:var(--amber)">R$276</div><div class="li-tg"><span class="bg bg-am">Em rota</span></div></div>
+        </div>
+        <div class="li" onclick="openM('mDetPedido','0046','Ana Paula','Kit Hidratação × 1','R$ 147,00','Separando','R. 7 Setembro, 88 · Coronel/MG')">
+          <div class="li-ic" style="background:var(--light-blue)">🛒</div>
+          <div class="li-inf"><div class="li-t">Ana Paula Costa</div><div class="li-s">Kit Hidratação Pele × 1</div></div>
+          <div class="li-r"><div class="li-v" style="color:var(--blue)">R$147</div><div class="li-tg"><span class="bg bg-bl">Separando</span></div></div>
+        </div>
+        <div class="li" onclick="openM('mDetPedido','0045','Maria Fernanda','Suplemento + Vit C × 1','R$ 189,00','Entregue','R. das Flores, 320 · Timóteo/MG')">
+          <div class="li-ic" style="background:var(--green-l)">✅</div>
+          <div class="li-inf"><div class="li-t">Maria Fernanda Lima</div><div class="li-s">Suplemento + Vitamina C × 1</div></div>
+          <div class="li-r"><div class="li-v" style="color:var(--green)">R$189</div><div class="li-tg"><span class="bg bg-gr">Entregue</span></div></div>
+        </div>
+      </div>
+
+      <!-- Top da rede -->
+      <div class="stitle">Ranking da Rede — Top 3</div>
+      <div class="card">
+        <div class="rank-item">
+          <div class="rk-num rk-1">1</div>
+          <div class="rk-av" style="background:#e74c3c">J</div>
+          <div class="rk-inf"><div class="rk-name">Juliana Martins</div><div class="rk-sub">Supervisora · 30 pessoas</div></div>
+          <div class="rk-val">R$650</div>
+        </div>
+        <div class="rank-item">
+          <div class="rk-num rk-2">2</div>
+          <div class="rk-av" style="background:#8e44ad">P</div>
+          <div class="rk-inf"><div class="rk-name">Pedro Alves</div><div class="rk-sub">Supervisor · 28 pessoas</div></div>
+          <div class="rk-val">R$590</div>
+        </div>
+        <div class="rank-item">
+          <div class="rk-num rk-3">3</div>
+          <div class="rk-av" style="background:#16a085">F</div>
+          <div class="rk-inf"><div class="rk-name">Fernanda Costa</div><div class="rk-sub">Líder · 8 pessoas</div></div>
+          <div class="rk-val">R$210</div>
+        </div>
+      </div>
+
+    </div><!-- /dashboard -->
+
+    <!-- ══ ESTOQUE ══ -->
+    <div id="pageEstoque" class="page">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;margin-top:4px">
+        <div>
+          <div style="font-size:18px;font-weight:900">Meu Estoque</div>
+          <div style="font-size:12px;color:var(--soft)">47 unidades · 9 produtos</div>
+        </div>
+        <button class="mbtn" style="width:auto;padding:9px 16px;font-size:13px" onclick="openM('mAddProd')">+ Produto</button>
+      </div>
+      <div class="srch"><span>🔍</span><input type="text" placeholder="Buscar produto ou categoria..."></div>
+      <div class="filters">
+        <button class="flt on">Todos</button>
+        <button class="flt off" onclick="fltClick(this)">Saúde</button>
+        <button class="flt off" onclick="fltClick(this)">Beleza</button>
+        <button class="flt off" onclick="fltClick(this)">Suplemento</button>
+        <button class="flt off" onclick="fltClick(this)">Emagrecimento</button>
+        <button class="flt off" onclick="fltClick(this)">Estética</button>
+      </div>
+
+      <div id="estoqueList"></div>
+    </div>
+
+    <!-- ══ PEDIDOS ══ -->
+    <div id="pagePedidos" class="page">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;margin-top:4px">
+        <div>
+          <div style="font-size:18px;font-weight:900">Pedidos</div>
+          <div style="font-size:12px;color:var(--soft)">9 ativos · 2 para hoje</div>
+        </div>
+        <button class="mbtn" style="width:auto;padding:9px 16px;font-size:13px" onclick="openM('mNovoPedido')">+ Novo</button>
+      </div>
+
+      <div class="tabs">
+        <div class="tab on" onclick="tabPed(this,'todos')">Todos (9)</div>
+        <div class="tab" onclick="tabPed(this,'ativo')">Ativos (7)</div>
+        <div class="tab" onclick="tabPed(this,'entregue')">Entregues (2)</div>
+      </div>
+
+      <div id="pedidosList"></div>
+    </div>
+
+    <!-- ══ COMISSÕES ══ -->
+    <div id="pageComissoes" class="page">
+
+      <div class="com-hero">
+        <div class="ch-l">Comissão Total — Março 2026</div>
+        <div class="ch-v">R$ 1.550,00</div>
+        <div class="ch-s">Volume de rede: R$ 31.000 · Taxa: 5%</div>
+        <div class="ch-cs">
+          <div class="ch-c">👑 Coordenadora</div>
+          <div class="ch-c">👥 155 pessoas</div>
+          <div class="ch-c">📅 Saque: 05/04</div>
+          <div class="ch-c">📈 +18% vs fev</div>
+        </div>
+      </div>
+
+      <!-- Projeção -->
+      <div class="card cp" style="background:linear-gradient(135deg,var(--green-l),#fff);border:1.5px solid var(--green)">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px">Projeção até fim do mês</div>
+            <div style="font-size:28px;font-weight:900;color:var(--green);margin-top:3px">R$ 2.050,00</div>
+            <div style="font-size:12px;color:var(--soft);margin-top:3px">Se manter ritmo atual de +12 pessoas/mês</div>
+          </div>
+          <div style="font-size:40px">🎯</div>
+        </div>
+      </div>
+
+      <div class="stitle">Comissão por Geração</div>
+      <div class="card">
+        <div class="gen">
+          <div class="gd" style="background:var(--blue)">G1</div>
+          <div class="gi"><div class="gn">1ª Geração</div><div class="gp">5 pessoas diretas · 5%</div></div>
+          <div class="gv" style="color:var(--blue)">R$320</div>
+        </div>
+        <div class="gpb"><div class="gpb-l"><span>Contribuição</span><span>20,6%</span></div><div class="gpb-t"><div class="gpb-f" style="width:21%;background:var(--blue)"></div></div></div>
+        <div class="gen">
+          <div class="gd" style="background:var(--mid)">G2</div>
+          <div class="gi"><div class="gn">2ª Geração</div><div class="gp">25 pessoas · 3%</div></div>
+          <div class="gv" style="color:var(--mid)">R$480</div>
+        </div>
+        <div class="gpb"><div class="gpb-l"><span>Contribuição</span><span>31%</span></div><div class="gpb-t"><div class="gpb-f" style="width:31%;background:var(--mid)"></div></div></div>
+        <div class="gen">
+          <div class="gd" style="background:#3a7bd5">G3</div>
+          <div class="gi"><div class="gn">3ª Geração</div><div class="gp">125 pessoas · 2%</div></div>
+          <div class="gv" style="color:#3a7bd5">R$750</div>
+        </div>
+        <div class="gpb"><div class="gpb-l"><span>Contribuição</span><span>48,4%</span></div><div class="gpb-t"><div class="gpb-f" style="width:48%;background:#3a7bd5"></div></div></div>
+        <div class="gen" style="opacity:.4">
+          <div class="gd" style="background:var(--green)">G4</div>
+          <div class="gi"><div class="gn">4ª Geração</div><div class="gp">Disponível no cargo Gerente</div></div>
+          <div class="gv">—</div>
+        </div>
+        <div class="gen" style="opacity:.4">
+          <div class="gd" style="background:var(--amber)">G5</div>
+          <div class="gi"><div class="gn">5ª Geração</div><div class="gp">Disponível no cargo Diretor</div></div>
+          <div class="gv">—</div>
+        </div>
+      </div>
+
+      <div class="stitle">Histórico de Comissões</div>
+      <div class="card" id="histCom"></div>
+
+      <div class="stitle">Próximo Cargo — Gerente</div>
+      <div class="card cp">
+        <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+          <div>
+            <div style="font-size:14px;font-weight:800">Coordenadora → Gerente</div>
+            <div style="font-size:12px;color:var(--soft);margin-top:3px">Precisa de 780 pessoas na rede</div>
+          </div>
+          <div style="font-size:22px;font-weight:900;color:var(--blue)">20%</div>
+        </div>
+        <div style="background:var(--bg);height:8px;border-radius:10px;overflow:hidden;margin-bottom:10px">
+          <div style="width:20%;height:100%;background:var(--blue);border-radius:10px"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--soft)">
+          <span>Atual: 155 pessoas</span>
+          <span>Meta: 780 pessoas</span>
+          <span>Faltam: 625</span>
+        </div>
+        <div style="margin-top:12px;background:var(--light-blue);border-radius:10px;padding:11px 13px">
+          <div style="font-size:12px;font-weight:700;color:var(--blue)">💡 Como chegar mais rápido</div>
+          <div style="font-size:12px;color:var(--text);margin-top:4px">Se cada uma das suas 5 diretas convidar 5 pessoas este mês, você ganha +25 pessoas. Em 24 meses no ritmo atual você alcança o cargo de Gerente.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ REDE ══ -->
+    <div id="pageRede" class="page">
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;margin-top:4px">
+        <div>
+          <div style="font-size:18px;font-weight:900">Minha Rede</div>
+          <div style="font-size:12px;color:var(--soft)">155 pessoas em 3 gerações ativas</div>
+        </div>
+        <button class="mbtn" style="width:auto;padding:9px 16px;font-size:13px" onclick="openM('mConvidar')">+ Convidar</button>
+      </div>
+
+      <div class="rs">
+        <div class="rsi"><div class="rsi-v" style="color:var(--blue)">155</div><div class="rsi-l">Total</div></div>
+        <div class="rsi"><div class="rsi-v" style="color:var(--green)">112</div><div class="rsi-l">Ativos</div></div>
+        <div class="rsi"><div class="rsi-v" style="color:var(--amber)">43</div><div class="rsi-l">Inativos</div></div>
+      </div>
+
+      <!-- Alertas de rede -->
+      <div style="background:var(--red-l);border:1.5px solid var(--red);border-radius:12px;padding:12px 14px;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:800;color:var(--red);margin-bottom:6px">⚠️ Atenção — Inativos na sua rede</div>
+        <div style="font-size:13px;color:var(--text)">Ricardo Souza (45 dias sem vender) e Marcos Lima (30 dias) precisam de apoio. Entre em contato hoje.</div>
+        <button style="margin-top:10px;padding:7px 14px;background:var(--red);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer" onclick="showToast('Mensagem enviada para Ricardo e Marcos!')">Enviar mensagem de apoio</button>
+      </div>
+
+      <div class="stitle">Suas 5 Pessoas Diretas</div>
+      <div id="redeList"></div>
+
+      <div class="stitle">Ranking Completo da Rede</div>
+      <div class="card" id="rankingList"></div>
+
+    </div>
+
+    <!-- ══ PERFIL ══ -->
+    <div id="pagePerfil" class="page">
+      <div class="pf-hero">
+        <div class="pf-av" id="pfAv">R</div>
+        <div class="pf-name" id="pfName">Renata Silva</div>
+        <div class="pf-cargo" id="pfCargo">Coordenadora · Minas Gerais</div>
+        <div class="pf-chips">
+          <div class="pf-chip">🗓 Na Bold desde Jan/2026</div>
+          <div class="pf-chip">🌐 155 pessoas na rede</div>
+          <div class="pf-chip">💰 R$1.550 este mês</div>
+        </div>
+      </div>
+
+      <div class="stitle">Resumo do Mês</div>
+      <div class="mg">
+        <div class="mc bl"><div class="ico">💰</div><div class="lbl">Comissão</div><div class="val" style="font-size:18px">R$1.550</div><div class="sub">+18%</div></div>
+        <div class="mc gr"><div class="ico">🛒</div><div class="lbl">Vendas diretas</div><div class="val">R$3.2k</div><div class="sub">11 pedidos</div></div>
+        <div class="mc am"><div class="ico">👥</div><div class="lbl">Novos membros</div><div class="val">+12</div><div class="sub">este mês</div></div>
+        <div class="mc pu"><div class="ico">⭐</div><div class="lbl">Pontuação</div><div class="val">4.850</div><div class="sub">pts Bold</div></div>
+      </div>
+
+      <div class="stitle">Minha Conta</div>
+      <div class="card">
+        <div class="pf-item" onclick="showToast('Abrindo dados pessoais...')">
+          <div class="pf-ic" style="background:var(--light-blue)">👤</div>
+          <div class="pf-label">Dados Pessoais</div>
+          <div class="pf-arrow">›</div>
+        </div>
+        <div class="pf-item" onclick="showToast('Abrindo dados bancários...')">
+          <div class="pf-ic" style="background:var(--green-l)">🏦</div>
+          <div class="pf-label">Dados Bancários para Saque</div>
+          <div class="pf-arrow">›</div>
+        </div>
+        <div class="pf-item" onclick="showToast('Abrindo link de indicação...')">
+          <div class="pf-ic" style="background:var(--amber-l)">🔗</div>
+          <div class="pf-label">Meu Link de Indicação</div>
+          <div class="pf-arrow">›</div>
+        </div>
+        <div class="pf-item" onclick="showToast('Abrindo materiais de apoio...')">
+          <div class="pf-ic" style="background:var(--purple-l)">📚</div>
+          <div class="pf-label">Materiais de Apoio Bold Life</div>
+          <div class="pf-arrow">›</div>
+        </div>
+        <div class="pf-item" onclick="showToast('Abrindo suporte...')">
+          <div class="pf-ic" style="background:var(--green-l)">💬</div>
+          <div class="pf-label">Falar com Suporte</div>
+          <div class="pf-arrow">›</div>
+        </div>
+        <div class="pf-item" onclick="logout()">
+          <div class="pf-ic" style="background:var(--red-l)">🚪</div>
+          <div class="pf-label" style="color:var(--red)">Sair da Conta</div>
+          <div class="pf-arrow" style="color:var(--red)">›</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /cnt -->
+
+  <!-- NAV -->
+  <div class="bnav">
+    <div class="ni on" id="ni-dash" onclick="navTo('pageDash','ni-dash')">
+      <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+      <span>Início</span>
+    </div>
+    <div class="ni" id="ni-est" onclick="navTo('pageEstoque','ni-est')">
+      <svg viewBox="0 0 24 24"><path d="M20 7H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm0 12H4V9h16v10zM12 5V3H8v2H4v2h16V5h-4V3h-4v2z"/></svg>
+      <span>Estoque</span>
+    </div>
+    <div class="ni" id="ni-ped" onclick="navTo('pagePedidos','ni-ped')">
+      <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+      <span>Pedidos</span>
+    </div>
+    <div class="ni" id="ni-com" onclick="navTo('pageComissoes','ni-com')">
+      <svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+      <span>Comissões</span>
+    </div>
+    <div class="ni" id="ni-red" onclick="navTo('pageRede','ni-red')">
+      <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+      <span>Rede</span>
+    </div>
+    <div class="ni" id="ni-pf" onclick="navTo('pagePerfil','ni-pf')">
+      <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+      <span>Perfil</span>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- ══ MODAIS ══ -->
+
+<!-- Notificações -->
+<div class="mover" id="mNotif" onclick="closeM(this)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="mh"></div>
+    <h3>🔔 Notificações</h3>
+    <div class="li" style="padding:12px 0;border-bottom:1px solid var(--border)">
+      <div class="li-ic" style="background:var(--green-l)">💰</div>
+      <div class="li-inf"><div class="li-t">Comissão liberada!</div><div class="li-s">R$ 1.550,00 disponível para saque em 05/04 · agora</div></div>
+      <span class="bg bg-gr">Novo</span>
+    </div>
+    <div class="li" style="padding:12px 0;border-bottom:1px solid var(--border)">
+      <div class="li-ic" style="background:var(--light-blue)">👤</div>
+      <div class="li-inf"><div class="li-t">Nova pessoa na rede!</div><div class="li-s">Marcos Oliveira entrou via Larissa Nunes · 2h atrás</div></div>
+      <span class="bg bg-bl">Novo</span>
+    </div>
+    <div class="li" style="padding:12px 0;border-bottom:1px solid var(--border)">
+      <div class="li-ic" style="background:var(--amber-l)">⚠️</div>
+      <div class="li-inf"><div class="li-t">Estoque crítico</div><div class="li-s">Vitamina C com apenas 2 unidades · hoje</div></div>
+      <span class="bg bg-am">Alerta</span>
+    </div>
+    <div class="li" style="padding:12px 0">
+      <div class="li-ic" style="background:var(--red-l)">🚨</div>
+      <div class="li-inf"><div class="li-t">Membro inativo há 45 dias</div><div class="li-s">Ricardo Souza precisa de apoio · ontem</div></div>
+      <span class="bg bg-re">Urgente</span>
+    </div>
+    <button class="mbtn mbtn-out" onclick="closeM(document.getElementById('mNotif'));document.getElementById('notifCount').style.display='none'">Marcar todas como lidas</button>
+  </div>
+</div>
+
+<!-- Novo Pedido -->
+<div class="mover" id="mNovoPedido" onclick="closeM(this)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="mh"></div>
+    <h3>🛒 Novo Pedido</h3>
+    <div class="mf"><label>Cliente</label><input type="text" placeholder="Nome completo do cliente"></div>
+    <div class="mf"><label>WhatsApp do Cliente</label><input type="tel" placeholder="(31) 99999-9999"></div>
+    <div class="mf"><label>Produto</label>
+      <select>
+        <option>Ômega 3 Premium — R$138</option>
+        <option>Vitamina C 1000mg — R$89</option>
+        <option>Kit Hidratação Pele — R$147</option>
+        <option>Colágeno Hidrolisado — R$119</option>
+        <option>Whey Protein 1kg — R$189</option>
+        <option>Termogênico Slim — R$159</option>
+        <option>Multivitamínico — R$79</option>
+      </select>
+    </div>
+    <div class="m2">
+      <div class="mf"><label>Qtd.</label><input type="number" value="1" min="1"></div>
+      <div class="mf"><label>Forma Pagto.</label>
+        <select><option>PIX</option><option>Cartão</option><option>Dinheiro</option></select>
+      </div>
+    </div>
+    <div class="mf"><label>Endereço de Entrega</label><input type="text" placeholder="Rua, nº, bairro, cidade/MG"></div>
+    <div class="mf"><label>Observações</label><textarea placeholder="Instruções de entrega, referência, etc."></textarea></div>
+    <button class="mbtn" onclick="criarPedido()">✅ Confirmar Pedido</button>
+    <button class="mbtn mbtn-out" onclick="closeM(document.getElementById('mNovoPedido'))">Cancelar</button>
+  </div>
+</div>
+
+<!-- Detalhe do Pedido -->
+<div class="mover" id="mDetPedido" onclick="closeM(this)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="mh"></div>
+    <h3>📋 Detalhes do Pedido</h3>
+    <div class="minfo"><div class="minfo-l">Número</div><div class="minfo-v" id="dp-id">#PED-0047</div></div>
+    <div class="m2">
+      <div class="minfo"><div class="minfo-l">Cliente</div><div class="minfo-v" id="dp-cl">Carlos Mendes</div></div>
+      <div class="minfo"><div class="minfo-l">Total</div><div class="minfo-v" id="dp-tot">R$276</div></div>
+    </div>
+    <div class="minfo"><div class="minfo-l">Produto</div><div class="minfo-v" id="dp-pr">Ômega 3 × 2</div></div>
+    <div class="minfo"><div class="minfo-l">Endereço</div><div class="minfo-v" id="dp-end">Av. Brasil, 1240 · Ipatinga/MG</div></div>
+    <div class="mf"><label>Atualizar Status</label>
+      <select id="dp-status">
+        <option>Aguardando pagamento</option>
+        <option>Pagamento confirmado</option>
+        <option>Separando</option>
+        <option selected>Em rota</option>
+        <option>Entregue</option>
+        <option>Cancelado</option>
+      </select>
+    </div>
+    <button class="mbtn" onclick="showToast('Status do pedido atualizado!');closeM(document.getElementById('mDetPedido'))">Salvar Atualização</button>
+    <button class="mbtn mbtn-out" onclick="closeM(document.getElementById('mDetPedido'))">Fechar</button>
+  </div>
+</div>
+
+<!-- Convidar -->
+<div class="mover" id="mConvidar" onclick="closeM(this)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="mh"></div>
+    <h3>➕ Convidar para a Rede</h3>
+    <div class="mf"><label>Nome da Pessoa</label><input type="text" placeholder="Nome completo"></div>
+    <div class="mf"><label>WhatsApp</label><input type="tel" placeholder="(31) 99999-9999"></div>
+    <div class="mf"><label>Como você vai apresentar?</label>
+      <select>
+        <option>Presencialmente</option>
+        <option>Por WhatsApp</option>
+        <option>Vídeo chamada</option>
+        <option>Enviar link automático</option>
+      </select>
+    </div>
+    <div class="minfo">
+      <div class="minfo-l">Seu Link de Convite</div>
+      <div class="minfo-v">boldlife.com/entrar?ref=renata2026</div>
+    </div>
+    <button class="mbtn" onclick="showToast('Convite enviado via WhatsApp!');closeM(document.getElementById('mConvidar'))">📲 Enviar pelo WhatsApp</button>
+    <button class="mbtn mbtn-out" onclick="showToast('Link copiado!');closeM(document.getElementById('mConvidar'))">🔗 Copiar Link</button>
+  </div>
+</div>
+
+<!-- Adicionar Produto -->
+<div class="mover" id="mAddProd" onclick="closeM(this)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="mh"></div>
+    <h3>📦 Adicionar ao Estoque</h3>
+    <div class="mf"><label>Produto</label>
+      <select>
+        <option>Ômega 3 Premium</option>
+        <option>Vitamina C 1000mg</option>
+        <option>Kit Hidratação Pele</option>
+        <option>Colágeno Hidrolisado</option>
+        <option>Whey Protein 1kg</option>
+        <option>Termogênico Slim</option>
+        <option>Multivitamínico</option>
+        <option>+ Buscar no catálogo Bold</option>
+      </select>
+    </div>
+    <div class="m2">
+      <div class="mf"><label>Quantidade</label><input type="number" value="5" min="1"></div>
+      <div class="mf"><label>Preço de Compra</label><input type="text" placeholder="R$ 0,00"></div>
+    </div>
+    <div class="mf"><label>Preço de Venda</label><input type="text" placeholder="R$ 0,00"></div>
+    <button class="mbtn" onclick="showToast('Produto adicionado ao estoque!');closeM(document.getElementById('mAddProd'))">Adicionar ao Estoque</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══ DADOS ══
+const chartData = [
+  {m:'Out',v:680},{m:'Nov',v:790},{m:'Dez',v:880},{m:'Jan',v:1100},{m:'Fev',v:1310},{m:'Mar',v:1550}
+];
+const estoque = [
+  {ico:'💊',nome:'Ômega 3 Premium',cat:'Saúde',preco:'R$138',qtd:8,status:'gr',sl:'Ativo'},
+  {ico:'🌿',nome:'Vitamina C 1000mg',cat:'Saúde',preco:'R$89',qtd:2,status:'re',sl:'Crítico'},
+  {ico:'✨',nome:'Kit Hidratação Pele',cat:'Beleza',preco:'R$147',qtd:5,status:'gr',sl:'Ativo'},
+  {ico:'💆',nome:'Colágeno Hidrolisado',cat:'Beleza',preco:'R$119',qtd:12,status:'gr',sl:'Ativo'},
+  {ico:'🏋️',nome:'Whey Protein 1kg',cat:'Suplemento',preco:'R$189',qtd:0,status:'am',sl:'Zerado'},
+  {ico:'🔥',nome:'Termogênico Slim',cat:'Emagrecimento',preco:'R$159',qtd:7,status:'gr',sl:'Ativo'},
+  {ico:'💊',nome:'Multivitamínico',cat:'Saúde',preco:'R$79',qtd:15,status:'gr',sl:'Ativo'},
+  {ico:'🌸',nome:'Creme Anti-Idade',cat:'Estética',preco:'R$229',qtd:3,status:'am',sl:'Baixo'},
+  {ico:'⚡',nome:'Energético Natural',cat:'Suplemento',preco:'R$99',qtd:10,status:'gr',sl:'Ativo'},
+];
+const pedidos = [
+  {id:'0048',cl:'Josiane Rocha',pr:'Colágeno × 3',tot:'R$357',st:'Aguardando pagamento',addr:'R. Minas Gerais, 55 · Ipatinga/MG',data:'27 mar · 16:40'},
+  {id:'0047',cl:'Carlos Mendes',pr:'Ômega 3 × 2',tot:'R$276',st:'Em rota',addr:'Av. Brasil, 1240 · Ipatinga/MG',data:'27 mar · 14:23'},
+  {id:'0046',cl:'Ana Paula Costa',pr:'Kit Hidratação × 1',tot:'R$147',st:'Separando',addr:'R. 7 Setembro, 88 · Coronel/MG',data:'27 mar · 11:05'},
+  {id:'0045',cl:'Maria Fernanda Lima',pr:'Suplemento + Vit C × 1',tot:'R$189',st:'Entregue',addr:'R. das Flores, 320 · Timóteo/MG',data:'26 mar · 09:40'},
+  {id:'0044',cl:'Paulo Henrique',pr:'Termogênico × 2',tot:'R$318',st:'Em rota',addr:'Av. Central, 780 · Ipatinga/MG',data:'26 mar · 08:15'},
+  {id:'0043',cl:'Sandra Oliveira',pr:'Multivitamínico × 1',tot:'R$79',st:'Entregue',addr:'R. Palmeiras, 44 · Timóteo/MG',data:'25 mar · 15:30'},
+  {id:'0042',cl:'Ricardo Fonseca',pr:'Whey Protein × 1',tot:'R$189',st:'Pagamento confirmado',addr:'R. das Acácias, 120 · Coronel/MG',data:'25 mar · 10:00'},
+  {id:'0041',cl:'Letícia Araújo',pr:'Creme Anti-Idade × 1',tot:'R$229',st:'Separando',addr:'Av. Rio Doce, 550 · Ipatinga/MG',data:'24 mar · 14:50'},
+  {id:'0040',cl:'Marcos Vieira',pr:'Ômega 3 × 1',tot:'R$138',st:'Em rota',addr:'R. Esperança, 30 · Coronel/MG',data:'24 mar · 09:20'},
+];
+const rede = [
+  {ini:'J',cor:'#e74c3c',nome:'Juliana Martins',cargo:'Supervisora',pes:30,st:'gr',stl:'Ativo',prog:19,meta:'Coord.'},
+  {ini:'P',cor:'#8e44ad',nome:'Pedro Alves',cargo:'Supervisor',pes:28,st:'gr',stl:'Ativo',prog:18,meta:'Coord.'},
+  {ini:'F',cor:'#16a085',nome:'Fernanda Costa',cargo:'Líder',pes:8,st:'bl',stl:'Crescendo',prog:27,meta:'Superv.'},
+  {ini:'R',cor:'#d35400',nome:'Ricardo Souza',cargo:'Associado',pes:0,st:'re',stl:'Inativo 45d',prog:0,meta:'Líder'},
+  {ini:'L',cor:'#2980b9',nome:'Larissa Nunes',cargo:'Líder',pes:5,st:'gr',stl:'Ativo',prog:16,meta:'Superv.'},
+];
+const hist = [
+  {m:'Março 2026',v:'R$1.550',p:155,pct:'+18%',c:'gr'},
+  {m:'Fevereiro 2026',v:'R$1.310',p:128,pct:'+18%',c:'gr'},
+  {m:'Janeiro 2026',v:'R$1.100',p:110,pct:'+25%',c:'gr'},
+  {m:'Dezembro 2025',v:'R$880',p:88,pct:'+10%',c:'gr'},
+  {m:'Novembro 2025',v:'R$790',p:79,pct:'+16%',c:'gr'},
+  {m:'Outubro 2025',v:'R$680',p:68,pct:'início',c:'bl'},
+];
+
+// ══ LOGIN ══
+let perfSel = 'Coordenadora';
+function selPerf(el,nome,ico){
+  document.querySelectorAll('.lg-perf').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel'); perfSel = nome;
+}
+function login(){
+  const em = document.getElementById('lgEmail').value;
+  if(!em){showToast('Informe seu e-mail');return}
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('appScreen').classList.add('on');
+  const n = em.split('@')[0];
+  const nome = n.charAt(0).toUpperCase()+n.slice(1)+' Silva';
+  document.getElementById('hname').textContent = nome;
+  document.getElementById('hav').textContent = nome[0];
+  document.getElementById('hcargo').textContent = perfSel+' · 155 pessoas';
+  document.getElementById('pfAv').textContent = nome[0];
+  document.getElementById('pfName').textContent = nome;
+  document.getElementById('pfCargo').textContent = perfSel+' · Minas Gerais';
+  buildChart(); buildEstoque(); buildPedidos('todos'); buildRede(); buildHist();
+}
+function logout(){
+  closeM(document.getElementById('pagePerfil'));
+  document.getElementById('appScreen').classList.remove('on');
+  document.getElementById('loginScreen').style.display='flex';
+}
+document.getElementById('lgSenha').addEventListener('keydown',e=>{ if(e.key==='Enter')login(); });
+
+// ══ NAV ══
+function navTo(pg,ni){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  document.getElementById(pg).classList.add('on');
+  if(ni)document.getElementById(ni).classList.add('on');
+  document.querySelector('.cnt').scrollTop=0;
+}
+
+// ══ CHART ══
+function buildChart(){
+  const max = Math.max(...chartData.map(d=>d.v));
+  const bars = document.getElementById('chartBars');
+  const lbls = document.getElementById('chartLabels');
+  bars.innerHTML=''; lbls.innerHTML='';
+  chartData.forEach((d,i)=>{
+    const pct = (d.v/max)*100;
+    const col = document.createElement('div');
+    col.className='bar-col';
+    col.innerHTML=`<div class="bar-val">R$${(d.v/1000).toFixed(1)}k</div>
+      <div class="bar-fill" style="height:0%;background:${i===chartData.length-1?'var(--blue)':'var(--border)'}"></div>`;
+    bars.appendChild(col);
+    const lb = document.createElement('div');
+    lb.style.cssText='font-size:10px;color:var(--soft);font-weight:700;flex:1;text-align:center';
+    lb.textContent=d.m;
+    lbls.appendChild(lb);
+    setTimeout(()=>{ col.querySelector('.bar-fill').style.height=pct+'%'; },100+i*80);
+  });
+}
+
+// ══ ESTOQUE ══
+const qtds = {};
+function buildEstoque(){
+  const el = document.getElementById('estoqueList');
+  el.innerHTML='';
+  estoque.forEach((p,i)=>{
+    qtds[i]=p.qtd;
+    const bgMap={'gr':'var(--green-l)','re':'var(--red-l)','am':'var(--amber-l)'};
+    const clMap={'gr':'var(--green)','re':'var(--red)','am':'var(--amber)'};
+    el.innerHTML+=`<div class="ei">
+      <div class="ei-h">
+        <div class="ei-img">${p.ico}</div>
+        <div style="flex:1">
+          <div class="ei-n">${p.nome}</div>
+          <div class="ei-c">${p.cat} · <span class="bg" style="background:${bgMap[p.status]};color:${clMap[p.status]}">${p.sl}</span></div>
+        </div>
+        <div class="ei-price">${p.preco}</div>
+      </div>
+      <div class="ei-f">
+        <div class="ei-q">Estoque: <strong id="qs${i}">${p.qtd}</strong> un.</div>
+        <div class="qc">
+          <button class="qb" onclick="adjQ(${i},-1)">−</button>
+          <span class="qn" id="qv${i}">${p.qtd}</span>
+          <button class="qb" onclick="adjQ(${i},1)">+</button>
+        </div>
+      </div>
+    </div>`;
+  });
+}
+function adjQ(i,d){
+  qtds[i]=Math.max(0,qtds[i]+d);
+  document.getElementById('qs'+i).textContent=qtds[i];
+  document.getElementById('qv'+i).textContent=qtds[i];
+  showToast(d>0?'+ 1 unidade adicionada':'- 1 unidade removida');
+}
+function fltClick(el){
+  document.querySelectorAll('.flt').forEach(f=>{f.classList.remove('on');f.classList.add('off')});
+  el.classList.remove('off'); el.classList.add('on');
+  showToast('Filtro: '+el.textContent);
+}
+
+// ══ PEDIDOS ══
+const stMap={
+  'Aguardando pagamento':'bg-am','Pagamento confirmado':'bg-bl',
+  'Separando':'bg-bl','Em rota':'bg-am','Entregue':'bg-gr','Cancelado':'bg-re'
+};
+function buildPedidos(tab){
+  const el = document.getElementById('pedidosList');
+  const list = tab==='todos' ? pedidos : tab==='entregue' ? pedidos.filter(p=>p.st==='Entregue') : pedidos.filter(p=>p.st!=='Entregue');
+  el.innerHTML='';
+  list.forEach(p=>{
+    el.innerHTML+=`<div class="pc" onclick="openM('mDetPedido','${p.id}','${p.cl}','${p.pr}','${p.tot}','${p.st}','${p.addr}')">
+      <div class="pc-h">
+        <div><div class="pc-id">#PED-${p.id}</div><div class="pc-d">${p.data}</div></div>
+        <span class="bg ${stMap[p.st]||'bg-am'}">${p.st}</span>
+      </div>
+      <div class="pc-b">
+        <div class="pc-cl">${p.cl}</div>
+        <div class="pc-pr">${p.pr}</div>
+        <div class="pc-addr">📍 ${p.addr}</div>
+      </div>
+      <div class="pc-f">
+        <div class="pc-tot">${p.tot}</div>
+        <button class="pc-upd" onclick="event.stopPropagation();showToast('Status atualizado!')">Atualizar</button>
+      </div>
+    </div>`;
+  });
+}
+function tabPed(el,tab){
+  document.querySelectorAll('.tab').forEach(t=>{t.classList.remove('on')});
+  el.classList.add('on');
+  buildPedidos(tab);
+}
+function criarPedido(){
+  showToast('Pedido #PED-0049 criado com sucesso!');
+  closeM(document.getElementById('mNovoPedido'));
+}
+
+// ══ REDE ══
+const barColors=['var(--blue)','var(--mid)','#3a7bd5','var(--green)','var(--amber)'];
+function buildRede(){
+  const el = document.getElementById('redeList');
+  const rk = document.getElementById('rankingList');
+  el.innerHTML='';
+  rede.forEach((m,i)=>{
+    const bgM={'gr':'var(--green-l)','re':'var(--red-l)','am':'var(--amber-l)','bl':'var(--light-blue)'};
+    const clM={'gr':'var(--green)','re':'var(--red)','am':'var(--amber)','bl':'var(--blue)'};
+    el.innerHTML+=`<div class="mb">
+      <div class="mb-r">
+        <div class="mb-av" style="background:${m.cor}">${m.ini}</div>
+        <div style="flex:1">
+          <div class="mb-n">${m.nome}</div>
+          <div class="mb-c">${m.cargo} · ${m.pes} pessoas</div>
+        </div>
+        <span class="bg" style="background:${bgM[m.st]};color:${clM[m.st]}">${m.stl}</span>
+      </div>
+      <div class="mb-bw">
+        <div class="mb-bl"><span>Progresso para ${m.meta}</span><span>${m.prog}%</span></div>
+        <div class="mb-bt"><div class="mb-bf" style="width:0%;background:${barColors[i]}" data-w="${m.prog}%"></div></div>
+      </div>
+    </div>`;
+  });
+  // ranking
+  const all = [...rede].sort((a,b)=>b.pes-a.pes);
+  rk.innerHTML='';
+  all.forEach((m,i)=>{
+    const nums=['rk-1','rk-2','rk-3','rk-n','rk-n'];
+    rk.innerHTML+=`<div class="rank-item">
+      <div class="rk-num ${nums[i]||'rk-n'}">${i+1}</div>
+      <div class="rk-av" style="background:${m.cor}">${m.ini}</div>
+      <div class="rk-inf"><div class="rk-name">${m.nome}</div><div class="rk-sub">${m.cargo}</div></div>
+      <div class="rk-val">${m.pes} pessoas</div>
+    </div>`;
+  });
+  setTimeout(()=>{
+    document.querySelectorAll('.mb-bf').forEach(b=>{b.style.width=b.dataset.w});
+  },300);
+}
+
+// ══ HISTÓRICO ══
+function buildHist(){
+  const el = document.getElementById('histCom');
+  el.innerHTML='';
+  hist.forEach(h=>{
+    const bgM={'gr':'var(--green-l)','bl':'var(--light-blue)'};
+    const clM={'gr':'var(--green)','bl':'var(--blue)'};
+    el.innerHTML+=`<div class="li">
+      <div class="li-ic" style="background:var(--light-blue)">📅</div>
+      <div class="li-inf"><div class="li-t">${h.m}</div><div class="li-s">${h.p} pessoas na rede</div></div>
+      <div class="li-r">
+        <div class="li-v" style="color:var(--blue)">${h.v}</div>
+        <div class="li-tg"><span class="bg" style="background:${bgM[h.c]};color:${clM[h.c]}">${h.pct}</span></div>
+      </div>
+    </div>`;
+  });
+}
+
+// ══ MODAL ══
+function openM(id,...args){
+  if(id==='mDetPedido'&&args.length>0){
+    document.getElementById('dp-id').textContent='#PED-'+args[0];
+    document.getElementById('dp-cl').textContent=args[1];
+    document.getElementById('dp-pr').textContent=args[2];
+    document.getElementById('dp-tot').textContent=args[3];
+    const sel=document.getElementById('dp-status');
+    for(let o of sel.options) if(o.text===args[4])o.selected=true;
+    document.getElementById('dp-end').textContent=args[5];
+  }
+  document.getElementById(id).classList.add('on');
+}
+function closeM(el){ el.classList.remove('on'); }
+
+// ══ TOAST ══
+let tt;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('on');
+  clearTimeout(tt); tt=setTimeout(()=>t.classList.remove('on'),2400);
+}
+</script>
+</body>
+</html>

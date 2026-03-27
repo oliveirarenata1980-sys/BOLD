@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Bold Intelligence</title>
+<meta name="theme-color" content="#02040a">
+<style>
+/* ═══════════════════════════════════════════════
+   BOLD INTELLIGENCE · Mission Control
+   RSo Soluções Digitais · 2026
+═══════════════════════════════════════════════ */
+:root{
+  --bg:#02040a; --bg2:#060912; --bg3:#0a0f1e;
+  --card:#0d1525; --card2:#111d30;
+  --border:rgba(77,166,214,.12); --border2:rgba(77,166,214,.06);
+  --blue:#4da6d6; --cyan:#00d4ff; --green:#00e676;
+  --red:#ff3d5a; --amber:#ffb300; --purple:#c084fc;
+  --gold:#ffd700; --white:#fff;
+  --t1:rgba(255,255,255,.92); --t2:rgba(255,255,255,.55);
+  --t3:rgba(255,255,255,.28); --t4:rgba(255,255,255,.08);
+  --gB:0 0 24px rgba(77,166,214,.35); --gC:0 0 24px rgba(0,212,255,.3);
+  --gG:0 0 24px rgba(0,230,118,.25); --gR:0 0 24px rgba(255,61,90,.3);
+  --gA:0 0 24px rgba(255,179,0,.25);
+  --nav:60px; --head:56px; --r:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t1)}
+
+/* ═══ BOOT SCREEN ═══ */
+#boot{
+  position:fixed;inset:0;z-index:9999;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
+}
+.boot-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(77,166,214,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(77,166,214,.04) 1px,transparent 1px);
+  background-size:40px 40px;
+  animation:gridFade 3s forwards;
+}
+@keyframes gridFade{0%{opacity:0}50%{opacity:1}100%{opacity:.3}}
+.boot-ring{
+  width:120px;height:120px;border-radius:50%;
+  border:2px solid rgba(77,166,214,.2);
+  position:relative;margin-bottom:32px;
+  animation:ringPulse 2s infinite;
+}
+@keyframes ringPulse{0%,100%{box-shadow:0 0 0 0 rgba(77,166,214,.4)}50%{box-shadow:0 0 0 20px rgba(77,166,214,0)}}
+.boot-ring::before{
+  content:'';position:absolute;inset:10px;border-radius:50%;
+  border:2px solid rgba(0,212,255,.3);
+  animation:spin 3s linear infinite;
+}
+.boot-ring::after{
+  content:'';position:absolute;inset:20px;border-radius:50%;
+  background:radial-gradient(circle,rgba(77,166,214,.15),transparent);
+}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.boot-logo{font-size:32px;font-weight:900;color:var(--white);letter-spacing:4px;text-align:center;animation:fadeUp .8s .5s both}
+.boot-logo span{color:var(--cyan)}
+.boot-sub{font-size:11px;color:var(--t3);letter-spacing:4px;text-transform:uppercase;margin-top:6px;animation:fadeUp .8s .7s both}
+.boot-bar{width:200px;height:2px;background:var(--card);border-radius:2px;margin-top:28px;overflow:hidden;animation:fadeUp .8s .9s both}
+.boot-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:2px;width:0;animation:bootLoad 2.5s 1s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes bootLoad{to{width:100%}}
+.boot-status{font-size:11px;color:var(--t3);letter-spacing:2px;margin-top:12px;animation:fadeUp .8s 1s both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ MAIN APP ═══ */
+#app{display:none;height:100%;flex-direction:column}
+#app.on{display:flex}
+
+/* ═══ HEADER ═══ */
+.hdr{
+  height:var(--head);flex-shrink:0;
+  background:rgba(2,4,10,.96);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 14px;position:relative;z-index:100;
+}
+.hdr::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:.25;animation:scanLine 4s linear infinite}
+@keyframes scanLine{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.hdr-brand{display:flex;align-items:center;gap:8px}
+.hdr-icon{
+  width:32px;height:32px;border-radius:9px;
+  background:linear-gradient(135deg,#0d1a2e,var(--blue));
+  border:1px solid rgba(77,166,214,.4);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;box-shadow:var(--gB);
+}
+.hdr-name{font-size:15px;font-weight:900;color:var(--white);letter-spacing:.5px}
+.hdr-name span{color:var(--cyan)}
+.live-pill{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.2);
+  border-radius:20px;padding:4px 10px;
+}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:livePulse 1.5s infinite}
+@keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+.live-txt{font-size:10px;font-weight:800;color:var(--green);letter-spacing:1.5px;text-transform:uppercase}
+.hdr-r{display:flex;align-items:center;gap:10px}
+.hdr-av{
+  width:32px;height:32px;border-radius:9px;
+  background:linear-gradient(135deg,#1a1f4b,var(--blue));
+  border:1px solid rgba(77,166,214,.35);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:900;cursor:pointer;
+}
+.hdr-alert{position:relative;cursor:pointer;padding:4px}
+.hdr-alert svg{width:20px;height:20px;fill:var(--t2)}
+.alert-n{position:absolute;top:1px;right:1px;width:14px;height:14px;border-radius:50%;background:var(--red);color:#fff;font-size:8px;font-weight:900;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--bg);box-shadow:var(--gR)}
+
+/* ═══ CONTENT ═══ */
+.cnt{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--nav)+10px)}
+.pg{display:none;padding:12px}
+.pg.on{display:block}
+
+/* ═══ BOTTOM NAV ═══ */
+.bnav{
+  height:var(--nav);flex-shrink:0;
+  background:rgba(6,9,18,.97);backdrop-filter:blur(20px);
+  border-top:1px solid var(--border2);
+  display:flex;align-items:stretch;
+  position:relative;
+}
+.bnav::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--blue),transparent);opacity:.2}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;position:relative;transition:.2s}
+.ni svg{width:20px;height:20px;fill:var(--t3);transition:.2s}
+.ni span{font-size:9px;color:var(--t3);font-weight:600;letter-spacing:.3px;transition:.2s}
+.ni.on svg{fill:var(--cyan);filter:drop-shadow(0 0 4px var(--cyan))}
+.ni.on span{color:var(--cyan);font-weight:800}
+.ni.on::before{content:'';position:absolute;top:0;left:20%;right:20%;height:2px;background:var(--cyan);border-radius:0 0 3px 3px;box-shadow:0 0 10px var(--cyan)}
+
+/* ═══ SECTION TITLE ═══ */
+.stit{
+  font-size:10px;font-weight:800;color:var(--t3);
+  text-transform:uppercase;letter-spacing:1.5px;
+  margin:18px 0 10px;display:flex;align-items:center;gap:8px;
+}
+.stit::after{content:'';flex:1;height:1px;background:var(--border2)}
+.stit .live-dot{width:5px;height:5px}
+
+/* ═══ CARDS BASE ═══ */
+.card{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);overflow:hidden}
+.cp{padding:14px}
+
+/* ═══ MISSION CONTROL HEADER ═══ */
+.mc-hero{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:18px;margin-bottom:12px;
+  position:relative;overflow:hidden;
+}
+.mc-hero::before{
+  content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+  background:radial-gradient(ellipse at 80% 50%,rgba(77,166,214,.08) 0%,transparent 60%),
+    radial-gradient(ellipse at 20% 80%,rgba(0,212,255,.05) 0%,transparent 50%);
+  pointer-events:none;
+}
+.mch-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px}
+.mch-label{font-size:10px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px}
+.mch-val{font-size:36px;font-weight:900;color:var(--white);line-height:1;font-variant-numeric:tabular-nums}
+.mch-val .currency{font-size:20px;color:var(--t2);margin-right:2px}
+.mch-sub{font-size:12px;color:var(--t2);margin-top:4px;display:flex;align-items:center;gap:6px}
+.mch-badge{padding:3px 8px;border-radius:20px;font-size:10px;font-weight:800}
+.badge-up{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.2)}
+.badge-fire{background:rgba(255,179,0,.1);color:var(--amber);border:1px solid rgba(255,179,0,.2)}
+.mch-right{text-align:right}
+.mch-pct{font-size:32px;font-weight:900;color:var(--cyan);line-height:1}
+.mch-pct-l{font-size:10px;color:var(--t3);margin-top:2px}
+/* Glow bar */
+.glow-bar{height:6px;background:rgba(255,255,255,.06);border-radius:6px;overflow:hidden;position:relative}
+.glow-fill{height:100%;border-radius:6px;position:relative;transition:width 2s cubic-bezier(.4,0,.2,1)}
+.glow-fill::after{content:'';position:absolute;right:0;top:-3px;width:12px;height:12px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan),0 0 20px var(--cyan);animation:glowDot 2s infinite}
+@keyframes glowDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.8)}}
+/* Chips */
+.hero-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.hchip{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(255,255,255,.04);border:1px solid var(--border2);
+  border-radius:20px;padding:5px 12px;font-size:11px;color:var(--t2);font-weight:700;
+}
+
+/* ═══ STATS GRID ═══ */
+.sg{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:12px}
+.sg3{grid-template-columns:repeat(3,1fr)}
+.scard{
+  background:var(--card);border:1px solid var(--border2);
+  border-radius:12px;padding:13px 12px;position:relative;overflow:hidden;
+}
+.scard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:2px 2px 0 0}
+.scard.bl::before{background:linear-gradient(90deg,transparent,var(--blue),transparent)}
+.scard.cy::before{background:linear-gradient(90deg,transparent,var(--cyan),transparent)}
+.scard.gr::before{background:linear-gradient(90deg,transparent,var(--green),transparent)}
+.scard.am::before{background:linear-gradient(90deg,transparent,var(--amber),transparent)}
+.scard.re::before{background:linear-gradient(90deg,transparent,var(--red),transparent)}
+.scard.pu::before{background:linear-gradient(90deg,transparent,var(--purple),transparent)}
+.sc-ico{font-size:20px;margin-bottom:6px}
+.sc-lbl{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.sc-val{font-size:22px;font-weight:900;line-height:1}
+.sc-sub{font-size:11px;margin-top:4px;font-weight:600}
+.scard.bl .sc-val,.scard.bl .sc-sub{color:var(--blue)}
+.scard.cy .sc-val,.scard.cy .sc-sub{color:var(--cyan)}
+.scard.gr .sc-val,.scard.gr .sc-sub{color:var(--green)}
+.scard.am .sc-val,.scard.am .sc-sub{color:var(--amber)}
+.scard.re .sc-val,.scard.re .sc-sub{color:var(--red)}
+.scard.pu .sc-val,.scard.pu .sc-sub{color:var(--purple)}
+
+/* ═══ LIVE FEED ═══ */
+.feed{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);overflow:hidden;margin-bottom:12px}
+.feed-h{padding:12px 14px;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between}
+.feed-title{font-size:13px;font-weight:800;display:flex;align-items:center;gap:8px}
+.feed-list{max-height:200px;overflow-y:auto}
+.feed-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;border-bottom:1px solid var(--border2);
+  animation:feedIn .4s cubic-bezier(.4,0,.2,1);
+}
+@keyframes feedIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+.feed-item:last-child{border-bottom:none}
+.fi-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;box-shadow:0 0 6px currentColor}
+.fi-txt{flex:1;font-size:12px;color:var(--t2)}
+.fi-txt strong{color:var(--t1)}
+.fi-time{font-size:10px;color:var(--t3);flex-shrink:0}
+
+/* ═══ CORRIDA DE METAS ═══ */
+.race-hero{
+  background:linear-gradient(135deg,#05080f,#0a0f1e,#0d1525);
+  border:1px solid var(--border);border-radius:var(--r);
+  padding:18px;margin-bottom:12px;
+  position:relative;overflow:hidden;
+}
+.rh-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(0,212,255,.07) 0%,transparent 60%);pointer-events:none}
+.rh-title{font-size:18px;font-weight:900;color:var(--white);margin-bottom:3px}
+.rh-sub{font-size:12px;color:var(--t3);margin-bottom:16px}
+.race-timer{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,179,0,.08);border:1px solid rgba(255,179,0,.2);
+  border-radius:8px;padding:6px 12px;font-size:13px;font-weight:800;color:var(--amber);
+  margin-bottom:16px;
+}
+.rt-label{font-size:10px;color:var(--t3);font-weight:600;margin-right:4px}
+
+/* Race lane */
+.race-lanes{display:flex;flex-direction:column;gap:10px}
+.lane{background:rgba(255,255,255,.02);border:1px solid var(--border2);border-radius:10px;padding:10px 12px;position:relative;overflow:hidden}
+.lane-track{background:rgba(255,255,255,.03);border-radius:6px;height:28px;position:relative;overflow:hidden;margin:8px 0}
+.lane-fill{
+  height:100%;border-radius:6px;position:relative;
+  display:flex;align-items:center;padding-right:8px;justify-content:flex-end;
+  transition:width 2s cubic-bezier(.4,0,.2,1);
+  min-width:32px;
+}
+.lane-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06));border-radius:6px}
+.lane-runner{
+  position:absolute;right:-1px;top:50%;transform:translateY(-50%);
+  width:26px;height:26px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:900;color:#05080f;
+  border:2px solid rgba(255,255,255,.3);
+  box-shadow:0 0 12px currentColor;
+  z-index:2;transition:right 2s cubic-bezier(.4,0,.2,1);
+}
+.lane-pct{font-size:10px;font-weight:900;color:rgba(255,255,255,.7);position:relative;z-index:3}
+.lane-top{display:flex;align-items:center;justify-content:space-between}
+.lane-name{font-size:13px;font-weight:700;color:var(--t1);display:flex;align-items:center;gap:8px}
+.lane-meta{font-size:11px;color:var(--t3)}
+.lane-badge{padding:2px 8px;border-radius:20px;font-size:10px;font-weight:800}
+.lb-fire{background:rgba(255,61,90,.1);color:var(--red);border:1px solid rgba(255,61,90,.2)}
+.lb-up{background:rgba(0,230,118,.08);color:var(--green);border:1px solid rgba(0,230,118,.2)}
+.lb-warn{background:rgba(255,179,0,.08);color:var(--amber);border:1px solid rgba(255,179,0,.2)}
+.lb-cold{background:rgba(255,255,255,.05);color:var(--t3);border:1px solid var(--border2)}
+.lane-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+.lane-atual{font-size:11px;color:var(--t3)}
+.lane-falta{font-size:11px;font-weight:700}
+
+/* Finish line */
+.finish-line{
+  position:absolute;right:0;top:0;bottom:0;width:3px;
+  background:repeating-linear-gradient(to bottom,var(--white) 0px,var(--white) 4px,transparent 4px,transparent 8px);
+  opacity:.15;
+}
+.lane-milestone{
+  position:absolute;top:0;bottom:0;width:1px;
+  background:rgba(255,255,255,.08);
+}
+.lm-label{position:absolute;top:-18px;font-size:9px;color:var(--t3);transform:translateX(-50%);white-space:nowrap}
+
+/* Podium */
+.podium{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:8px;align-items:flex-end;margin:14px 0}
+.pod{background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:12px 8px;text-align:center;position:relative}
+.pod-medal{font-size:24px;margin-bottom:6px}
+.pod-av{width:40px;height:40px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:#fff}
+.pod-name{font-size:12px;font-weight:800;color:var(--t1)}
+.pod-cargo{font-size:10px;color:var(--t3);margin-top:2px}
+.pod-val{font-size:14px;font-weight:900;margin-top:6px}
+.pod-1{background:linear-gradient(180deg,rgba(255,215,0,.06) 0%,var(--card) 100%);border-color:rgba(255,215,0,.2)}
+.pod-1 .pod-val{color:var(--gold)}
+.pod-2{background:linear-gradient(180deg,rgba(192,192,192,.05) 0%,var(--card) 100%);border-color:rgba(192,192,192,.15)}
+.pod-2 .pod-val{color:silver}
+.pod-3{background:linear-gradient(180deg,rgba(205,127,50,.05) 0%,var(--card) 100%);border-color:rgba(205,127,50,.15)}
+.pod-3 .pod-val{color:#cd7f32}
+
+/* ═══ REDE VISUAL ═══ */
+.rede-hero{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:16px;margin-bottom:12px;
+}
+.rn-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.rns{text-align:center;background:var(--card2);border-radius:10px;padding:10px 6px;border:1px solid var(--border2)}
+.rns-v{font-size:18px;font-weight:900;line-height:1}
+.rns-l{font-size:9px;color:var(--t3);margin-top:3px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+
+/* Network tree */
+.net-tree{position:relative;margin-bottom:12px}
+canvas#netCanvas{width:100%;display:block;border-radius:var(--r);border:1px solid var(--border2)}
+
+/* Member card */
+.mc-row{
+  background:var(--card);border:1px solid var(--border2);
+  border-radius:12px;margin-bottom:8px;overflow:hidden;
+}
+.mcr-h{display:flex;align-items:center;gap:11px;padding:12px 13px}
+.mcr-av{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:#fff;flex-shrink:0;position:relative}
+.mcr-av .status-ring{position:absolute;inset:-2px;border-radius:13px;border:2px solid}
+.mcr-name{font-size:14px;font-weight:800;color:var(--t1)}
+.mcr-cpf{font-size:10px;font-family:monospace;color:var(--t3);margin-top:1px}
+.mcr-cargo{font-size:11px;font-weight:700;margin-top:2px}
+.mcr-r{text-align:right;flex-shrink:0}
+.mcr-vol{font-size:14px;font-weight:900;color:var(--t1)}
+.mcr-comm{font-size:11px;color:var(--green);font-weight:700}
+.mcr-bar{padding:0 13px 11px}
+.mcr-bl{display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-bottom:4px}
+.mcr-bt{background:var(--bg);height:4px;border-radius:4px;overflow:hidden}
+.mcr-bf{height:100%;border-radius:4px;transition:width 1.5s cubic-bezier(.4,0,.2,1);position:relative}
+.mcr-bf::after{content:'';position:absolute;right:0;top:-2px;width:8px;height:8px;border-radius:50%;background:currentColor;filter:blur(2px)}
+
+/* ═══ ANALYTICS ═══ */
+.chart-card{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.cc-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.cc-title{font-size:14px;font-weight:800;color:var(--t1)}
+.cc-badge{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(0,230,118,.08);color:var(--green);border:1px solid rgba(0,230,118,.2)}
+.bar-chart{display:flex;align-items:flex-end;gap:6px;height:100px}
+.bc-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bc-bar{width:100%;border-radius:4px 4px 0 0;position:relative;min-height:4px;transition:height 1.5s cubic-bezier(.4,0,.2,1)}
+.bc-bar::before{content:attr(data-val);position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:800;color:var(--t2);white-space:nowrap}
+.bc-lbl{font-size:9px;color:var(--t3);font-weight:600}
+.bc-val-top{font-size:9px;font-weight:800;color:var(--blue)}
+
+/* Donut chart */
+.donut-wrap{display:flex;align-items:center;gap:16px}
+.donut{position:relative;width:100px;height:100px;flex-shrink:0}
+.donut svg{transform:rotate(-90deg)}
+.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.dc-val{font-size:18px;font-weight:900;color:var(--white);line-height:1}
+.dc-lbl{font-size:9px;color:var(--t3)}
+.donut-legend{flex:1}
+.dl-item{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border2)}
+.dl-item:last-child{border-bottom:none}
+.dl-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.dl-name{font-size:12px;color:var(--t2);flex:1}
+.dl-val{font-size:12px;font-weight:700;color:var(--t1)}
+
+/* ═══ ALERTAS ═══ */
+.alert-card{
+  background:var(--card);border-radius:12px;padding:14px;margin-bottom:8px;
+  display:flex;align-items:flex-start;gap:12px;
+  border-left:3px solid;
+  position:relative;overflow:hidden;
+}
+.alert-card::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.02),transparent);pointer-events:none}
+.ac-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ac-title{font-size:14px;font-weight:800;color:var(--t1);margin-bottom:3px}
+.ac-sub{font-size:12px;color:var(--t2);line-height:1.5}
+.ac-time{font-size:10px;color:var(--t3);margin-top:6px;display:flex;align-items:center;gap:4px}
+.ac-btn{margin-top:8px;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;border:none;cursor:pointer;transition:.15s}
+.ac-btn:active{transform:scale(.95)}
+.alert-red{border-left-color:var(--red)}
+.alert-amber{border-left-color:var(--amber)}
+.alert-green{border-left-color:var(--green)}
+.alert-blue{border-left-color:var(--blue)}
+
+/* ═══ CARGO TRACKER ═══ */
+.cargo-track{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.ct-steps{display:flex;align-items:center;position:relative;margin:14px 0 8px}
+.ct-line{position:absolute;top:15px;left:0;right:0;height:2px;background:var(--border2)}
+.ct-linefill{position:absolute;top:15px;left:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:width 2s}
+.ct-step{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;z-index:1}
+.ct-dot{
+  width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:900;transition:.5s;
+}
+.ct-dot.done{background:var(--blue);color:#fff;box-shadow:0 0 12px rgba(77,166,214,.5)}
+.ct-dot.now{background:var(--cyan);color:#05080f;box-shadow:0 0 16px rgba(0,212,255,.6);animation:nowPulse 2s infinite}
+@keyframes nowPulse{0%,100%{box-shadow:0 0 16px rgba(0,212,255,.6)}50%{box-shadow:0 0 24px rgba(0,212,255,.9),0 0 40px rgba(0,212,255,.3)}}
+.ct-dot.next{background:var(--card2);color:var(--t3);border:1px solid var(--border2)}
+.ct-lbl{font-size:9px;font-weight:700;text-align:center;line-height:1.2}
+.ct-dot.done~.ct-lbl,.ct-lbl-done{color:var(--blue)}
+.ct-dot.now~.ct-lbl{color:var(--cyan);font-weight:900}
+.ct-lbl-next{color:var(--t3)}
+.ct-earn{font-size:9px;color:var(--green);font-weight:700}
+
+/* ═══ PROJECTION ═══ */
+.proj-card{
+  background:linear-gradient(135deg,rgba(0,230,118,.04),rgba(0,230,118,.01));
+  border:1px solid rgba(0,230,118,.15);border-radius:var(--r);padding:16px;margin-bottom:12px;
+}
+.pc-label{font-size:10px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.pc-val{font-size:32px;font-weight:900;color:var(--green)}
+.pc-sub{font-size:12px;color:var(--t2);margin-top:4px}
+.proj-scenarios{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px}
+.ps{text-align:center;background:rgba(255,255,255,.03);border:1px solid var(--border2);border-radius:10px;padding:10px 6px}
+.ps-v{font-size:16px;font-weight:900}
+.ps-l{font-size:9px;color:var(--t3);margin-top:3px;font-weight:600}
+
+/* ═══ MODAL ═══ */
+.mover{position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);display:none;align-items:flex-end}
+.mover.on{display:flex}
+.modal{
+  background:var(--bg2);border:1px solid var(--border);
+  border-top:1px solid rgba(77,166,214,.2);
+  border-radius:22px 22px 0 0;width:100%;
+  max-height:90vh;overflow-y:auto;padding:20px 16px 34px;
+  animation:su .3s cubic-bezier(.4,0,.2,1);
+}
+@keyframes su{from{transform:translateY(50px);opacity:0}to{transform:translateY(0);opacity:1}}
+.mh{width:40px;height:3px;background:var(--t4);border-radius:2px;margin:0 auto 18px}
+.modal h3{font-size:19px;font-weight:900;margin-bottom:14px;color:var(--white)}
+.mbtn{width:100%;padding:14px;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#05080f;font-size:15px;font-weight:900;border:none;border-radius:11px;cursor:pointer;transition:.15s;margin-top:8px;letter-spacing:.5px}
+.mbtn:active{transform:scale(.97)}
+.mbtn-out{background:transparent;color:var(--blue);border:1px solid var(--border);margin-top:10px}
+
+/* ═══ TOAST ═══ */
+.toast{
+  position:fixed;bottom:calc(var(--nav)+14px);left:50%;
+  transform:translateX(-50%) translateY(10px);
+  background:var(--card2);border:1px solid var(--border);
+  color:var(--white);padding:11px 22px;border-radius:30px;
+  font-size:13px;font-weight:700;
+  box-shadow:0 8px 40px rgba(0,0,0,.5),var(--gB);
+  z-index:999;opacity:0;transition:.3s;white-space:nowrap;pointer-events:none;
+}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ═══ scrollbar ═══ */
+::-webkit-scrollbar{width:2px}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- BOOT -->
+<div id="boot">
+  <div class="boot-grid"></div>
+  <div class="boot-ring"></div>
+  <div class="boot-logo">BOLD<span>.</span><br><span style="font-size:16px;letter-spacing:8px;color:rgba(255,255,255,.4)">INTELLIGENCE</span></div>
+  <div class="boot-bar"><div class="boot-fill"></div></div>
+  <div class="boot-status" id="bootStatus">Conectando à rede...</div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <div class="hdr">
+    <div class="hdr-brand">
+      <div class="hdr-icon">⚡</div>
+      <div>
+        <div class="hdr-name">BOLD<span>.</span>INT</div>
+      </div>
+    </div>
+    <div class="live-pill">
+      <div class="live-dot"></div>
+      <div class="live-txt">AO VIVO</div>
+    </div>
+    <div class="hdr-r">
+      <div class="hdr-alert" onclick="openM('mAlertas')">
+        <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+        <div class="alert-n">5</div>
+      </div>
+      <div class="hdr-av" onclick="navTo('pgPerfil','ni-pf')">R</div>
+    </div>
+  </div>
+
+  <div class="cnt">
+
+    <!-- ══════════════ MISSION CONTROL ══════════════ -->
+    <div id="pgMission" class="pg on">
+
+      <!-- CARGO TRACKER -->
+      <div class="cargo-track">
+        <div style="font-size:11px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:2px">Sua jornada</div>
+        <div style="font-size:16px;font-weight:900;color:var(--white)">Coordenadora → Gerente <span style="color:var(--cyan);font-size:13px">· 20% concluído</span></div>
+        <div class="ct-steps" id="ctSteps">
+          <div class="ct-line"></div>
+          <div class="ct-linefill" style="width:40%" id="ctLineFill"></div>
+        </div>
+        <div style="font-size:11px;color:var(--t3);margin-top:4px">Faltam <strong style="color:var(--amber)">625 pessoas</strong> para alcançar Gerente e ganhar <strong style="color:var(--green)">R$7.800/mês</strong></div>
+      </div>
+
+      <!-- HERO COMISSÃO -->
+      <div class="mc-hero">
+        <div class="mch-top">
+          <div>
+            <div class="mch-label">Comissão · Março 2026</div>
+            <div class="mch-val"><span class="currency">R$</span><span id="heroVal">0</span></div>
+            <div class="mch-sub">
+              <span class="mch-badge badge-up">↑ +18%</span>
+              vs fevereiro · Meta: R$2.000
+            </div>
+          </div>
+          <div class="mch-right">
+            <div class="mch-pct" id="heroPct">0%</div>
+            <div class="mch-pct-l">da meta</div>
+            <div style="margin-top:8px;font-size:11px;color:var(--t3)">Saque: 05/abr</div>
+          </div>
+        </div>
+        <div class="glow-bar"><div class="glow-fill" id="heroBar" style="width:0%;background:linear-gradient(90deg,var(--blue),var(--cyan))"></div></div>
+        <div class="hero-chips">
+          <div class="hchip">👥 155 na rede</div>
+          <div class="hchip">🏆 Coordenadora</div>
+          <div class="hchip">📅 +12 novos/mês</div>
+          <div class="hchip">💳 5 ger. ativas</div>
+        </div>
+      </div>
+
+      <!-- STATS 2x2 -->
+      <div class="sg">
+        <div class="scard cy">
+          <div class="sc-ico">👥</div>
+          <div class="sc-lbl">Rede Total</div>
+          <div class="sc-val" id="sRede">0</div>
+          <div class="sc-sub">+12 este mês</div>
+        </div>
+        <div class="scard gr">
+          <div class="sc-ico">💰</div>
+          <div class="sc-lbl">Vendas no Mês</div>
+          <div class="sc-val" id="sVendas">0</div>
+          <div class="sc-sub">11 pedidos</div>
+        </div>
+        <div class="scard am">
+          <div class="sc-ico">📦</div>
+          <div class="sc-lbl">Estoque Itens</div>
+          <div class="sc-val" id="sEstq">0</div>
+          <div class="sc-sub">1 item crítico ⚠️</div>
+        </div>
+        <div class="scard pu">
+          <div class="sc-ico">⭐</div>
+          <div class="sc-lbl">Pts Bold</div>
+          <div class="sc-val" id="sPts">0</div>
+          <div class="sc-sub">Top 12% da rede</div>
+        </div>
+      </div>
+
+      <!-- PROJEÇÃO -->
+      <div class="proj-card">
+        <div class="pc-label">🎯 Projeção até fim do mês</div>
+        <div class="pc-val" id="projVal">R$ 2.050</div>
+        <div class="pc-sub">Mantendo ritmo atual de +12 pessoas/mês</div>
+        <div class="proj-scenarios">
+          <div class="ps"><div class="ps-v" style="color:var(--red)">R$1.8k</div><div class="ps-l">Cenário Mín.</div></div>
+          <div class="ps"><div class="ps-v" style="color:var(--green)">R$2.05k</div><div class="ps-l">Cenário Real</div></div>
+          <div class="ps"><div class="ps-v" style="color:var(--cyan)">R$2.4k</div><div class="ps-l">Cenário Ótimo</div></div>
+        </div>
+      </div>
+
+      <!-- LIVE FEED -->
+      <div class="feed">
+        <div class="feed-h">
+          <div class="feed-title"><div class="live-dot"></div> Atividade em Tempo Real</div>
+          <span style="font-size:11px;color:var(--t3)" id="feedCount">0 eventos</span>
+        </div>
+        <div class="feed-list" id="feedList"></div>
+      </div>
+
+      <!-- GRAFICO -->
+      <div class="chart-card">
+        <div class="cc-h">
+          <div class="cc-title">Evolução de Comissões</div>
+          <span class="cc-badge">+128% em 6m</span>
+        </div>
+        <div class="bar-chart" id="barChart"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px" id="barLabels"></div>
+      </div>
+
+    </div>
+
+    <!-- ══════════════ CORRIDA DE METAS ══════════════ -->
+    <div id="pgCorrida" class="pg">
+
+      <div class="race-hero">
+        <div class="rh-bg"></div>
+        <div class="rh-title">🏁 Corrida de Metas</div>
+        <div class="rh-sub">Quem vai subir de cargo esse mês?</div>
+        <div class="race-timer">
+          <span class="rt-label">FIM DO MÊS EM</span>
+          <span id="raceTimer">--d --h --m</span>
+          🕐
+        </div>
+      </div>
+
+      <!-- PODIUM -->
+      <div class="stit">🏆 Pódio do Mês</div>
+      <div class="podium" id="podiumEl"></div>
+
+      <!-- CORRIDA PARA PRÓXIMO CARGO -->
+      <div class="stit">🚀 Corrida para Próximo Cargo</div>
+      <div style="background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:14px;margin-bottom:12px">
+        <div style="font-size:11px;color:var(--t3);margin-bottom:14px">Quem chega primeiro a <strong style="color:var(--cyan)">Supervisor → Coordenador</strong> (meta: 155 pessoas)</div>
+        <div class="race-lanes" id="raceLanes"></div>
+      </div>
+
+      <!-- CORRIDA PARA LIDER -->
+      <div class="stit">⚡ Corrida Associado → Líder (meta: 5)</div>
+      <div style="background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:14px;margin-bottom:12px">
+        <div class="race-lanes" id="raceLanes2"></div>
+      </div>
+
+      <!-- DONUT CHART -->
+      <div class="chart-card">
+        <div class="cc-h">
+          <div class="cc-title">Distribuição da Rede por Cargo</div>
+        </div>
+        <div class="donut-wrap" id="donutWrap"></div>
+      </div>
+
+    </div>
+
+    <!-- ══════════════ REDE ══════════════ -->
+    <div id="pgRede" class="pg">
+
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px">
+        <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;font-weight:800;margin-bottom:4px">CPF da Rede — Coordenadora</div>
+        <div style="font-size:16px;font-weight:900;color:var(--white);margin-bottom:10px">Renata Silva · <span style="font-family:monospace;color:var(--cyan)">***.456.***-00</span></div>
+        <div class="rn-stats">
+          <div class="rns"><div class="rns-v" style="color:var(--blue)">155</div><div class="rns-l">Total</div></div>
+          <div class="rns"><div class="rns-v" style="color:var(--green)">112</div><div class="rns-l">Ativos</div></div>
+          <div class="rns"><div class="rns-v" style="color:var(--amber)">43</div><div class="rns-l">Inativos</div></div>
+          <div class="rns"><div class="rns-v" style="color:var(--purple)">3</div><div class="rns-l">Gerações</div></div>
+        </div>
+      </div>
+
+      <!-- Canvas network -->
+      <div class="net-tree">
+        <canvas id="netCanvas" height="220"></canvas>
+      </div>
+
+      <div class="stit">Seus 5 Diretos — 1ª Geração</div>
+      <div id="redeCards"></div>
+
+    </div>
+
+    <!-- ══════════════ ANALYTICS ══════════════ -->
+    <div id="pgAnalytics" class="pg">
+
+      <!-- Comissão por geração -->
+      <div class="chart-card">
+        <div class="cc-h">
+          <div class="cc-title">Comissão por Geração</div>
+          <span class="cc-badge">R$1.550 total</span>
+        </div>
+        <div class="bar-chart" id="genChart"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px" id="genLabels"></div>
+      </div>
+
+      <!-- Donut categorias -->
+      <div class="chart-card">
+        <div class="cc-h"><div class="cc-title">Vendas por Categoria</div></div>
+        <div class="donut-wrap" id="catDonut"></div>
+      </div>
+
+      <!-- Histórico tabela -->
+      <div class="chart-card">
+        <div class="cc-h"><div class="cc-title">Histórico de Comissões</div></div>
+        <div id="histTable"></div>
+      </div>
+
+      <!-- Alertas inteligência -->
+      <div class="stit">🧠 Inteligência Bold</div>
+      <div style="background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.15);border-radius:var(--r);padding:14px;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:800;color:var(--cyan);margin-bottom:10px">💡 Insights gerados por IA</div>
+        <div style="font-size:13px;color:var(--t2);line-height:1.8">
+          • Juliana Martins tem <strong style="color:var(--white)">crescimento de 22%/mês</strong> — investir apoio nela pode gerar +R$180/mês para você<br>
+          • Ricardo Souza está inativo há 45 dias — <strong style="color:var(--amber)">risco de abandono alto</strong><br>
+          • Se manter o ritmo atual, você alcança <strong style="color:var(--green)">Gerente em 24 meses</strong><br>
+          • Melhor horário para recrutar: <strong style="color:var(--white)">terça e quinta, 19h–21h</strong> (baseado nos seus dados)
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══════════════ PERFIL ══════════════ -->
+    <div id="pgPerfil" class="pg">
+
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:22px 16px;text-align:center;margin-bottom:14px;position:relative;overflow:hidden">
+        <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(0,212,255,.07),transparent 60%);pointer-events:none"></div>
+        <div style="width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#1a1f4b,var(--blue));border:2px solid rgba(77,166,214,.4);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#fff;margin:0 auto 12px;box-shadow:var(--gB)">R</div>
+        <div style="font-size:22px;font-weight:900;color:var(--white)">Renata Silva</div>
+        <div style="font-size:12px;font-family:monospace;color:var(--t3);margin:4px 0 10px">***.456.789-00</div>
+        <div style="display:inline-flex;align-items:center;gap:6px;padding:6px 16px;background:rgba(77,166,214,.1);border:1px solid var(--border);border-radius:20px;font-size:13px;font-weight:700;color:var(--blue)">👑 Coordenadora</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px">
+          <div style="background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--t2);font-weight:600">📅 Jan/2026</div>
+          <div style="background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--t2);font-weight:600">👥 155 pessoas</div>
+          <div style="background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--t2);font-weight:600">💰 R$1.550/mês</div>
+          <div style="background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--t2);font-weight:600">📍 Minas Gerais</div>
+        </div>
+      </div>
+
+      <!-- Conquistas -->
+      <div class="stit">🏅 Conquistas</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px" id="achievements"></div>
+
+      <!-- Resumo mês -->
+      <div class="sg">
+        <div class="scard bl"><div class="sc-ico">💰</div><div class="sc-lbl">Comissão</div><div class="sc-val" style="font-size:16px">R$1.550</div><div class="sc-sub">+18%</div></div>
+        <div class="scard gr"><div class="sc-ico">🛒</div><div class="sc-lbl">Vendas</div><div class="sc-val">R$3.2k</div><div class="sc-sub">11 pedidos</div></div>
+        <div class="scard cy"><div class="sc-ico">👥</div><div class="sc-lbl">Novos</div><div class="sc-val">+12</div><div class="sc-sub">este mês</div></div>
+        <div class="scard pu"><div class="sc-ico">⭐</div><div class="sc-lbl">Pontos</div><div class="sc-val">4.850</div><div class="sc-sub">pts Bold</div></div>
+      </div>
+
+      <!-- Menu -->
+      <div style="background:var(--card);border:1px solid var(--border2);border-radius:var(--r);overflow:hidden">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid var(--border2);cursor:pointer" onclick="showToast('Abrindo dados pessoais...')">
+          <div style="width:38px;height:38px;border-radius:10px;background:rgba(77,166,214,.1);display:flex;align-items:center;justify-content:center;font-size:18px">👤</div>
+          <div style="flex:1;font-size:14px;font-weight:600">Dados Pessoais</div>
+          <div style="color:var(--t3)">›</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid var(--border2);cursor:pointer" onclick="showToast('Abrindo dados bancários...')">
+          <div style="width:38px;height:38px;border-radius:10px;background:rgba(0,230,118,.08);display:flex;align-items:center;justify-content:center;font-size:18px">🏦</div>
+          <div style="flex:1;font-size:14px;font-weight:600">Dados Bancários</div>
+          <div style="color:var(--t3)">›</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid var(--border2);cursor:pointer" onclick="openM('mLinkRef')">
+          <div style="width:38px;height:38px;border-radius:10px;background:rgba(0,212,255,.06);display:flex;align-items:center;justify-content:center;font-size:18px">🔗</div>
+          <div style="flex:1;font-size:14px;font-weight:600">Link de Indicação</div>
+          <div style="color:var(--t3)">›</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:14px;cursor:pointer" onclick="showToast('Saindo...');location.reload()">
+          <div style="width:38px;height:38px;border-radius:10px;background:rgba(255,61,90,.08);display:flex;align-items:center;justify-content:center;font-size:18px">🚪</div>
+          <div style="flex:1;font-size:14px;font-weight:600;color:var(--red)">Sair</div>
+          <div style="color:var(--red)">›</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- NAV -->
+  <div class="bnav">
+    <div class="ni on" id="ni-mc" onclick="navTo('pgMission','ni-mc')">
+      <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+      <span>Central</span>
+    </div>
+    <div class="ni" id="ni-race" onclick="navTo('pgCorrida','ni-race');buildCorrida()">
+      <svg viewBox="0 0 24 24"><path d="M21 3L3 10.53v.98l6.84 2.65L12.48 21h.98L21 3z"/></svg>
+      <span>Corrida</span>
+    </div>
+    <div class="ni" id="ni-rede" onclick="navTo('pgRede','ni-rede');buildRede()">
+      <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+      <span>Rede</span>
+    </div>
+    <div class="ni" id="ni-ana" onclick="navTo('pgAnalytics','ni-ana');buildAnalytics()">
+      <svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+      <span>Analytics</span>
+    </div>
+    <div class="ni" id="ni-pf" onclick="navTo('pgPerfil','ni-pf')">
+      <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+      <span>Perfil</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ MODAIS ══ -->
+<div class="mover" id="mAlertas" onclick="closeM(this)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="mh"></div>
+    <h3>🔔 Alertas Inteligentes</h3>
+    <div id="alertsList"></div>
+    <button class="mbtn mbtn-out" style="margin-top:14px" onclick="closeM(document.getElementById('mAlertas'))">Fechar</button>
+  </div>
+</div>
+
+<div class="mover" id="mLinkRef" onclick="closeM(this)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="mh"></div>
+    <h3>🔗 Seu Link de Indicação</h3>
+    <div style="background:var(--card);border:1px solid rgba(0,212,255,.2);border-radius:12px;padding:16px;margin-bottom:14px">
+      <div style="font-size:10px;font-weight:800;color:var(--cyan);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Link exclusivo vinculado ao seu CPF</div>
+      <div style="font-size:14px;color:var(--t1);font-family:monospace;word-break:break-all">boldstore.com/?ref=CPF45678900</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button class="mbtn" style="margin:0" onclick="showToast('Link copiado!');closeM(document.getElementById('mLinkRef'))">📋 Copiar</button>
+      <button class="mbtn" style="margin:0;background:linear-gradient(135deg,#25d366,#128c7e)" onclick="showToast('Compartilhado!');closeM(document.getElementById('mLinkRef'))">📲 WhatsApp</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════
+   BOLD INTELLIGENCE · CORE LOGIC
+═══════════════════════════════════════ */
+
+// ══ DADOS ══
+const CHART_DATA = [
+  {m:'Out',v:680},{m:'Nov',v:790},{m:'Dez',v:880},{m:'Jan',v:1100},{m:'Fev',v:1310},{m:'Mar',v:1550}
+];
+const GEN_DATA = [
+  {g:'G1',v:320,p:5,pct:'5%',c:'var(--blue)'},
+  {g:'G2',v:480,p:25,pct:'3%',c:'var(--cyan)'},
+  {g:'G3',v:750,p:125,pct:'2%',c:'var(--purple)'},
+  {g:'G4',v:0,p:0,pct:'—',c:'var(--border)'},
+  {g:'G5',v:0,p:0,pct:'—',c:'var(--border)'},
+];
+const REDE_DATA = [
+  {ini:'J',cor:'#e74c3c',nome:'Juliana Martins',cpf:'***.456.***-12',cargo:'Supervisora',pes:30,meta:155,vol:'R$6.200',comm:'R$310',st:'gr',prog:19,trend:'+22%/mês'},
+  {ini:'P',cor:'#8e44ad',nome:'Pedro Alves',cpf:'***.789.***-34',cargo:'Supervisor',pes:28,meta:155,vol:'R$5.900',comm:'R$295',st:'gr',prog:18,trend:'+15%/mês'},
+  {ini:'F',cor:'#16a085',nome:'Fernanda Costa',cpf:'***.123.***-56',cargo:'Líder',pes:8,meta:30,vol:'R$2.100',comm:'R$63',st:'cy',prog:27,trend:'+8%/mês'},
+  {ini:'R',cor:'#d35400',nome:'Ricardo Souza',cpf:'***.321.***-78',cargo:'Associado',pes:0,meta:5,vol:'R$0',comm:'R$0',st:'re',prog:0,trend:'inativo 45d'},
+  {ini:'L',cor:'#2980b9',nome:'Larissa Nunes',cpf:'***.654.***-90',cargo:'Líder',pes:5,meta:30,vol:'R$1.300',comm:'R$39',st:'bl',prog:16,trend:'+5%/mês'},
+];
+const CORRIDA_DATA = [
+  {ini:'J',cor:'#e74c3c',nome:'Juliana Martins',atual:30,meta:155,badge:'lb-fire',badgeTxt:'🔥 Acelerou'},
+  {ini:'P',cor:'#8e44ad',nome:'Pedro Alves',atual:28,meta:155,badge:'lb-up',badgeTxt:'↑ Subindo'},
+  {ini:'F',cor:'#16a085',nome:'Fernanda Costa',atual:8,meta:155,badge:'lb-warn',badgeTxt:'⚡ Crescendo'},
+  {ini:'L',cor:'#2980b9',nome:'Larissa Nunes',atual:5,meta:155,badge:'lb-cold',badgeTxt:'· Estável'},
+];
+const CORRIDA2_DATA = [
+  {ini:'M',cor:'#e67e22',nome:'Marcos Oliveira',atual:4,meta:5,badge:'lb-fire',badgeTxt:'🔥 Quase lá!'},
+  {ini:'C',cor:'#27ae60',nome:'Carla Santos',atual:3,meta:5,badge:'lb-up',badgeTxt:'↑ Rápida'},
+  {ini:'T',cor:'#8e44ad',nome:'Thiago Lima',atual:2,meta:5,badge:'lb-cold',badgeTxt:'· Iniciando'},
+  {ini:'B',cor:'#2980b9',nome:'Bruno Faria',atual:1,meta:5,badge:'lb-cold',badgeTxt:'· Iniciando'},
+];
+const FEED_EVENTS = [
+  {dot:'var(--green)',txt:'<strong>Marcos Oliveira</strong> entrou na rede via Larissa',t:'agora'},
+  {dot:'var(--blue)',txt:'<strong>Carlos Mendes</strong> fez uma compra de R$276',t:'3m'},
+  {dot:'var(--cyan)',txt:'<strong>Juliana Martins</strong> recrutou uma nova pessoa',t:'12m'},
+  {dot:'var(--amber)',txt:'<strong>Fernanda Costa</strong> vendeu Kit Hidratação × 2',t:'28m'},
+  {dot:'var(--purple)',txt:'<strong>Pedro Alves</strong> bateu 28 pessoas na rede',t:'1h'},
+  {dot:'var(--green)',txt:'<strong>Larissa Nunes</strong> fez primeira venda do mês',t:'2h'},
+  {dot:'var(--red)',txt:'<strong>Ricardo Souza</strong> sem atividade há 45 dias',t:'3h'},
+  {dot:'var(--blue)',txt:'Sua comissão de <strong>R$1.550</strong> foi calculada',t:'4h'},
+];
+const ALERTS = [
+  {ic:'🚨',title:'Ricardo Souza inativo 45 dias',sub:'Risco alto de abandono. Envie uma mensagem de apoio agora.',tipo:'red',btn:'Enviar apoio',time:'hoje'},
+  {ic:'🎯',title:'Juliana a 125 pessoas do cargo Coordenadora',sub:'Apoie Juliana e ela pode gerar +R$450/mês para você em 3 meses.',tipo:'green',btn:'Ver estratégia',time:'hoje'},
+  {ic:'⚠️',title:'Estoque de Vitamina C crítico',sub:'Apenas 2 unidades restantes. Reabasteça antes de amanhã.',tipo:'amber',btn:'Ver estoque',time:'hoje'},
+  {ic:'💰',title:'Comissão disponível para saque',sub:'R$1.550,00 liberado. Saque disponível a partir de 05/04.',tipo:'blue',btn:'Sacar agora',time:'ontem'},
+  {ic:'📈',title:'Projeção: você vai bater a meta!',sub:'No ritmo atual, você atingirá R$2.050 até fim do mês.',tipo:'green',btn:'Ver projeção',time:'hoje'},
+];
+const CONQUISTAS = [
+  {ico:'🏆',nome:'1ª Comissão',on:true},{ico:'👥',nome:'10 na rede',on:true},
+  {ico:'💰',nome:'R$1k/mês',on:true},{ico:'🌐',nome:'3 gerações',on:true},
+  {ico:'🔥',nome:'R$2k/mês',on:false},{ico:'⭐',nome:'Gerente',on:false},
+  {ico:'🚀',nome:'100 rede',on:true},{ico:'💎',nome:'Diretor',on:false},
+];
+const CARGO_STEPS = [
+  {lbl:'Líder',earn:'R$50',state:'done'},
+  {lbl:'Superv.',earn:'R$300',state:'done'},
+  {lbl:'Coord.',earn:'R$1.5k',state:'now'},
+  {lbl:'Gerente',earn:'R$7.8k',state:'next'},
+  {lbl:'Diretor',earn:'R$39k',state:'next'},
+];
+
+// ══ BOOT ══
+const bootMsgs = ['Conectando à rede...','Verificando CPFs...','Carregando rede...','Calculando comissões...','Pronto!'];
+let bIdx=0;
+const bInt = setInterval(()=>{
+  bIdx++;
+  if(bIdx<bootMsgs.length) document.getElementById('bootStatus').textContent=bootMsgs[bIdx];
+},400);
+setTimeout(()=>{
+  clearInterval(bInt);
+  document.getElementById('boot').style.display='none';
+  document.getElementById('app').classList.add('on');
+  buildCargo();
+  buildFeed();
+  buildBarChart();
+  buildAlerts();
+  buildAchievements();
+  animateHero();
+  startLiveSimulation();
+  buildRede();
+  buildCorrida();
+  buildAnalytics();
+},2200);
+
+// ══ CARGO TRACKER ══
+function buildCargo(){
+  const el = document.getElementById('ctSteps');
+  let html = '<div class="ct-line"></div><div class="ct-linefill" style="width:0%" id="ctLineFill"></div>';
+  CARGO_STEPS.forEach(s=>{
+    html+=`<div class="ct-step">
+      <div class="ct-dot ${s.state}">${s.state==='done'?'✓':s.state==='now'?'●':'○'}</div>
+      <div class="ct-lbl" style="color:${s.state==='done'?'var(--blue)':s.state==='now'?'var(--cyan)':'var(--t3)'}">${s.lbl}</div>
+      <div class="ct-earn" style="opacity:${s.state==='done'||s.state==='now'?1:.4}">${s.earn}</div>
+    </div>`;
+  });
+  el.innerHTML=html;
+  setTimeout(()=>{ const lf=document.getElementById('ctLineFill'); if(lf)lf.style.width='40%'; },300);
+}
+
+// ══ ANIMATE HERO ══
+function animateHero(){
+  animCount('heroVal',0,1550,2000,'');
+  setTimeout(()=>{ document.getElementById('heroPct').textContent='77%'; document.getElementById('heroBar').style.width='77%'; },200);
+  animCount('sRede',0,155,1500,'');
+  animCount('sVendas',0,3200,1800,'R$',true);
+  animCount('sEstq',0,47,1200,'');
+  animCount('sPts',0,4850,1600,'');
+}
+function animCount(id,from,to,dur,prefix,money){
+  const el=document.getElementById(id);
+  if(!el)return;
+  const start=performance.now();
+  const step=t=>{
+    const p=Math.min((t-start)/dur,1);
+    const ease=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
+    const v=Math.floor(from+(to-from)*ease);
+    el.textContent=prefix+(money?'R$'+(v/1000).toFixed(1)+'k':v.toLocaleString('pt-BR'));
+    if(p<1)requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+// ══ FEED ══
+let feedIdx=0;
+function buildFeed(){
+  const el=document.getElementById('feedList');
+  el.innerHTML='';
+  FEED_EVENTS.forEach((e,i)=>{
+    const d=document.createElement('div');
+    d.className='feed-item';
+    d.innerHTML=`<div class="fi-dot" style="background:${e.dot};color:${e.dot}"></div><div class="fi-txt">${e.txt}</div><div class="fi-time">${e.t}</div>`;
+    el.appendChild(d);
+  });
+  document.getElementById('feedCount').textContent=FEED_EVENTS.length+' eventos';
+}
+
+// ══ LIVE SIMULATION ══
+const liveEvents=[
+  {dot:'var(--green)',txt:'<strong>Ana Lima</strong> acabou de entrar na rede',t:'agora'},
+  {dot:'var(--blue)',txt:'<strong>José Mendes</strong> comprou Whey Protein',t:'agora'},
+  {dot:'var(--cyan)',txt:'<strong>Fernanda Costa</strong> recrutou +1 pessoa',t:'agora'},
+  {dot:'var(--purple)',txt:'<strong>Sua rede</strong> gerou +R$42 em comissão',t:'agora'},
+];
+let leIdx=0;
+function startLiveSimulation(){
+  setInterval(()=>{
+    const e=liveEvents[leIdx%liveEvents.length]; leIdx++;
+    const el=document.getElementById('feedList');
+    if(!el)return;
+    const d=document.createElement('div');
+    d.className='feed-item';
+    d.innerHTML=`<div class="fi-dot" style="background:${e.dot};color:${e.dot}"></div><div class="fi-txt">${e.txt}</div><div class="fi-time">${e.t}</div>`;
+    el.insertBefore(d,el.firstChild);
+    const kids=[...el.children];
+    if(kids.length>10) el.removeChild(kids[kids.length-1]);
+    const cnt=document.getElementById('feedCount');
+    if(cnt){ const n=parseInt(cnt.textContent)||8; cnt.textContent=(n+1)+' eventos'; }
+    // update hero val slightly
+    const hv=document.getElementById('heroVal');
+    if(hv){ const cur=parseInt(hv.textContent.replace(/\D/g,''))||1550; hv.textContent=(cur+Math.floor(Math.random()*15)+5).toLocaleString('pt-BR'); }
+  },6000);
+}
+
+// ══ BAR CHART ══
+function buildBarChart(){
+  const el=document.getElementById('barChart');
+  const ll=document.getElementById('barLabels');
+  if(!el)return;
+  const max=Math.max(...CHART_DATA.map(d=>d.v));
+  el.innerHTML=''; ll.innerHTML='';
+  CHART_DATA.forEach((d,i)=>{
+    const pct=(d.v/max)*100;
+    const isCurrent=i===CHART_DATA.length-1;
+    const col=document.createElement('div');
+    col.className='bc-col';
+    col.innerHTML=`<div class="bc-val-top">${isCurrent?'R$'+d.v:''}</div>
+      <div class="bc-bar" style="height:0%;background:${isCurrent?'linear-gradient(to top,var(--blue),var(--cyan))':'rgba(77,166,214,.2)'};${isCurrent?'box-shadow:var(--gB)':''}" data-h="${pct}%"></div>`;
+    el.appendChild(col);
+    const lb=document.createElement('div');
+    lb.style.cssText='flex:1;text-align:center;font-size:9px;color:var(--t3);font-weight:700';
+    lb.textContent=d.m;
+    ll.appendChild(lb);
+    setTimeout(()=>{ col.querySelector('.bc-bar').style.height=pct+'%'; },200+i*100);
+  });
+}
+
+// ══ CORRIDA ══
+function buildCorrida(){
+  // Timer
+  const now=new Date(); const end=new Date(now.getFullYear(),now.getMonth()+1,1);
+  const diff=end-now; const d=Math.floor(diff/86400000); const h=Math.floor((diff%86400000)/3600000); const m=Math.floor((diff%3600000)/60000);
+  const rt=document.getElementById('raceTimer'); if(rt) rt.textContent=d+'d '+h+'h '+m+'m';
+
+  // Podium
+  const podEl=document.getElementById('podiumEl');
+  if(podEl){
+    const top=[...REDE_DATA].sort((a,b)=>b.pes-a.pes).slice(0,3);
+    const order=[top[1],top[0],top[2]]; // 2nd, 1st, 3rd
+    const medals=['🥈','🥇','🥉']; const cls=['pod pod-2','pod pod-1','pod pod-3'];
+    podEl.innerHTML=order.map((m,i)=>`
+      <div class="${cls[i]}">
+        <div class="pod-medal">${medals[i]}</div>
+        <div class="pod-av" style="background:${m.cor}">${m.ini}</div>
+        <div class="pod-name">${m.nome.split(' ')[0]}</div>
+        <div class="pod-cargo">${m.cargo}</div>
+        <div class="pod-val">${m.pes} p.</div>
+      </div>`).join('');
+  }
+
+  // Raias 1 (supervisor→coordenadora)
+  buildRace('raceLanes',CORRIDA_DATA,155);
+  buildRace('raceLanes2',CORRIDA2_DATA,5);
+
+  // Donut
+  buildDonut('donutWrap',[
+    {nome:'Associados',v:89,c:'#4da6d6'},{nome:'Líderes',v:36,c:'#00d4ff'},
+    {nome:'Supervisores',v:22,c:'#c084fc'},{nome:'Coordenadores',v:8,c:'#00e676'}
+  ],155,'Rede');
+}
+
+function buildRace(elId,data,meta){
+  const el=document.getElementById(elId);
+  if(!el)return;
+  el.innerHTML='';
+  data.forEach((r,i)=>{
+    const pct=Math.min((r.atual/meta)*100,100);
+    const colors=['var(--red)','var(--purple)','var(--cyan)','var(--blue)','var(--green)'];
+    const c=r.cor||colors[i%colors.length];
+    const d=document.createElement('div');
+    d.className='lane';
+    d.innerHTML=`
+      <div class="lane-top">
+        <div class="lane-name">
+          <div style="width:28px;height:28px;border-radius:8px;background:${c};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff">${r.ini}</div>
+          ${r.nome.split(' ')[0]}
+        </div>
+        <span class="lane-badge ${r.badge}">${r.badgeTxt}</span>
+      </div>
+      <div class="lane-track">
+        <div class="finish-line"></div>
+        <div class="lane-fill" style="width:0%;background:linear-gradient(90deg,${c}33,${c})" data-w="${pct}%">
+          <span class="lane-pct">${pct.toFixed(0)}%</span>
+        </div>
+      </div>
+      <div class="lane-bottom">
+        <div class="lane-atual">${r.atual} / ${meta} pessoas</div>
+        <div class="lane-falta" style="color:${c}">faltam ${meta-r.atual}</div>
+      </div>`;
+    el.appendChild(d);
+    setTimeout(()=>{ d.querySelector('.lane-fill').style.width=pct+'%'; },200+i*150);
+  });
+}
+
+// ══ DONUT ══
+function buildDonut(elId,items,total,label){
+  const el=document.getElementById(elId);
+  if(!el)return;
+  const r=45,cx=50,cy=50,circ=2*Math.PI*r;
+  let offset=0;
+  let arcs='';
+  items.forEach(item=>{
+    const pct=item.v/total;
+    const dash=circ*pct;
+    const gap=circ*(1-pct);
+    arcs+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${item.c}" stroke-width="10" stroke-dasharray="${dash} ${gap}" stroke-dashoffset="${-offset*circ/total}" stroke-linecap="butt" style="transition:stroke-dashoffset 1.5s"/>`;
+    offset+=item.v;
+  });
+  const legend=items.map(i=>`<div class="dl-item"><div class="dl-dot" style="background:${i.c}"></div><div class="dl-name">${i.nome}</div><div class="dl-val">${i.v}</div></div>`).join('');
+  el.innerHTML=`
+    <div class="donut">
+      <svg width="100" height="100" viewBox="0 0 100 100">${arcs}</svg>
+      <div class="donut-center"><div class="dc-val">${total}</div><div class="dc-lbl">${label}</div></div>
+    </div>
+    <div class="donut-legend">${legend}</div>`;
+}
+
+// ══ REDE ══
+function buildRede(){
+  const el=document.getElementById('redeCards');
+  if(!el)return;
+  el.innerHTML='';
+  const stC={'gr':'var(--green)','cy':'var(--cyan)','re':'var(--red)','bl':'var(--blue)','am':'var(--amber)'};
+  const stL={'gr':'Ativo','cy':'Crescendo','re':'Inativo','bl':'Estável','am':'Atenção'};
+  REDE_DATA.forEach((m,i)=>{
+    const c=stC[m.st]||'var(--blue)';
+    const d=document.createElement('div');
+    d.className='mc-row';
+    d.innerHTML=`
+      <div class="mcr-h">
+        <div class="mcr-av" style="background:${m.cor}">
+          ${m.ini}
+          <div class="status-ring" style="border-color:${c};box-shadow:0 0 8px ${c}40"></div>
+        </div>
+        <div style="flex:1">
+          <div class="mcr-name">${m.nome}</div>
+          <div class="mcr-cpf">${m.cpf}</div>
+          <div class="mcr-cargo" style="color:${c}">${m.cargo} · ${m.pes} pessoas · <span style="color:var(--t3)">${m.trend}</span></div>
+        </div>
+        <div class="mcr-r">
+          <div class="mcr-vol">${m.vol}</div>
+          <div class="mcr-comm">${m.comm}</div>
+          <div style="margin-top:4px"><span style="background:${c}18;border:1px solid ${c}30;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;color:${c}">${stL[m.st]}</span></div>
+        </div>
+      </div>
+      <div class="mcr-bar">
+        <div class="mcr-bl"><span>Progresso de cargo</span><span style="color:${c}">${m.prog}%</span></div>
+        <div class="mcr-bt"><div class="mcr-bf" style="width:0%;background:${c};color:${c}" data-w="${m.prog}%"></div></div>
+      </div>`;
+    el.appendChild(d);
+  });
+  setTimeout(()=>{ document.querySelectorAll('.mcr-bf').forEach(b=>{b.style.width=b.dataset.w}); },400);
+  drawNetwork();
+}
+
+// ══ CANVAS NETWORK ══
+function drawNetwork(){
+  const canvas=document.getElementById('netCanvas');
+  if(!canvas)return;
+  const dpr=window.devicePixelRatio||1;
+  const w=canvas.offsetWidth||340;
+  const h=220;
+  canvas.width=w*dpr; canvas.height=h*dpr;
+  const ctx=canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,w,h);
+  // center node
+  const cx=w/2, cy=50;
+  const nodes=[{x:cx,y:cy,c:'#4da6d6',l:'Você',r:18,glow:'rgba(77,166,214,.5)'}];
+  const angles=[-60,-30,0,30,60];
+  REDE_DATA.forEach((m,i)=>{
+    const ang=(angles[i]||i*30-60)*Math.PI/180;
+    const dist=90;
+    const nx=cx+Math.cos(ang)*dist, ny=cy+Math.sin(ang)*dist+40;
+    nodes.push({x:nx,y:ny,c:m.cor,l:m.nome.split(' ')[0],r:13,glow:m.cor+'80'});
+    // sub-nodes
+    if(m.pes>0){
+      const subCount=Math.min(m.pes>20?4:m.pes>5?3:2,4);
+      for(let s=0;s<subCount;s++){
+        const sa=(ang + (s-(subCount-1)/2)*0.4);
+        const sx=nx+Math.cos(sa)*50, sy=ny+Math.sin(sa)*40+20;
+        if(sy<h-10) nodes.push({x:sx,y:sy,c:m.cor+'99',l:'',r:7,sub:true,glow:m.cor+'40'});
+      }
+    }
+  });
+  // draw edges
+  nodes.slice(1).forEach(n=>{
+    if(!n.sub){
+      ctx.beginPath();ctx.moveTo(nodes[0].x,nodes[0].y);ctx.lineTo(n.x,n.y);
+      const grad=ctx.createLinearGradient(nodes[0].x,nodes[0].y,n.x,n.y);
+      grad.addColorStop(0,'rgba(77,166,214,.4)'); grad.addColorStop(1,n.c+'40');
+      ctx.strokeStyle=grad; ctx.lineWidth=1.5; ctx.stroke();
+    } else {
+      // find parent
+      const par=nodes.find(p=>!p.sub&&p!==nodes[0]&&Math.hypot(p.x-n.x,p.y-n.y)<80);
+      if(par){
+        ctx.beginPath();ctx.moveTo(par.x,par.y);ctx.lineTo(n.x,n.y);
+        ctx.strokeStyle=n.c; ctx.lineWidth=.8; ctx.stroke();
+      }
+    }
+  });
+  // draw nodes
+  nodes.forEach(n=>{
+    ctx.beginPath();ctx.arc(n.x,n.y,n.r+4,0,Math.PI*2);
+    ctx.fillStyle=n.glow||n.c+'20'; ctx.fill();
+    ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+    ctx.fillStyle=n.c; ctx.fill();
+    if(n.l){
+      ctx.fillStyle='rgba(255,255,255,.85)';
+      ctx.font=`bold ${n.sub?8:n===nodes[0]?10:9}px sans-serif`;
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(n.l,n.x,n.y);
+    }
+    if(!n.sub&&n!==nodes[0]){
+      ctx.fillStyle=n.c; ctx.font='bold 9px sans-serif';
+      ctx.textAlign='center';
+      ctx.fillText(n.l,n.x,n.y+n.r+10);
+    }
+  });
+  // center label
+  ctx.fillStyle='rgba(255,255,255,.5)'; ctx.font='bold 8px sans-serif';
+  ctx.textAlign='center';
+  ctx.fillText('Você',cx,cy+nodes[0].r+10);
+}
+
+// ══ ANALYTICS ══
+function buildAnalytics(){
+  // Comissão por geração
+  const gc=document.getElementById('genChart');
+  const gl=document.getElementById('genLabels');
+  if(gc){
+    gc.innerHTML=''; gl.innerHTML='';
+    const max=Math.max(...GEN_DATA.map(d=>d.v),1);
+    GEN_DATA.forEach((d,i)=>{
+      const pct=(d.v/max)*100;
+      const col=document.createElement('div'); col.className='bc-col';
+      col.innerHTML=`<div class="bc-val-top" style="color:${d.c}">${d.v?'R$'+d.v:''}</div>
+        <div class="bc-bar" style="height:0%;background:${d.c};${d.v?'box-shadow:0 0 10px '+d.c+'60':''}" data-h="${pct}%"></div>`;
+      gc.appendChild(col);
+      const lb=document.createElement('div');
+      lb.style.cssText='flex:1;text-align:center;font-size:9px;color:var(--t3);font-weight:700';
+      lb.textContent=d.g; gl.appendChild(lb);
+      setTimeout(()=>{ col.querySelector('.bc-bar').style.height=pct+'%'; },300+i*100);
+    });
+  }
+  // Donut categorias
+  buildDonut('catDonut',[
+    {nome:'Saúde',v:42,c:'var(--blue)'},{nome:'Beleza',v:31,c:'var(--purple)'},
+    {nome:'Suplemento',v:18,c:'var(--cyan)'},{nome:'Emagrecimento',v:9,c:'var(--amber)'}
+  ],100,'Vendas');
+  // Histórico
+  const ht=document.getElementById('histTable');
+  if(ht){
+    const hist=[
+      {m:'Março 2026',v:'R$1.550',p:155,d:'+18%',c:'var(--green)'},
+      {m:'Fevereiro',v:'R$1.310',p:128,d:'+18%',c:'var(--green)'},
+      {m:'Janeiro',v:'R$1.100',p:110,d:'+25%',c:'var(--green)'},
+      {m:'Dezembro',v:'R$880',p:88,d:'+10%',c:'var(--green)'},
+      {m:'Novembro',v:'R$790',p:79,d:'+16%',c:'var(--green)'},
+      {m:'Outubro',v:'R$680',p:68,d:'início',c:'var(--blue)'},
+    ];
+    ht.innerHTML=hist.map(h=>`
+      <div style="display:flex;align-items:center;padding:11px 0;border-bottom:1px solid var(--border2)">
+        <div style="font-size:13px;font-weight:700;flex:1;color:var(--t1)">${h.m}</div>
+        <div style="font-size:12px;color:var(--t2);margin-right:14px">${h.p} pessoas</div>
+        <div style="font-size:14px;font-weight:900;color:var(--blue);margin-right:10px">${h.v}</div>
+        <span style="background:${h.c}18;border:1px solid ${h.c}30;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:800;color:${h.c}">${h.d}</span>
+      </div>`).join('');
+  }
+}
+
+// ══ ALERTAS ══
+function buildAlerts(){
+  const el=document.getElementById('alertsList');
+  if(!el)return;
+  const tipoC={red:'var(--red)',amber:'var(--amber)',green:'var(--green)',blue:'var(--blue)'};
+  const tipoBg={red:'rgba(255,61,90,.08)',amber:'rgba(255,179,0,.06)',green:'rgba(0,230,118,.06)',blue:'rgba(77,166,214,.06)'};
+  el.innerHTML='';
+  ALERTS.forEach(a=>{
+    const c=tipoC[a.tipo], bg=tipoBg[a.tipo];
+    el.innerHTML+=`
+      <div class="alert-card" style="background:${bg};border-left-color:${c};margin-bottom:10px">
+        <div class="ac-icon" style="background:${c}18;border:1px solid ${c}30">${a.ic}</div>
+        <div style="flex:1">
+          <div class="ac-title">${a.title}</div>
+          <div class="ac-sub">${a.sub}</div>
+          <div class="ac-time">🕐 ${a.time}</div>
+          <button class="ac-btn" style="background:${c};color:#05080f" onclick="showToast('${a.btn}...')">${a.btn}</button>
+        </div>
+      </div>`;
+  });
+}
+
+// ══ CONQUISTAS ══
+function buildAchievements(){
+  const el=document.getElementById('achievements');
+  if(!el)return;
+  el.innerHTML=CONQUISTAS.map(a=>`
+    <div style="background:${a.on?'var(--card2)':'var(--card)'};border:1px solid ${a.on?'var(--border)':'var(--border2)'};border-radius:12px;padding:12px 6px;text-align:center;${a.on?'':'opacity:.4'}">
+      <div style="font-size:22px;${a.on?'filter:drop-shadow(0 0 6px rgba(255,215,0,.4))':''}">${a.ico}</div>
+      <div style="font-size:9px;font-weight:700;color:${a.on?'var(--t2)':'var(--t3)'};margin-top:5px">${a.nome}</div>
+    </div>`).join('');
+}
+
+// ══ NAV ══
+function navTo(pg,ni){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  document.getElementById(pg).classList.add('on');
+  if(ni)document.getElementById(ni).classList.add('on');
+  document.querySelector('.cnt').scrollTop=0;
+}
+
+// ══ MODAL ══
+function openM(id){ document.getElementById(id).classList.add('on'); }
+function closeM(el){ el.classList.remove('on'); }
+
+// ══ TOAST ══
+let tt;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('on');
+  clearTimeout(tt); tt=setTimeout(()=>t.classList.remove('on'),2400);
+}
+
+// ══ RESIZE canvas on nav ══
+window.addEventListener('resize',()=>{ if(document.getElementById('pgRede').classList.contains('on')) drawNetwork(); });
+</script>
+</body>
+</html>
