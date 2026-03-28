@@ -126,6 +126,33 @@ footer{border-top:1px solid var(--border);text-align:center;padding:28px 20px;fo
 .card{opacity:0;transform:translateY(24px);transition:opacity .5s ease,transform .5s ease,box-shadow .3s,border-color .3s;}
 .card.visible{opacity:1;transform:translateY(0);}
 .card:hover{transform:translateY(-4px)!important;}
+
+/* LAYOUT COM SIDEBAR */
+.layout{display:flex;min-height:calc(100vh - 64px);}
+.sidebar{width:224px;flex-shrink:0;background:var(--s1);border-right:1px solid var(--border);position:sticky;top:64px;height:calc(100vh - 64px);overflow-y:auto;z-index:50;transition:transform .3s;}
+.sidebar-inner{padding:16px 8px;}
+.sb-brand{display:flex;align-items:center;gap:10px;padding:12px;margin-bottom:8px;border-bottom:1px solid var(--border);}
+.sb-brand-icon{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#1a1f4b,var(--blue));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#fff;flex-shrink:0;}
+.sb-brand-txt{font-size:13px;font-weight:900;letter-spacing:2px;color:var(--text);}
+.sb-brand-txt span{color:var(--gold);}
+.sb-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);padding:14px 14px 4px;display:block;}
+.sb-link{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:10px;text-decoration:none;color:var(--muted);font-size:13px;font-weight:500;transition:all .2s;margin-bottom:2px;cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:inherit;}
+.sb-link:hover{background:var(--s2);color:var(--text);}
+.sb-link.active{background:rgba(77,166,214,.12);color:var(--cyan);font-weight:700;}
+.sb-link.active .sb-icon{filter:drop-shadow(0 0 4px var(--cyan));}
+.sb-icon{font-size:16px;width:22px;text-align:center;flex-shrink:0;}
+.sb-divider{height:1px;background:var(--border);margin:8px 12px;}
+.sb-sub{font-size:11px;color:var(--muted);padding-left:46px;line-height:1.5;margin-top:-6px;margin-bottom:4px;}
+.main-content{flex:1;min-width:0;}
+/* Mobile */
+.sb-overlay{display:none;position:fixed;inset:0;top:64px;background:rgba(0,0,0,.65);z-index:149;}
+.sb-toggle{display:none;width:36px;height:36px;border-radius:10px;background:var(--s2);border:1px solid var(--border);align-items:center;justify-content:center;cursor:pointer;font-size:18px;flex-shrink:0;}
+@media(max-width:900px){
+  .sb-toggle{display:flex;}
+  .sidebar{position:fixed;left:0;top:64px;height:calc(100vh - 64px);transform:translateX(-100%);z-index:150;box-shadow:4px 0 24px rgba(0,0,0,.6);}
+  .sidebar.open{transform:translateX(0);}
+  .sb-overlay.open{display:block;}
+}
 </style>
 </head>
 <body>
@@ -138,12 +165,79 @@ footer{border-top:1px solid var(--border);text-align:center;padding:28px 20px;fo
       <div class="logo-icon">BL</div>
       <div class="logo-text">BOLD <span>LIFE</span></div>
     </a>
-    <div class="nav-live"><span class="live-dot"></span> Todos os materiais online</div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div class="nav-live"><span class="live-dot"></span> Todos os materiais online</div>
+      <button class="sb-toggle" onclick="toggleSidebar()" title="Menu lateral">☰</button>
+    </div>
   </div>
 </nav>
 
+<div class="sb-overlay" id="sbOverlay" onclick="closeSidebar()"></div>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-inner">
+    <div class="sb-brand">
+      <div class="sb-brand-icon">BL</div>
+      <div class="sb-brand-txt">BOLD <span>LIFE</span></div>
+    </div>
+
+    <span class="sb-lbl">Navegação</span>
+    <a class="sb-link active" href="#topo" onclick="navTo(event,'topo')">
+      <span class="sb-icon">🏠</span> Início
+    </a>
+
+    <div class="sb-divider"></div>
+    <span class="sb-lbl">Materiais</span>
+
+    <a class="sb-link" href="#auditorio" onclick="navTo(event,'auditorio')">
+      <span class="sb-icon">🎤</span> Auditório
+    </a>
+    <div class="sb-sub">Apresentação 14 slides</div>
+
+    <a class="sb-link" href="#apps" onclick="navTo(event,'apps')">
+      <span class="sb-icon">📱</span> Os 3 Apps
+    </a>
+    <div class="sb-sub">Gestão · Store · Intelligence</div>
+
+    <a class="sb-link" href="#boldcoin" onclick="navTo(event,'boldcoin')">
+      <span class="sb-icon">🪙</span> Bold Coin
+    </a>
+    <div class="sb-sub">Slides + Landing Page</div>
+
+    <a class="sb-link" href="#formulario" onclick="navTo(event,'formulario')">
+      <span class="sb-icon">📝</span> Formulário
+    </a>
+    <div class="sb-sub">Ativação de associados</div>
+
+    <div class="sb-divider"></div>
+    <span class="sb-lbl">Compartilhar</span>
+
+    <a class="sb-link" href="#compartilhar" onclick="navTo(event,'compartilhar')">
+      <span class="sb-icon">📲</span> Enviar Link
+    </a>
+
+    <div class="sb-divider"></div>
+    <span class="sb-lbl">Acesso rápido</span>
+
+    <a class="sb-link" href="https://oliveirarenata1980-sys.github.io/BOLD/APN_BOLD_APRESENTACAO.html" target="_blank">
+      <span class="sb-icon">↗️</span> Abrir Auditório
+    </a>
+    <a class="sb-link" href="https://oliveirarenata1980-sys.github.io/BOLD/FORMULARIO_ATIVACAO.html" target="_blank">
+      <span class="sb-icon">↗️</span> Abrir Formulário
+    </a>
+    <a class="sb-link" href="https://oliveirarenata1980-sys.github.io/BOLD/ECOSSISTEMA_BOLD.html" target="_blank">
+      <span class="sb-icon">↗️</span> Abrir Ecossistema
+    </a>
+  </div>
+</aside>
+
+<div class="main-content">
+
 <!-- HERO -->
-<div class="hero">
+<div class="hero" id="topo">
   <div class="hero-badge">🚀 Central de Materiais — 2026</div>
   <h1 class="hero-title">Tudo em um<br><span class="gold-txt">só lugar.</span></h1>
   <p class="hero-sub">Apresentações, apps, propostas e formulário de ativação — organizados e prontos para abrir em qualquer dispositivo.</p>
@@ -160,7 +254,7 @@ footer{border-top:1px solid var(--border);text-align:center;padding:28px 20px;fo
 </div>
 
 <!-- ═══════ SEÇÃO 1 — AUDITÓRIO ═══════ -->
-<div class="section">
+<div class="section" id="auditorio">
   <div class="sec-header">
     <div class="sec-tag" style="background:rgba(255,215,0,.07);color:var(--gold);border:1px solid rgba(255,215,0,.2);">🎤 Para o Auditório</div>
     <div class="sec-line"></div>
@@ -200,7 +294,7 @@ footer{border-top:1px solid var(--border);text-align:center;padding:28px 20px;fo
 </div>
 
 <!-- ═══════ SEÇÃO 2 — APPS ═══════ -->
-<div class="section">
+<div class="section" id="apps">
   <div class="sec-header">
     <div class="sec-tag" style="background:rgba(77,166,214,.07);color:var(--blue);border:1px solid rgba(77,166,214,.2);">📱 Os 3 Apps + Ecossistema</div>
     <div class="sec-line"></div>
@@ -289,7 +383,7 @@ footer{border-top:1px solid var(--border);text-align:center;padding:28px 20px;fo
 </div>
 
 <!-- ═══════ SEÇÃO 3 — BOLD COIN ═══════ -->
-<div class="section">
+<div class="section" id="boldcoin">
   <div class="sec-header">
     <div class="sec-tag" style="background:rgba(255,215,0,.07);color:var(--gold);border:1px solid rgba(255,215,0,.2);">🪙 Bold Coin</div>
     <div class="sec-line"></div>
@@ -345,7 +439,7 @@ footer{border-top:1px solid var(--border);text-align:center;padding:28px 20px;fo
 </div>
 
 <!-- ═══════ SEÇÃO 4 — FORMULÁRIO ═══════ -->
-<div class="section">
+<div class="section" id="formulario">
   <div class="sec-header">
     <div class="sec-tag" style="background:rgba(192,132,252,.07);color:var(--purple);border:1px solid rgba(192,132,252,.2);">📝 Formulário de Ativação</div>
     <div class="sec-line"></div>
@@ -385,7 +479,7 @@ footer{border-top:1px solid var(--border);text-align:center;padding:28px 20px;fo
 </div>
 
 <!-- ═══════ QRCODE SECTION ═══════ -->
-<div class="section">
+<div class="section" id="compartilhar">
   <div class="sec-header">
     <div class="sec-tag" style="background:rgba(0,230,118,.07);color:var(--green);border:1px solid rgba(0,230,118,.2);">📲 Compartilhar</div>
     <div class="sec-line"></div>
@@ -401,6 +495,9 @@ footer{border-top:1px solid var(--border);text-align:center;padding:28px 20px;fo
     </div>
   </div>
 </div>
+
+</div><!-- /main-content -->
+</div><!-- /layout -->
 
 <footer>
   <div style="margin-bottom:6px;font-weight:700;color:var(--text);">BOLD LIFE — Central de Materiais 2026</div>
@@ -446,6 +543,38 @@ function shareAll(){
   if(navigator.share){navigator.share({title:'Bold Life — Materiais',text,url}).catch(()=>{});}
   else{copyLink({preventDefault:()=>{},stopPropagation:()=>{}},url);}
 }
+
+// SIDEBAR
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sbOverlay').classList.toggle('open');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sbOverlay').classList.remove('open');
+}
+function navTo(e,id){
+  e.preventDefault();
+  const el=document.getElementById(id);
+  if(el){const y=el.getBoundingClientRect().top+window.scrollY-80;window.scrollTo({top:y,behavior:'smooth'});}
+  // Fechar no mobile
+  if(window.innerWidth<=900)closeSidebar();
+}
+
+// ACTIVE SIDEBAR LINK on scroll
+const sbSections=['topo','auditorio','apps','boldcoin','formulario','compartilhar'];
+function updateActiveSb(){
+  let active='topo';
+  sbSections.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el&&el.getBoundingClientRect().top<=100)active=id;
+  });
+  document.querySelectorAll('.sb-link').forEach(l=>{
+    const href=l.getAttribute('href');
+    l.classList.toggle('active',href==='#'+active);
+  });
+}
+window.addEventListener('scroll',updateActiveSb,{passive:true});
 
 // SEARCH
 function filterCards(q){
