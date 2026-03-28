@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#02040a">
+<title>Bold Life — Formulário de Ativação</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+:root{
+  --bg:#02040a;--surface:#0d1117;--surface2:#161b22;
+  --blue:#4da6d6;--cyan:#00d4ff;--gold:#ffd700;--gold2:#ffaa00;
+  --green:#00e676;--red:#ff4444;--text:#e6edf3;--muted:#7d8590;--border:#21262d;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(77,166,214,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(77,166,214,.025) 1px,transparent 1px);background-size:50px 50px;pointer-events:none;z-index:0;}
+
+.glow{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;}
+
+/* HEADER */
+.header{position:sticky;top:0;z-index:50;background:rgba(2,4,10,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(12px);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;}
+.header-logo{font-size:22px;font-weight:900;letter-spacing:4px;}
+.header-logo span:first-child{color:var(--blue);}
+.header-logo span:last-child{color:var(--gold);}
+.header-event{font-size:12px;color:var(--muted);text-align:right;}
+
+/* PROGRESS STEPS */
+.steps-bar{padding:28px 24px 0;max-width:680px;margin:0 auto;position:relative;z-index:1;}
+.steps-track{display:flex;align-items:center;gap:0;}
+.step-item{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;position:relative;z-index:1;}
+.step-circle{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;border:2px solid var(--border);background:var(--surface);transition:all .4s;flex-shrink:0;}
+.step-circle.done{background:var(--green);border-color:var(--green);color:#000;}
+.step-circle.active{background:linear-gradient(135deg,var(--gold2),var(--gold));border-color:var(--gold);color:#000;box-shadow:0 0 20px rgba(255,215,0,.4);}
+.step-name{font-size:10px;font-weight:600;color:var(--muted);text-align:center;text-transform:uppercase;letter-spacing:.5px;transition:color .3s;}
+.step-name.active{color:var(--gold);}
+.step-name.done{color:var(--green);}
+.step-line{flex:1;height:2px;background:var(--border);margin:0 -1px;margin-bottom:22px;transition:background .4s;}
+.step-line.done{background:linear-gradient(90deg,var(--green),var(--gold));}
+
+/* FORM CONTAINER */
+.form-wrap{max-width:680px;margin:0 auto;padding:24px 24px 60px;position:relative;z-index:1;}
+
+/* PANEL */
+.panel{display:none;animation:fadeUp .4s ease both;}
+.panel.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+.panel-header{margin-bottom:28px;}
+.panel-num{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
+.panel-title{font-size:clamp(22px,4vw,30px);font-weight:900;line-height:1.1;margin-bottom:8px;}
+.panel-sub{font-size:14px;color:var(--muted);line-height:1.6;}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;}
+.card-title{font-size:13px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+
+/* FIELD */
+.field{margin-bottom:20px;}
+.field-label{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.required{color:var(--gold);font-size:14px;}
+.field-input{width:100%;padding:14px 16px;background:var(--surface2);border:2px solid var(--border);border-radius:12px;color:var(--text);font-size:15px;font-family:inherit;transition:all .25s;outline:none;}
+.field-input:focus{border-color:var(--blue);background:rgba(77,166,214,.05);}
+.field-input.valid{border-color:var(--green);}
+.field-input.invalid{border-color:var(--red);}
+.field-input::placeholder{color:var(--muted);}
+.field-hint{font-size:11px;color:var(--muted);margin-top:6px;display:flex;align-items:center;gap:4px;}
+.field-error{font-size:11px;color:var(--red);margin-top:6px;display:none;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.field-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+
+/* SELECT */
+select.field-input{cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237d8590' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;}
+
+/* RADIO CARDS */
+.radio-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.radio-card{cursor:pointer;}
+.radio-card input{display:none;}
+.radio-label{display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 16px;background:var(--surface2);border:2px solid var(--border);border-radius:12px;text-align:center;cursor:pointer;transition:all .25s;}
+.radio-card input:checked + .radio-label{border-color:var(--gold);background:rgba(255,215,0,.05);}
+.radio-icon{font-size:28px;}
+.radio-title{font-size:14px;font-weight:700;}
+.radio-sub{font-size:11px;color:var(--muted);}
+
+/* CHECKBOX */
+.checkbox-wrap{display:flex;align-items:flex-start;gap:12px;cursor:pointer;}
+.checkbox-wrap input[type=checkbox]{display:none;}
+.check-box{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);background:var(--surface2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .25s;margin-top:1px;}
+.checkbox-wrap input:checked + .check-box{background:var(--green);border-color:var(--green);}
+.checkbox-wrap input:checked + .check-box::after{content:'✓';color:#000;font-size:13px;font-weight:900;}
+.check-text{font-size:13px;color:var(--muted);line-height:1.6;}
+.check-text strong{color:var(--text);}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:12px;margin-top:28px;}
+.btn-next{flex:1;padding:16px;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#000;font-size:16px;font-weight:800;border:none;border-radius:12px;cursor:pointer;font-family:inherit;transition:all .3s;box-shadow:0 4px 20px rgba(255,215,0,.3);}
+.btn-next:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,215,0,.5);}
+.btn-back{padding:16px 24px;background:transparent;color:var(--muted);font-size:15px;font-weight:600;border:1px solid var(--border);border-radius:12px;cursor:pointer;font-family:inherit;transition:all .3s;}
+.btn-back:hover{border-color:var(--blue);color:var(--blue);}
+
+/* INFO BOX */
+.info-box{display:flex;gap:12px;padding:14px 16px;border-radius:12px;margin-bottom:16px;font-size:13px;line-height:1.6;}
+.info-box.gold{background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.2);color:var(--text);}
+.info-box.blue{background:rgba(77,166,214,.06);border:1px solid rgba(77,166,214,.2);color:var(--text);}
+.info-box.green{background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.2);color:var(--text);}
+.info-icon{font-size:20px;flex-shrink:0;}
+
+/* SUMMARY */
+.summary-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.summary-item:last-child{border-bottom:none;}
+.summary-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.summary-value{font-size:14px;font-weight:700;text-align:right;max-width:60%;}
+
+/* SUCCESS */
+#success{display:none;text-align:center;padding:40px 24px 60px;max-width:680px;margin:0 auto;position:relative;z-index:1;}
+.success-coin{font-size:80px;animation:bounce 1s ease infinite alternate;display:block;margin-bottom:24px;}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-16px)}}
+.success-title{font-size:clamp(28px,5vw,44px);font-weight:900;margin-bottom:12px;}
+.success-sub{font-size:16px;color:var(--muted);line-height:1.7;max-width:500px;margin:0 auto 32px;}
+.success-card{background:var(--surface);border:1px solid rgba(255,215,0,.3);border-radius:20px;padding:28px;margin-bottom:24px;text-align:left;}
+.success-num{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;}
+.success-name{font-size:24px;font-weight:900;margin-bottom:16px;}
+.btn-print{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;background:rgba(77,166,214,.1);border:1px solid rgba(77,166,214,.3);color:var(--blue);font-size:14px;font-weight:700;border-radius:50px;cursor:pointer;font-family:inherit;transition:all .3s;margin-right:10px;}
+.btn-print:hover{background:rgba(77,166,214,.2);}
+.btn-new{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#000;font-size:14px;font-weight:700;border-radius:50px;cursor:pointer;border:none;font-family:inherit;transition:all .3s;}
+.btn-new:hover{transform:translateY(-2px);}
+
+/* TAG */
+.tag{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:50px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.tag-gold{background:rgba(255,215,0,.1);color:var(--gold);border:1px solid rgba(255,215,0,.2);}
+.tag-green{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.2);}
+.tag-blue{background:rgba(77,166,214,.1);color:var(--blue);border:1px solid rgba(77,166,214,.2);}
+
+/* PRINT */
+@media print{
+  body{background:#fff;color:#000;}
+  body::before,.header,.steps-bar,.btn-row,.glow,#success .btn-print,#success .btn-new{display:none!important;}
+  .success-card{border:2px solid #000;background:#fff;}
+  .success-title,.success-name{color:#000;}
+  .summary-label{color:#555;}
+  .summary-value{color:#000;}
+  .tag-gold,.tag-green,.tag-blue{background:#eee;color:#000;border:1px solid #999;}
+}
+
+@media(max-width:520px){
+  .field-row,.field-row-3{grid-template-columns:1fr;}
+  .radio-grid{grid-template-columns:1fr;}
+  .btn-row{flex-direction:column-reverse;}
+  .btn-back{text-align:center;}
+}
+</style>
+</head>
+<body>
+<div class="glow" style="width:500px;height:500px;background:rgba(255,215,0,.04);top:-150px;right:-100px;"></div>
+<div class="glow" style="width:400px;height:400px;background:rgba(77,166,214,.04);bottom:-100px;left:-100px;"></div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo"><span>BOLD</span> <span>LIFE</span></div>
+  <div class="header-event">
+    <div style="font-weight:700;color:var(--text);">Formulário de Ativação</div>
+    <div>Apresentação Oficial 2026</div>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="steps-bar" id="steps-bar">
+  <div class="steps-track">
+    <div class="step-item">
+      <div class="step-circle active" id="sc-1">1</div>
+      <div class="step-name active" id="sn-1">Dados</div>
+    </div>
+    <div class="step-line" id="sl-1"></div>
+    <div class="step-item">
+      <div class="step-circle" id="sc-2">2</div>
+      <div class="step-name" id="sn-2">Endereço</div>
+    </div>
+    <div class="step-line" id="sl-2"></div>
+    <div class="step-item">
+      <div class="step-circle" id="sc-3">3</div>
+      <div class="step-name" id="sn-3">Rede</div>
+    </div>
+    <div class="step-line" id="sl-3"></div>
+    <div class="step-item">
+      <div class="step-circle" id="sc-4">4</div>
+      <div class="step-name" id="sn-4">Plano</div>
+    </div>
+    <div class="step-line" id="sl-4"></div>
+    <div class="step-item">
+      <div class="step-circle" id="sc-5">5</div>
+      <div class="step-name" id="sn-5">Confirmar</div>
+    </div>
+  </div>
+</div>
+
+<div class="form-wrap" id="form-wrap">
+
+<!-- ══ STEP 1 — DADOS PESSOAIS ══ -->
+<div class="panel active" id="panel-1">
+  <div class="panel-header">
+    <div class="panel-num">Passo 1 de 5</div>
+    <div class="panel-title">Seus Dados <span style="color:var(--gold)">Pessoais</span></div>
+    <div class="panel-sub">Preencha com atenção — esses dados serão usados para criar sua conta na Bold Life.</div>
+  </div>
+  <div class="info-box gold">
+    <div class="info-icon">🪙</div>
+    <div>Ao completar este formulário, você dá o primeiro passo para sua ativação. Nossa equipe entrará em contato em até 24 horas.</div>
+  </div>
+  <div class="card">
+    <div class="card-title">👤 Identificação</div>
+    <div class="field">
+      <div class="field-label">Nome Completo <span class="required">*</span></div>
+      <input class="field-input" id="f-nome" type="text" placeholder="Digite seu nome completo" autocomplete="name">
+      <div class="field-error" id="e-nome">Por favor, informe seu nome completo</div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">CPF <span class="required">*</span></div>
+        <input class="field-input" id="f-cpf" type="text" placeholder="000.000.000-00" maxlength="14" inputmode="numeric">
+        <div class="field-error" id="e-cpf">CPF inválido</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Data de Nascimento <span class="required">*</span></div>
+        <input class="field-input" id="f-nasc" type="text" placeholder="DD/MM/AAAA" maxlength="10" inputmode="numeric">
+        <div class="field-error" id="e-nasc">Data inválida</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Gênero</div>
+      <select class="field-input" id="f-genero">
+        <option value="">Selecione</option>
+        <option>Masculino</option>
+        <option>Feminino</option>
+        <option>Prefiro não informar</option>
+      </select>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">📱 Contato</div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">WhatsApp <span class="required">*</span></div>
+        <input class="field-input" id="f-tel" type="text" placeholder="(00) 00000-0000" maxlength="15" inputmode="numeric">
+        <div class="field-error" id="e-tel">Telefone inválido</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Telefone Adicional</div>
+        <input class="field-input" id="f-tel2" type="text" placeholder="(00) 00000-0000" maxlength="15" inputmode="numeric">
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">E-mail <span class="required">*</span></div>
+      <input class="field-input" id="f-email" type="email" placeholder="seu@email.com" autocomplete="email" inputmode="email">
+      <div class="field-error" id="e-email">E-mail inválido</div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-next" onclick="next(1)">Próximo — Endereço →</button>
+  </div>
+</div>
+
+<!-- ══ STEP 2 — ENDEREÇO ══ -->
+<div class="panel" id="panel-2">
+  <div class="panel-header">
+    <div class="panel-num">Passo 2 de 5</div>
+    <div class="panel-title">Seu <span style="color:var(--gold)">Endereço</span></div>
+    <div class="panel-sub">Informe seu endereço para cadastro e entrega de produtos.</div>
+  </div>
+  <div class="card">
+    <div class="card-title">🏠 Localização</div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">CEP <span class="required">*</span></div>
+        <input class="field-input" id="f-cep" type="text" placeholder="00000-000" maxlength="9" inputmode="numeric">
+        <div class="field-error" id="e-cep">CEP inválido</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Estado <span class="required">*</span></div>
+        <select class="field-input" id="f-estado">
+          <option value="">Selecione</option>
+          <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+          <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+          <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+          <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+          <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+          <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+          <option>SP</option><option>SE</option><option>TO</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Cidade <span class="required">*</span></div>
+      <input class="field-input" id="f-cidade" type="text" placeholder="Nome da cidade">
+      <div class="field-error" id="e-cidade">Informe a cidade</div>
+    </div>
+    <div class="field">
+      <div class="field-label">Bairro <span class="required">*</span></div>
+      <input class="field-input" id="f-bairro" type="text" placeholder="Nome do bairro">
+      <div class="field-error" id="e-bairro">Informe o bairro</div>
+    </div>
+    <div class="field-row">
+      <div class="field" style="grid-column:1/-1">
+        <div class="field-label">Rua / Logradouro <span class="required">*</span></div>
+        <input class="field-input" id="f-rua" type="text" placeholder="Nome da rua, avenida, etc.">
+        <div class="field-error" id="e-rua">Informe o endereço</div>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">Número <span class="required">*</span></div>
+        <input class="field-input" id="f-num" type="text" placeholder="Nº" inputmode="numeric">
+        <div class="field-error" id="e-num">Informe o número</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Complemento</div>
+        <input class="field-input" id="f-comp" type="text" placeholder="Apto, bloco, etc.">
+      </div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-back" onclick="back(2)">← Voltar</button>
+    <button class="btn-next" onclick="next(2)">Próximo — Minha Rede →</button>
+  </div>
+</div>
+
+<!-- ══ STEP 3 — REDE / PATROCINADOR ══ -->
+<div class="panel" id="panel-3">
+  <div class="panel-header">
+    <div class="panel-num">Passo 3 de 5</div>
+    <div class="panel-title">Minha <span style="color:var(--gold)">Rede Bold</span></div>
+    <div class="panel-sub">Informe quem te convidou para a Bold Life. Isso garante que você entre na rede certa.</div>
+  </div>
+  <div class="info-box blue">
+    <div class="info-icon">🔗</div>
+    <div>O patrocinador é a pessoa que te apresentou a Bold Life. Ela fará parte da sua rede e te apoiará no crescimento.</div>
+  </div>
+  <div class="card">
+    <div class="card-title">👥 Patrocinador (quem te indicou)</div>
+    <div class="field">
+      <div class="field-label">Nome do Patrocinador <span class="required">*</span></div>
+      <input class="field-input" id="f-patr-nome" type="text" placeholder="Nome completo de quem te convidou">
+      <div class="field-error" id="e-patr-nome">Informe o nome do patrocinador</div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">CPF do Patrocinador</div>
+        <input class="field-input" id="f-patr-cpf" type="text" placeholder="000.000.000-00" maxlength="14" inputmode="numeric">
+        <div class="field-hint">💡 Se não souber, pergunte para quem te convidou</div>
+      </div>
+      <div class="field">
+        <div class="field-label">WhatsApp do Patrocinador</div>
+        <input class="field-input" id="f-patr-tel" type="text" placeholder="(00) 00000-0000" maxlength="15" inputmode="numeric">
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Cargo do Patrocinador</div>
+      <select class="field-input" id="f-patr-cargo">
+        <option value="">Não sei / Não informado</option>
+        <option>Líder</option>
+        <option>Supervisor</option>
+        <option>Coordenador</option>
+        <option>Gerente</option>
+        <option>Diretor</option>
+      </select>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">📍 Como você conheceu a Bold Life?</div>
+    <div class="field">
+      <select class="field-input" id="f-origem">
+        <option value="">Selecione</option>
+        <option>Indicação de amigo ou familiar</option>
+        <option>Apresentação presencial (este evento)</option>
+        <option>Instagram / Facebook</option>
+        <option>WhatsApp</option>
+        <option>TikTok / YouTube</option>
+        <option>Busca no Google</option>
+        <option>Outro</option>
+      </select>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-back" onclick="back(3)">← Voltar</button>
+    <button class="btn-next" onclick="next(3)">Próximo — Escolha do Plano →</button>
+  </div>
+</div>
+
+<!-- ══ STEP 4 — PLANO ══ -->
+<div class="panel" id="panel-4">
+  <div class="panel-header">
+    <div class="panel-num">Passo 4 de 5</div>
+    <div class="panel-title">Escolha seu <span style="color:var(--gold)">Perfil</span></div>
+    <div class="panel-sub">Como você pretende atuar na Bold Life? Isso ajuda a personalizar seu início.</div>
+  </div>
+  <div class="card">
+    <div class="card-title">🎯 Objetivo Principal</div>
+    <div class="radio-grid">
+      <label class="radio-card">
+        <input type="radio" name="objetivo" value="consumidor" id="r-cons">
+        <div class="radio-label">
+          <div class="radio-icon">🛍️</div>
+          <div class="radio-title">Consumidor</div>
+          <div class="radio-sub">Quero comprar produtos com desconto para uso pessoal</div>
+        </div>
+      </label>
+      <label class="radio-card">
+        <input type="radio" name="objetivo" value="vendedor" id="r-vend">
+        <div class="radio-label">
+          <div class="radio-icon">💰</div>
+          <div class="radio-title">Vendedor</div>
+          <div class="radio-sub">Quero vender produtos e ganhar comissão</div>
+        </div>
+      </label>
+      <label class="radio-card">
+        <input type="radio" name="objetivo" value="lider" id="r-lid">
+        <div class="radio-label">
+          <div class="radio-icon">👥</div>
+          <div class="radio-title">Líder</div>
+          <div class="radio-sub">Quero montar uma equipe e crescer na rede</div>
+        </div>
+      </label>
+      <label class="radio-card">
+        <input type="radio" name="objetivo" value="diretor" id="r-dir">
+        <div class="radio-label">
+          <div class="radio-icon">👑</div>
+          <div class="radio-title">Empreendedor</div>
+          <div class="radio-sub">Quero chegar ao topo — Gerente ou Diretor</div>
+        </div>
+      </label>
+    </div>
+    <div class="field-error" id="e-obj" style="margin-top:8px;">Selecione seu objetivo</div>
+  </div>
+  <div class="card">
+    <div class="card-title">💳 Forma de Pagamento da Ativação (R$200)</div>
+    <div class="radio-grid">
+      <label class="radio-card">
+        <input type="radio" name="pagto" value="pix" id="r-pix">
+        <div class="radio-label">
+          <div class="radio-icon">⚡</div>
+          <div class="radio-title">PIX</div>
+          <div class="radio-sub">Aprovação imediata</div>
+        </div>
+      </label>
+      <label class="radio-card">
+        <input type="radio" name="pagto" value="cartao" id="r-cart">
+        <div class="radio-label">
+          <div class="radio-icon">💳</div>
+          <div class="radio-title">Cartão</div>
+          <div class="radio-sub">Crédito ou débito</div>
+        </div>
+      </label>
+      <label class="radio-card">
+        <input type="radio" name="pagto" value="dinheiro" id="r-din">
+        <div class="radio-label">
+          <div class="radio-icon">💵</div>
+          <div class="radio-title">Dinheiro</div>
+          <div class="radio-sub">Pagamento presencial</div>
+        </div>
+      </label>
+      <label class="radio-card">
+        <input type="radio" name="pagto" value="boleto" id="r-bol">
+        <div class="radio-label">
+          <div class="radio-icon">📄</div>
+          <div class="radio-title">Boleto</div>
+          <div class="radio-sub">Prazo de 1 a 3 dias</div>
+        </div>
+      </label>
+    </div>
+    <div class="field-error" id="e-pag" style="margin-top:8px;">Selecione a forma de pagamento</div>
+  </div>
+  <div class="card">
+    <div class="card-title">📝 Observações</div>
+    <div class="field">
+      <textarea class="field-input" id="f-obs" rows="3" placeholder="Alguma dúvida, informação adicional ou recado para a equipe?" style="resize:vertical;"></textarea>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-back" onclick="back(4)">← Voltar</button>
+    <button class="btn-next" onclick="next(4)">Próximo — Revisar →</button>
+  </div>
+</div>
+
+<!-- ══ STEP 5 — CONFIRMAÇÃO ══ -->
+<div class="panel" id="panel-5">
+  <div class="panel-header">
+    <div class="panel-num">Passo 5 de 5</div>
+    <div class="panel-title">Revisar e <span style="color:var(--gold)">Confirmar</span></div>
+    <div class="panel-sub">Confira seus dados antes de finalizar. Tudo certo?</div>
+  </div>
+  <div class="card">
+    <div class="card-title">👤 Dados Pessoais</div>
+    <div class="summary-item"><div class="summary-label">Nome</div><div class="summary-value" id="r-nome">—</div></div>
+    <div class="summary-item"><div class="summary-label">CPF</div><div class="summary-value" id="r-cpf">—</div></div>
+    <div class="summary-item"><div class="summary-label">Nascimento</div><div class="summary-value" id="r-nasc">—</div></div>
+    <div class="summary-item"><div class="summary-label">WhatsApp</div><div class="summary-value" id="r-tel">—</div></div>
+    <div class="summary-item"><div class="summary-label">E-mail</div><div class="summary-value" id="r-email">—</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">🏠 Endereço</div>
+    <div class="summary-item"><div class="summary-label">Localização</div><div class="summary-value" id="r-end">—</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">👥 Rede & Plano</div>
+    <div class="summary-item"><div class="summary-label">Patrocinador</div><div class="summary-value" id="r-patr">—</div></div>
+    <div class="summary-item"><div class="summary-label">Objetivo</div><div class="summary-value" id="r-obj">—</div></div>
+    <div class="summary-item"><div class="summary-label">Pagamento</div><div class="summary-value" id="r-pag">—</div></div>
+    <div class="summary-item"><div class="summary-label">Valor de Ativação</div><div class="summary-value"><span class="tag tag-gold">R$ 200,00</span></div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">✅ Termos e Consentimento</div>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <label class="checkbox-wrap">
+        <input type="checkbox" id="t1">
+        <div class="check-box"></div>
+        <div class="check-text"><strong>Confirmo que as informações fornecidas são verdadeiras</strong> e estou ciente de que dados falsos podem invalidar minha ativação.</div>
+      </label>
+      <label class="checkbox-wrap">
+        <input type="checkbox" id="t2">
+        <div class="check-box"></div>
+        <div class="check-text"><strong>Li e aceito as condições do Plano de Marketing Bold Life,</strong> incluindo a taxa de ativação de R$200 e a comissão de 5% até a 5ª geração.</div>
+      </label>
+      <label class="checkbox-wrap">
+        <input type="checkbox" id="t3">
+        <div class="check-box"></div>
+        <div class="check-text"><strong>Autorizo o contato da equipe Bold Life</strong> pelo WhatsApp e e-mail informados para suporte e informações sobre minha conta.</div>
+      </label>
+    </div>
+    <div class="field-error" id="e-termos" style="margin-top:12px;">Aceite todos os termos para continuar</div>
+  </div>
+  <div class="info-box green">
+    <div class="info-icon">🚀</div>
+    <div>Após confirmar, nossa equipe entrará em contato em até <strong>24 horas</strong> para finalizar sua ativação e te dar as boas-vindas à rede!</div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-back" onclick="back(5)">← Voltar</button>
+    <button class="btn-next" onclick="submit()" style="background:linear-gradient(135deg,var(--green),#00b050);box-shadow:0 4px 20px rgba(0,230,118,.3);">🚀 Confirmar Ativação</button>
+  </div>
+</div>
+
+</div><!-- /form-wrap -->
+
+<!-- SUCCESS -->
+<div id="success">
+  <span class="success-coin">🎉</span>
+  <div class="success-title">Bem-vindo à <span style="background:linear-gradient(135deg,var(--gold2),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Bold Life!</span></div>
+  <p class="success-sub">Seu formulário foi enviado com sucesso. Nossa equipe vai entrar em contato em até 24 horas pelo seu WhatsApp para finalizar a ativação.</p>
+  <div class="success-card">
+    <div class="success-num">Protocolo de Ativação</div>
+    <div class="success-name" id="suc-nome">—</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+      <div class="summary-item"><div class="summary-label">CPF</div><div class="summary-value" id="suc-cpf">—</div></div>
+      <div class="summary-item"><div class="summary-label">WhatsApp</div><div class="summary-value" id="suc-tel">—</div></div>
+      <div class="summary-item"><div class="summary-label">E-mail</div><div class="summary-value" id="suc-email">—</div></div>
+      <div class="summary-item"><div class="summary-label">Patrocinador</div><div class="summary-value" id="suc-patr">—</div></div>
+      <div class="summary-item"><div class="summary-label">Objetivo</div><div class="summary-value" id="suc-obj">—</div></div>
+      <div class="summary-item"><div class="summary-label">Pagamento</div><div class="summary-value" id="suc-pag">—</div></div>
+      <div class="summary-item"><div class="summary-label">Endereço</div><div class="summary-value" id="suc-end">—</div></div>
+      <div class="summary-item"><div class="summary-label">Valor de Ativação</div><div class="summary-value"><span class="tag tag-gold">R$ 200,00</span></div></div>
+      <div class="summary-item"><div class="summary-label">Data / Hora</div><div class="summary-value" id="suc-data">—</div></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <span class="tag tag-green">✅ Formulário enviado</span>
+      <span class="tag tag-blue">📞 Aguardando contato</span>
+      <span class="tag tag-gold">🪙 Ativação pendente</span>
+    </div>
+  </div>
+  <div>
+    <button class="btn-print" onclick="window.print()">🖨️ Imprimir comprovante</button>
+    <button class="btn-new" onclick="resetForm()">+ Nova Ativação</button>
+  </div>
+</div>
+
+<script>
+let step=1;
+const TOTAL_STEPS=5;
+
+// MASKS
+function maskCPF(v){v=v.replace(/\D/g,'');if(v.length<=3)return v;if(v.length<=6)return v.slice(0,3)+'.'+v.slice(3);if(v.length<=9)return v.slice(0,3)+'.'+v.slice(3,6)+'.'+v.slice(6);return v.slice(0,3)+'.'+v.slice(3,6)+'.'+v.slice(6,9)+'-'+v.slice(9,11);}
+function maskTel(v){v=v.replace(/\D/g,'');if(v.length<=2)return v.length?'('+v:'';if(v.length<=6)return '('+v.slice(0,2)+') '+v.slice(2);if(v.length<=10)return '('+v.slice(0,2)+') '+v.slice(2,6)+'-'+v.slice(6);return '('+v.slice(0,2)+') '+v.slice(2,7)+'-'+v.slice(7,11);}
+function maskCEP(v){v=v.replace(/\D/g,'');if(v.length<=5)return v;return v.slice(0,5)+'-'+v.slice(5,8);}
+function maskDate(v){v=v.replace(/\D/g,'');if(v.length<=2)return v;if(v.length<=4)return v.slice(0,2)+'/'+v.slice(2);return v.slice(0,2)+'/'+v.slice(2,4)+'/'+v.slice(4,8);}
+
+// Apply masks
+['f-cpf','f-patr-cpf'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',function(){this.value=maskCPF(this.value);});});
+['f-tel','f-tel2','f-patr-tel'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',function(){this.value=maskTel(this.value);});});
+document.getElementById('f-cep').addEventListener('input',function(){this.value=maskCEP(this.value);});
+['f-nasc'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',function(){this.value=maskDate(this.value);});});
+
+// VALIDATE
+function req(id,errId){const v=document.getElementById(id).value.trim();const ok=v.length>0;showErr(errId,!ok);return ok;}
+function showErr(id,show){const el=document.getElementById(id);if(el)el.style.display=show?'block':'none';}
+function validCPF(s){const d=s.replace(/\D/g,'');return d.length===11;}
+function validEmail(s){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);}
+function validTel(s){return s.replace(/\D/g,'').length>=10;}
+
+function validateStep(n){
+  let ok=true;
+  if(n===1){
+    if(!req('f-nome','e-nome'))ok=false;
+    const cpf=document.getElementById('f-cpf').value;
+    if(!validCPF(cpf)){showErr('e-cpf',true);ok=false;}else showErr('e-cpf',false);
+    if(!req('f-nasc','e-nasc'))ok=false;
+    const tel=document.getElementById('f-tel').value;
+    if(!validTel(tel)){showErr('e-tel',true);ok=false;}else showErr('e-tel',false);
+    const email=document.getElementById('f-email').value;
+    if(!validEmail(email)){showErr('e-email',true);ok=false;}else showErr('e-email',false);
+  }
+  if(n===2){
+    ['f-cep','e-cep','f-cidade','e-cidade','f-bairro','e-bairro','f-rua','e-rua','f-num','e-num'].reduce((a,v,i,arr)=>{if(i%2===0)return arr[i];},null);
+    if(!req('f-cep','e-cep'))ok=false;
+    if(!req('f-cidade','e-cidade'))ok=false;
+    if(!req('f-bairro','e-bairro'))ok=false;
+    if(!req('f-rua','e-rua'))ok=false;
+    if(!req('f-num','e-num'))ok=false;
+    if(!document.getElementById('f-estado').value){ok=false;}
+  }
+  if(n===3){if(!req('f-patr-nome','e-patr-nome'))ok=false;}
+  if(n===4){
+    const obj=document.querySelector('input[name=objetivo]:checked');
+    const pag=document.querySelector('input[name=pagto]:checked');
+    if(!obj){showErr('e-obj',true);ok=false;}else showErr('e-obj',false);
+    if(!pag){showErr('e-pag',true);ok=false;}else showErr('e-pag',false);
+  }
+  if(n===5){
+    const t=[document.getElementById('t1'),document.getElementById('t2'),document.getElementById('t3')];
+    if(!t.every(c=>c.checked)){showErr('e-termos',true);ok=false;}else showErr('e-termos',false);
+  }
+  return ok;
+}
+
+function updateSteps(current){
+  for(let i=1;i<=TOTAL_STEPS;i++){
+    const c=document.getElementById('sc-'+i);
+    const n=document.getElementById('sn-'+i);
+    if(i<current){c.className='step-circle done';c.innerHTML='✓';n.className='step-name done';}
+    else if(i===current){c.className='step-circle active';c.innerHTML=i;n.className='step-name active';}
+    else{c.className='step-circle';c.innerHTML=i;n.className='step-name';}
+    if(i<TOTAL_STEPS){const l=document.getElementById('sl-'+i);if(l)l.className='step-line'+(i<current?' done':'');}
+  }
+}
+
+function goTo(n){
+  document.getElementById('panel-'+step).classList.remove('active');
+  step=n;
+  document.getElementById('panel-'+step).classList.add('active');
+  updateSteps(step);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function next(from){if(validateStep(from)){if(from===4)buildSummary();goTo(from+1);}}
+function back(from){goTo(from-1);}
+
+function getObjLabel(){const v=document.querySelector('input[name=objetivo]:checked');if(!v)return '—';const m={consumidor:'🛍️ Consumidor',vendedor:'💰 Vendedor',lider:'👥 Líder',diretor:'👑 Empreendedor'};return m[v.value]||v.value;}
+function getPagLabel(){const v=document.querySelector('input[name=pagto]:checked');if(!v)return '—';const m={pix:'⚡ PIX',cartao:'💳 Cartão',dinheiro:'💵 Dinheiro',boleto:'📄 Boleto'};return m[v.value]||v.value;}
+function g(id){return document.getElementById(id)?document.getElementById(id).value:'';}
+
+function buildSummary(){
+  document.getElementById('r-nome').textContent=g('f-nome')||'—';
+  document.getElementById('r-cpf').textContent=g('f-cpf')||'—';
+  document.getElementById('r-nasc').textContent=g('f-nasc')||'—';
+  document.getElementById('r-tel').textContent=g('f-tel')||'—';
+  document.getElementById('r-email').textContent=g('f-email')||'—';
+  const end=[g('f-rua'),g('f-num'),g('f-comp'),g('f-bairro'),g('f-cidade')+' - '+g('f-estado')].filter(Boolean).join(', ');
+  document.getElementById('r-end').textContent=end||'—';
+  document.getElementById('r-patr').textContent=g('f-patr-nome')||'—';
+  document.getElementById('r-obj').textContent=getObjLabel();
+  document.getElementById('r-pag').textContent=getPagLabel();
+}
+
+function submit(){
+  if(!validateStep(5))return;
+  const end=[g('f-rua'),g('f-num'),g('f-comp'),g('f-bairro'),g('f-cidade')+' - '+g('f-estado')].filter(Boolean).join(', ');
+  const now=new Date();
+  const data=now.toLocaleDateString('pt-BR')+' às '+now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('suc-nome').textContent=g('f-nome');
+  document.getElementById('suc-cpf').textContent=g('f-cpf');
+  document.getElementById('suc-tel').textContent=g('f-tel');
+  document.getElementById('suc-email').textContent=g('f-email');
+  document.getElementById('suc-patr').textContent=g('f-patr-nome');
+  document.getElementById('suc-obj').textContent=getObjLabel();
+  document.getElementById('suc-pag').textContent=getPagLabel();
+  document.getElementById('suc-end').textContent=end;
+  document.getElementById('suc-data').textContent=data;
+
+  // Save to localStorage
+  try{
+    const saved=JSON.parse(localStorage.getItem('bold_ativacoes')||'[]');
+    saved.push({nome:g('f-nome'),cpf:g('f-cpf'),tel:g('f-tel'),email:g('f-email'),patr:g('f-patr-nome'),obj:getObjLabel(),pag:getPagLabel(),end,data});
+    localStorage.setItem('bold_ativacoes',JSON.stringify(saved));
+  }catch(e){}
+
+  document.getElementById('steps-bar').style.display='none';
+  document.getElementById('form-wrap').style.display='none';
+  document.getElementById('success').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function resetForm(){
+  document.querySelectorAll('.field-input').forEach(el=>{if(el.tagName==='SELECT')el.selectedIndex=0;else el.value='';});
+  document.querySelectorAll('input[type=checkbox]').forEach(el=>el.checked=false);
+  document.querySelectorAll('input[type=radio]').forEach(el=>el.checked=false);
+  document.getElementById('steps-bar').style.display='block';
+  document.getElementById('form-wrap').style.display='block';
+  document.getElementById('success').style.display='none';
+  step=1;
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-1').classList.add('active');
+  updateSteps(1);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
