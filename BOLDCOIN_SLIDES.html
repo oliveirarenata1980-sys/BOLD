@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bold Coin — Proposta RSo × Grupo Bold</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  :root {
+    --bg: #02040a;
+    --surface: #0d1117;
+    --surface2: #161b22;
+    --blue: #4da6d6;
+    --cyan: #00d4ff;
+    --gold: #ffd700;
+    --gold2: #ffaa00;
+    --green: #00e676;
+    --red: #ff4444;
+    --text: #e6edf3;
+    --muted: #7d8590;
+    --border: #21262d;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* SLIDES CONTAINER */
+  .slides-wrapper {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+  }
+
+  .slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    opacity: 0;
+    transform: translateX(60px);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+  }
+
+  .slide.active {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: all;
+  }
+
+  .slide.prev {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+
+  /* NAV */
+  .nav {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    z-index: 100;
+    background: rgba(13,17,23,0.9);
+    border: 1px solid var(--border);
+    padding: 12px 24px;
+    border-radius: 50px;
+    backdrop-filter: blur(12px);
+  }
+
+  .nav-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .nav-btn:hover { background: var(--blue); border-color: var(--blue); }
+
+  .dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--border);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .dot.active {
+    background: var(--gold);
+    width: 20px;
+    border-radius: 3px;
+  }
+
+  .slide-counter {
+    font-size: 12px;
+    color: var(--muted);
+    min-width: 40px;
+    text-align: center;
+  }
+
+  /* GRID BG */
+  .grid-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image:
+      linear-gradient(rgba(77,166,214,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(77,166,214,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* GLOW */
+  .glow-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(100px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* TAGS */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 16px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .tag-gold { background: rgba(255,215,0,0.15); color: var(--gold); border: 1px solid rgba(255,215,0,0.3); }
+  .tag-blue { background: rgba(77,166,214,0.15); color: var(--cyan); border: 1px solid rgba(77,166,214,0.3); }
+  .tag-green { background: rgba(0,230,118,0.15); color: var(--green); border: 1px solid rgba(0,230,118,0.3); }
+  .tag-red { background: rgba(255,68,68,0.15); color: var(--red); border: 1px solid rgba(255,68,68,0.3); }
+
+  /* TYPOGRAPHY */
+  .slide-label { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+  .slide-title { font-size: clamp(28px, 5vw, 52px); font-weight: 900; line-height: 1.1; text-align: center; margin-bottom: 16px; }
+  .slide-subtitle { font-size: clamp(14px, 2vw, 18px); color: var(--muted); text-align: center; max-width: 700px; line-height: 1.6; }
+  .highlight { color: var(--gold); }
+  .highlight-blue { color: var(--cyan); }
+  .highlight-green { color: var(--green); }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    transition: all 0.3s;
+  }
+  .card:hover { border-color: var(--blue); transform: translateY(-2px); }
+  .card-gold { border-color: rgba(255,215,0,0.2); background: rgba(255,215,0,0.03); }
+  .card-blue { border-color: rgba(77,166,214,0.2); background: rgba(77,166,214,0.03); }
+  .card-green { border-color: rgba(0,230,118,0.2); background: rgba(0,230,118,0.03); }
+  .card-red { border-color: rgba(255,68,68,0.2); background: rgba(255,68,68,0.03); }
+
+  /* GRID LAYOUTS */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; max-width: 900px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; width: 100%; max-width: 900px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; width: 100%; max-width: 900px; }
+
+  /* FLOW ARROW */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    max-width: 900px;
+  }
+
+  .flow-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    text-align: center;
+    min-width: 110px;
+  }
+
+  .flow-arrow {
+    font-size: 20px;
+    color: var(--gold);
+    margin: 0 4px;
+    flex-shrink: 0;
+  }
+
+  /* COIN */
+  .coin {
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    font-weight: 900;
+    color: #000;
+    box-shadow: 0 0 30px rgba(255,215,0,0.4), 0 0 60px rgba(255,215,0,0.15);
+    animation: coinPulse 2s ease-in-out infinite;
+    position: relative;
+  }
+
+  .coin::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,215,0,0.3);
+    animation: coinRing 2s ease-in-out infinite;
+  }
+
+  @keyframes coinPulse {
+    0%, 100% { box-shadow: 0 0 30px rgba(255,215,0,0.4), 0 0 60px rgba(255,215,0,0.15); }
+    50% { box-shadow: 0 0 50px rgba(255,215,0,0.7), 0 0 100px rgba(255,215,0,0.3); }
+  }
+
+  @keyframes coinRing {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.15); opacity: 0; }
+  }
+
+  /* BIG NUMBER */
+  .big-number {
+    font-size: clamp(40px, 8vw, 80px);
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1;
+    text-shadow: 0 0 30px rgba(255,215,0,0.5);
+  }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--surface2);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--gold2), var(--gold));
+    transition: width 1.5s ease;
+    box-shadow: 0 0 10px rgba(255,215,0,0.5);
+  }
+
+  /* TABLE */
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .table th {
+    background: var(--surface2);
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(33,38,45,0.5);
+    color: var(--text);
+  }
+
+  .table tr:last-child td { border-bottom: none; }
+  .table tr:hover td { background: rgba(255,215,0,0.03); }
+
+  /* TIMELINE */
+  .timeline {
+    display: flex;
+    gap: 0;
+    width: 100%;
+    max-width: 900px;
+    position: relative;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    top: 28px;
+    left: 28px;
+    right: 28px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--blue), var(--cyan), var(--green));
+  }
+
+  .tl-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding-top: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .tl-dot {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    font-weight: 900;
+    border: 3px solid;
+  }
+
+  .tl-1 { background: rgba(255,215,0,0.1); border-color: var(--gold); color: var(--gold); }
+  .tl-2 { background: rgba(77,166,214,0.1); border-color: var(--blue); color: var(--blue); }
+  .tl-3 { background: rgba(0,212,255,0.1); border-color: var(--cyan); color: var(--cyan); }
+  .tl-4 { background: rgba(0,230,118,0.1); border-color: var(--green); color: var(--green); }
+
+  .tl-content { text-align: center; }
+  .tl-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .tl-sub { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+  /* COMPARISON */
+  .comp-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 8px;
+  }
+
+  .comp-logo {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  /* STAT CARD */
+  .stat-card {
+    text-align: center;
+    padding: 24px 16px;
+  }
+
+  .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; }
+
+  /* QUOTE */
+  .quote-box {
+    background: linear-gradient(135deg, rgba(255,215,0,0.05), rgba(255,170,0,0.02));
+    border: 1px solid rgba(255,215,0,0.2);
+    border-left: 4px solid var(--gold);
+    border-radius: 12px;
+    padding: 24px 28px;
+    max-width: 800px;
+    width: 100%;
+  }
+
+  .quote-text {
+    font-size: clamp(14px, 2vw, 18px);
+    line-height: 1.7;
+    color: var(--text);
+    font-style: italic;
+  }
+
+  /* SLIDE-SPECIFIC */
+  .vs-container {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    max-width: 900px;
+    align-items: stretch;
+  }
+
+  .vs-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .vs-title {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+  }
+
+  .vs-bad { background: rgba(255,68,68,0.1); color: var(--red); border: 1px solid rgba(255,68,68,0.2); }
+  .vs-good { background: rgba(0,230,118,0.1); color: var(--green); border: 1px solid rgba(0,230,118,0.2); }
+
+  .vs-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 13px;
+  }
+
+  .vs-icon { font-size: 16px; flex-shrink: 0; }
+
+  /* COIN FLOW ANIMATION */
+  @keyframes floatCoin {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+  }
+
+  .float-coin {
+    animation: floatCoin 3s ease-in-out infinite;
+  }
+
+  /* COUNTER */
+  .counter-value { display: inline; }
+
+  /* BADGE */
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .badge-gold { background: rgba(255,215,0,0.2); color: var(--gold); }
+  .badge-blue { background: rgba(77,166,214,0.2); color: var(--cyan); }
+  .badge-green { background: rgba(0,230,118,0.2); color: var(--green); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .slide { padding: 20px 16px 80px; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .grid-3 { grid-template-columns: 1fr 1fr; }
+    .grid-4 { grid-template-columns: 1fr 1fr; }
+    .flow { gap: 4px; }
+    .flow-item { min-width: 80px; padding: 10px 12px; }
+    .timeline { flex-direction: column; }
+    .timeline::before { display: none; }
+    .vs-container { flex-direction: column; }
+    .slide-title { font-size: 26px; }
+  }
+
+  /* LOGO AREA */
+  .logo-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .logo-badge {
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 1px;
+  }
+
+  .separator {
+    color: var(--muted);
+    font-size: 20px;
+  }
+
+  /* ICON CIRCLE */
+  .icon-circle {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- BACKGROUND -->
+<div class="grid-bg"></div>
+<div class="glow-orb" style="width:500px;height:500px;background:rgba(255,215,0,0.04);top:-100px;right:-100px;"></div>
+<div class="glow-orb" style="width:400px;height:400px;background:rgba(77,166,214,0.04);bottom:-100px;left:-100px;"></div>
+
+<div class="slides-wrapper" id="wrapper">
+
+  <!-- SLIDE 1 — CAPA -->
+  <div class="slide active" id="slide-1">
+    <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:24px;">
+      <div class="logo-row">
+        <div class="logo-badge" style="background:rgba(255,215,0,0.1);color:var(--gold);border:1px solid rgba(255,215,0,0.3);">RSo Soluções Digitais</div>
+        <span class="separator">×</span>
+        <div class="logo-badge" style="background:rgba(77,166,214,0.1);color:var(--cyan);border:1px solid rgba(77,166,214,0.3);">Grupo Bold</div>
+      </div>
+      <div class="coin float-coin" style="width:100px;height:100px;font-size:42px;">₿C</div>
+      <div>
+        <div class="slide-label">Proposta Estratégica — 2026</div>
+        <h1 class="slide-title">BOLD COIN</h1>
+        <p style="font-size:clamp(16px,2.5vw,22px);color:var(--muted);margin-top:8px;">O dinheiro que fica dentro da sua rede.<br>O motor que acelera o crescimento.</p>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:8px;">
+        <div class="tag tag-gold">💰 Economia Circular</div>
+        <div class="tag tag-blue">🔗 100% no Ecossistema</div>
+        <div class="tag tag-green">📈 Modelo Escalável</div>
+      </div>
+      <p style="font-size:12px;color:var(--muted);margin-top:16px;">Clique ou pressione → para avançar</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 2 — O PROBLEMA -->
+  <div class="slide" id="slide-2">
+    <div class="slide-label">O Problema</div>
+    <h2 class="slide-title">O Dinheiro <span class="highlight">Está Saindo</span> da Rede</h2>
+    <p class="slide-subtitle" style="margin-bottom:32px;">Toda vez que a Bold paga comissão em reais, esse dinheiro desaparece do ecossistema.</p>
+    <div style="display:flex;gap:24px;width:100%;max-width:900px;align-items:flex-start;flex-wrap:wrap;justify-content:center;">
+      <div style="flex:1;min-width:300px;">
+        <div style="font-size:12px;font-weight:700;color:var(--red);letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;">❌ Modelo Atual</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div class="vs-item"><span class="vs-icon">💸</span><span>Bold paga <strong>R$6 mi/mês</strong> em comissões</span></div>
+          <div style="text-align:center;color:var(--muted);font-size:20px;">↓</div>
+          <div class="vs-item"><span class="vs-icon">🏃</span><span>Associado recebe em <strong>reais</strong></span></div>
+          <div style="text-align:center;color:var(--muted);font-size:20px;">↓</div>
+          <div class="vs-item"><span class="vs-icon">🛒</span><span>Compra produto em <strong>outro lugar</strong></span></div>
+          <div style="text-align:center;color:var(--muted);font-size:20px;">↓</div>
+          <div class="vs-item" style="border-color:rgba(255,68,68,0.3);background:rgba(255,68,68,0.05);"><span class="vs-icon">🚪</span><span style="color:var(--red);font-weight:700;">Dinheiro sai da Bold para sempre</span></div>
+        </div>
+      </div>
+      <div style="flex:1;min-width:300px;">
+        <div style="font-size:12px;font-weight:700;color:var(--green);letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;">✅ Com Bold Coin</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div class="vs-item"><span class="vs-icon">🪙</span><span>Bold paga comissão em <strong style="color:var(--gold);">Bold Coin</strong></span></div>
+          <div style="text-align:center;color:var(--gold);font-size:20px;">↓</div>
+          <div class="vs-item"><span class="vs-icon">📱</span><span>Associado recebe na <strong>carteira digital</strong></span></div>
+          <div style="text-align:center;color:var(--gold);font-size:20px;">↓</div>
+          <div class="vs-item"><span class="vs-icon">🛍️</span><span>Compra produto na <strong>Bold Store</strong></span></div>
+          <div style="text-align:center;color:var(--gold);font-size:20px;">↓</div>
+          <div class="vs-item" style="border-color:rgba(0,230,118,0.3);background:rgba(0,230,118,0.05);"><span class="vs-icon">🔄</span><span style="color:var(--green);font-weight:700;">Dinheiro fica e gira na Bold</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3 — O QUE É A BOLD COIN -->
+  <div class="slide" id="slide-3">
+    <div class="slide-label">A Solução</div>
+    <h2 class="slide-title">O Que É a <span class="highlight">Bold Coin</span></h2>
+    <p class="slide-subtitle" style="margin-bottom:32px;">Uma moeda digital interna — ganhada por ação, gasta no ecossistema, circulando para sempre.</p>
+    <div class="grid-3">
+      <div class="card card-gold stat-card">
+        <div style="font-size:32px;margin-bottom:8px;">🪙</div>
+        <div style="font-size:22px;font-weight:900;color:var(--gold);">₿C</div>
+        <div style="font-size:13px;font-weight:700;margin:4px 0;">Símbolo</div>
+        <div class="stat-label">Bold Coin</div>
+      </div>
+      <div class="card card-blue stat-card">
+        <div style="font-size:32px;margin-bottom:8px;">💱</div>
+        <div style="font-size:22px;font-weight:900;color:var(--cyan);">R$0,10</div>
+        <div style="font-size:13px;font-weight:700;margin:4px 0;">1 BC = R$0,10</div>
+        <div class="stat-label">Valor de Referência</div>
+      </div>
+      <div class="card card-green stat-card">
+        <div style="font-size:32px;margin-bottom:8px;">📅</div>
+        <div style="font-size:22px;font-weight:900;color:var(--green);">12 meses</div>
+        <div style="font-size:13px;font-weight:700;margin:4px 0;">Validade</div>
+        <div class="stat-label">Renova com atividade</div>
+      </div>
+      <div class="card stat-card">
+        <div style="font-size:32px;margin-bottom:8px;">🔄</div>
+        <div style="font-size:22px;font-weight:900;color:var(--blue);">Sim</div>
+        <div style="font-size:13px;font-weight:700;margin:4px 0;">Transferível</div>
+        <div class="stat-label">Dentro da rede</div>
+      </div>
+      <div class="card stat-card">
+        <div style="font-size:32px;margin-bottom:8px;">🏦</div>
+        <div style="font-size:22px;font-weight:900;color:var(--red);">Não</div>
+        <div style="font-size:13px;font-weight:700;margin:4px 0;">Conversão</div>
+        <div class="stat-label">Protege o ecossistema</div>
+      </div>
+      <div class="card stat-card">
+        <div style="font-size:32px;margin-bottom:8px;">🛍️</div>
+        <div style="font-size:22px;font-weight:900;color:var(--gold);">3+ apps</div>
+        <div style="font-size:13px;font-weight:700;margin:4px 0;">Aceita em</div>
+        <div class="stat-label">Store, Gestão, Intelligence</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4 — COMO GANHAR BC -->
+  <div class="slide" id="slide-4">
+    <div class="slide-label">Como Funciona</div>
+    <h2 class="slide-title">Como o Associado <span class="highlight">Ganha ₿C</span></h2>
+    <div class="grid-2" style="max-width:860px;">
+      <div class="card card-gold">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+          <div class="icon-circle" style="background:rgba(255,215,0,0.1);">🛒</div>
+          <div>
+            <div style="font-weight:700;font-size:15px;">Por Vendas</div>
+            <div style="font-size:12px;color:var(--muted);">10 BC por R$100 vendido</div>
+          </div>
+        </div>
+        <table class="table">
+          <tr><td>R$500/mês</td><td style="text-align:right;color:var(--gold);font-weight:700;">50 BC</td></tr>
+          <tr><td>R$1.000/mês</td><td style="text-align:right;color:var(--gold);font-weight:700;">120 BC <span class="badge badge-gold">+20% bônus</span></td></tr>
+          <tr><td>R$5.000/mês</td><td style="text-align:right;color:var(--gold);font-weight:700;">800 BC <span class="badge badge-gold">+60% bônus</span></td></tr>
+        </table>
+      </div>
+      <div class="card card-blue">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+          <div class="icon-circle" style="background:rgba(77,166,214,0.1);">👥</div>
+          <div>
+            <div style="font-weight:700;font-size:15px;">Por Recrutamento</div>
+            <div style="font-size:12px;color:var(--muted);">Cada indicação gera BC</div>
+          </div>
+        </div>
+        <table class="table">
+          <tr><td>Indicado se cadastra</td><td style="text-align:right;color:var(--cyan);font-weight:700;">50 BC</td></tr>
+          <tr><td>Indicado faz 1ª venda</td><td style="text-align:right;color:var(--cyan);font-weight:700;">50 BC</td></tr>
+          <tr><td>Indicado bate meta</td><td style="text-align:right;color:var(--cyan);font-weight:700;">100 BC</td></tr>
+          <tr><td>Indicado sobe de cargo</td><td style="text-align:right;color:var(--cyan);font-weight:700;">200 BC</td></tr>
+        </table>
+      </div>
+      <div class="card card-green">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+          <div class="icon-circle" style="background:rgba(0,230,118,0.1);">🎯</div>
+          <div>
+            <div style="font-weight:700;font-size:15px;">Por Metas</div>
+            <div style="font-size:12px;color:var(--muted);">Bônus por superar</div>
+          </div>
+        </div>
+        <table class="table">
+          <tr><td>Atingiu meta mensal</td><td style="text-align:right;color:var(--green);font-weight:700;">50 BC</td></tr>
+          <tr><td>Superou em 20%</td><td style="text-align:right;color:var(--green);font-weight:700;">+80 BC</td></tr>
+          <tr><td>1º lugar na Corrida</td><td style="text-align:right;color:var(--green);font-weight:700;">1.000 BC</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+          <div class="icon-circle" style="background:rgba(255,255,255,0.05);">📱</div>
+          <div>
+            <div style="font-weight:700;font-size:15px;">Por Engajamento</div>
+            <div style="font-size:12px;color:var(--muted);">Ativo todo dia</div>
+          </div>
+        </div>
+        <table class="table">
+          <tr><td>Login diário no app</td><td style="text-align:right;color:var(--blue);font-weight:700;">2 BC/dia</td></tr>
+          <tr><td>Assistir treinamento</td><td style="text-align:right;color:var(--blue);font-weight:700;">10 BC</td></tr>
+          <tr><td>Avaliar produto</td><td style="text-align:right;color:var(--blue);font-weight:700;">5 BC</td></tr>
+          <tr><td>Aniversário na rede</td><td style="text-align:right;color:var(--blue);font-weight:700;">100 BC</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5 — COMO GASTAR BC -->
+  <div class="slide" id="slide-5">
+    <div class="slide-label">Como Funciona</div>
+    <h2 class="slide-title">Como o Associado <span class="highlight">Gasta ₿C</span></h2>
+    <p class="slide-subtitle" style="margin-bottom:28px;">Tudo dentro do ecossistema. O dinheiro nunca sai.</p>
+    <div class="grid-3" style="max-width:860px;">
+      <div class="card card-gold">
+        <div style="font-size:28px;margin-bottom:10px;">🛍️</div>
+        <div style="font-weight:700;font-size:14px;margin-bottom:6px;">Bold Store</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;">Pagar produtos com BC<br>Pagar 50% BC + 50% real<br>Desconto aplicado na hora</div>
+        <div style="margin-top:12px;padding:8px;background:rgba(255,215,0,0.05);border-radius:8px;font-size:12px;">
+          <strong style="color:var(--gold);">Exemplo:</strong> Suplemento R$180 → paga 750 BC + R$90
+        </div>
+      </div>
+      <div class="card card-blue">
+        <div style="font-size:28px;margin-bottom:10px;">📊</div>
+        <div style="font-weight:700;font-size:14px;margin-bottom:6px;">Bold Gestão</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;">Plano Básico: Grátis<br>Plano Pro: 200 BC/mês<br>Plano Elite: 500 BC/mês</div>
+        <div style="margin-top:12px;padding:8px;background:rgba(77,166,214,0.05);border-radius:8px;font-size:12px;">
+          <strong style="color:var(--cyan);">Paga com o que ganhou</strong> vendendo — não sai do bolso
+        </div>
+      </div>
+      <div class="card" style="border-color:rgba(0,212,255,0.2);background:rgba(0,212,255,0.03);">
+        <div style="font-size:28px;margin-bottom:10px;">🧠</div>
+        <div style="font-weight:700;font-size:14px;margin-bottom:6px;">Bold Intelligence</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;">Análise IA do perfil: 50 BC<br>Destaque no ranking: 100 BC<br>Booster na Corrida: 200 BC</div>
+        <div style="margin-top:12px;padding:8px;background:rgba(0,212,255,0.05);border-radius:8px;font-size:12px;">
+          <strong style="color:var(--cyan);">Quem investe BC</strong> cresce mais rápido
+        </div>
+      </div>
+      <div class="card card-green">
+        <div style="font-size:28px;margin-bottom:10px;">🔄</div>
+        <div style="font-weight:700;font-size:14px;margin-bottom:6px;">Marketplace Interno</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;">Associado vende para associado<br>Bold cobra 5% de taxa<br>Giro interno da rede</div>
+        <div style="margin-top:12px;padding:8px;background:rgba(0,230,118,0.05);border-radius:8px;font-size:12px;">
+          <strong style="color:var(--green);">Nova fonte de receita</strong> para a Bold
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-size:28px;margin-bottom:10px;">🏆</div>
+        <div style="font-weight:700;font-size:14px;margin-bottom:6px;">Prêmios e Sorteios</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;">Entrar em sorteios: 200 BC<br>Prêmio exclusivo: BC<br>Viagem de incentivo: BC</div>
+        <div style="margin-top:12px;padding:8px;background:rgba(255,255,255,0.03);border-radius:8px;font-size:12px;">
+          <strong style="color:var(--blue);">Marketing internalizado</strong> — prêmio pago em BC
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-size:28px;margin-bottom:10px;">🤝</div>
+        <div style="font-weight:700;font-size:14px;margin-bottom:6px;">Parceiros (Fase 2)</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;">Academias da região<br>Clínicas de estética<br>Cursos e treinamentos</div>
+        <div style="margin-top:12px;padding:8px;background:rgba(255,255,255,0.03);border-radius:8px;font-size:12px;">
+          <strong style="color:var(--gold);">Rede de parceiros</strong> que trocam acesso por BC
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6 — A MATEMÁTICA -->
+  <div class="slide" id="slide-6">
+    <div class="slide-label">Os Números</div>
+    <h2 class="slide-title">Quanto <span class="highlight">Fica no Ecossistema</span></h2>
+    <div style="display:flex;gap:24px;width:100%;max-width:900px;flex-wrap:wrap;justify-content:center;">
+      <div class="card card-gold" style="flex:1;min-width:260px;text-align:center;padding:32px;">
+        <div style="font-size:13px;color:var(--muted);margin-bottom:8px;">Com 50.000 associados ativos</div>
+        <div class="big-number" id="counter-vendas">R$0</div>
+        <div style="font-size:14px;color:var(--muted);margin-top:4px;">em vendas por mês</div>
+      </div>
+      <div style="flex:1;min-width:260px;display:flex;flex-direction:column;gap:12px;">
+        <div class="card" style="text-align:center;padding:20px;">
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">Comissões pagas</div>
+          <div style="font-size:28px;font-weight:900;color:var(--red);margin:4px 0;" id="counter-comissoes">R$0</div>
+          <div style="font-size:12px;color:var(--muted);">saem do caixa por mês</div>
+        </div>
+        <div class="card card-green" style="text-align:center;padding:20px;">
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">Retido como BC (40%)</div>
+          <div style="font-size:28px;font-weight:900;color:var(--green);margin:4px 0;" id="counter-retido">R$0</div>
+          <div style="font-size:12px;color:var(--muted);">ficam no ecossistema/mês</div>
+        </div>
+        <div class="card card-gold" style="text-align:center;padding:20px;">
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">Em 12 meses</div>
+          <div style="font-size:28px;font-weight:900;color:var(--gold);margin:4px 0;" id="counter-anual">R$0</div>
+          <div style="font-size:12px;color:var(--muted);">circulando na Bold</div>
+        </div>
+      </div>
+    </div>
+    <div class="quote-box" style="margin-top:20px;">
+      <p class="quote-text">
+        <strong style="color:var(--gold);">R$28.800.000</strong> que hoje saem da Bold, passam a girar dentro da Bold — pagando mais produto, mais recursos, mais crescimento. É dinheiro que trabalha para vocês, não para a concorrência.
+      </p>
+    </div>
+  </div>
+
+  <!-- SLIDE 7 — COMPARATIVO -->
+  <div class="slide" id="slide-7">
+    <div class="slide-label">Referências Globais</div>
+    <h2 class="slide-title">As Maiores Empresas <span class="highlight">Já Fazem Isso</span></h2>
+    <p class="slide-subtitle" style="margin-bottom:24px;">A Bold Coin não é uma ideia futurista. É um modelo comprovado.</p>
+    <div style="width:100%;max-width:860px;display:flex;flex-direction:column;gap:10px;">
+      <div class="comp-item">
+        <div class="comp-logo" style="background:rgba(0,154,91,0.15);font-size:24px;">☕</div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:14px;">Starbucks Rewards — Stars</div>
+          <div style="font-size:12px;color:var(--muted);">Programa de pontos que transformou a empresa</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:18px;font-weight:900;color:var(--green);">53%</div>
+          <div style="font-size:11px;color:var(--muted);">do faturamento vem<br>de membros do programa</div>
+        </div>
+        <div style="padding-left:16px;border-left:1px solid var(--border);text-align:right;">
+          <div style="font-size:18px;font-weight:900;color:var(--gold);">$3 bi</div>
+          <div style="font-size:11px;color:var(--muted);">em Stars não resgatadas<br>(float da empresa)</div>
+        </div>
+      </div>
+      <div class="comp-item">
+        <div class="comp-logo" style="background:rgba(255,153,0,0.15);font-size:24px;">📦</div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:14px;">Amazon Coins</div>
+          <div style="font-size:12px;color:var(--muted);">Moeda comprada com real, usada só na Amazon</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:18px;font-weight:900;color:var(--green);">100%</div>
+          <div style="font-size:11px;color:var(--muted);">dos coins gastos<br>dentro da Amazon</div>
+        </div>
+        <div style="padding-left:16px;border-left:1px solid var(--border);text-align:right;">
+          <div style="font-size:18px;font-weight:900;color:var(--gold);">+35%</div>
+          <div style="font-size:11px;color:var(--muted);">de ticket médio<br>com programa ativo</div>
+        </div>
+      </div>
+      <div class="comp-item" style="border-color:rgba(255,215,0,0.3);background:rgba(255,215,0,0.03);">
+        <div class="comp-logo" style="background:rgba(0,163,255,0.15);font-size:24px;">🛒</div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:14px;">Mercado Pontos → <span style="color:var(--gold);">Mercado Pago</span></div>
+          <div style="font-size:12px;color:var(--muted);">Começou como programa de pontos. Virou a maior fintech da América Latina.</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:18px;font-weight:900;color:var(--green);">2009</div>
+          <div style="font-size:11px;color:var(--muted);">Lançamento<br>como pontos</div>
+        </div>
+        <div style="padding-left:16px;border-left:1px solid var(--border);text-align:right;">
+          <div style="font-size:18px;font-weight:900;color:var(--gold);">R$100 bi</div>
+          <div style="font-size:11px;color:var(--muted);">processados/ano<br>hoje</div>
+        </div>
+      </div>
+    </div>
+    <div class="quote-box" style="margin-top:20px;">
+      <p class="quote-text">
+        O Mercado Livre construiu o Mercado Pago e hoje é a maior fintech da América Latina. A Bold Life — com 50.000+ associados e produto físico real — tem tudo para construir o <strong style="color:var(--gold);">Bold Bank.</strong>
+      </p>
+    </div>
+  </div>
+
+  <!-- SLIDE 8 — FASES -->
+  <div class="slide" id="slide-8">
+    <div class="slide-label">Implementação</div>
+    <h2 class="slide-title">De Programa de Pontos <span class="highlight">ao Bold Bank</span></h2>
+    <p class="slide-subtitle" style="margin-bottom:36px;">4 fases de evolução — começa pequeno, escala gigante.</p>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot tl-1">1</div>
+        <div class="tl-content">
+          <div class="tl-title" style="color:var(--gold);">Bold Coin Básico</div>
+          <div class="tl-sub">Meses 1–3<br>Pontos + descontos<br>na Bold Store<br><span style="color:var(--gold);font-weight:700;">Sem regulação</span></div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot tl-2">2</div>
+        <div class="tl-content">
+          <div class="tl-title" style="color:var(--blue);">BC Expandida</div>
+          <div class="tl-sub">Meses 4–8<br>Transferência entre rede<br>Marketplace interno<br><span style="color:var(--blue);font-weight:700;">Parceiros externos</span></div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot tl-3">3</div>
+        <div class="tl-content">
+          <div class="tl-title" style="color:var(--cyan);">Bold Wallet</div>
+          <div class="tl-sub">Meses 9–18<br>Carteira digital<br>QR Code pagamento<br><span style="color:var(--cyan);font-weight:700;">Extrato completo</span></div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot tl-4">4</div>
+        <div class="tl-content">
+          <div class="tl-title" style="color:var(--green);">Bold Pay / Bank</div>
+          <div class="tl-sub">Meses 18–36<br>Cartão pré-pago<br>Conta digital<br><span style="color:var(--green);font-weight:700;">Maior fintech da rede</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="grid-4" style="margin-top:32px;max-width:860px;">
+      <div class="card card-gold" style="text-align:center;padding:16px 10px;">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Fase 1</div>
+        <div style="font-size:13px;font-weight:700;color:var(--gold);">Programa de Fidelidade</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">Legal agora. Zero regulação.</div>
+      </div>
+      <div class="card card-blue" style="text-align:center;padding:16px 10px;">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Fase 2</div>
+        <div style="font-size:13px;font-weight:700;color:var(--blue);">Mercado Interno</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">Nova receita por transação.</div>
+      </div>
+      <div class="card" style="text-align:center;padding:16px 10px;">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Fase 3</div>
+        <div style="font-size:13px;font-weight:700;color:var(--cyan);">Carteira Digital</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">Consulta BACEN necessária.</div>
+      </div>
+      <div class="card card-green" style="text-align:center;padding:16px 10px;">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Fase 4</div>
+        <div style="font-size:13px;font-weight:700;color:var(--green);">Fintech Bold</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">Inst. de Pagamento BACEN.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9 — JURÍDICO -->
+  <div class="slide" id="slide-9">
+    <div class="slide-label">Segurança Jurídica</div>
+    <h2 class="slide-title">100% Legal <span class="highlight">desde o Dia 1</span></h2>
+    <p class="slide-subtitle" style="margin-bottom:28px;">A Bold Coin começa como programa de fidelidade — permitido no Brasil sem regulação do Banco Central.</p>
+    <div class="grid-2" style="max-width:860px;">
+      <div class="card card-green">
+        <div style="font-size:14px;font-weight:700;color:var(--green);margin-bottom:16px;">✅ Permitido Hoje — Sem Aprovação</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div class="vs-item"><span>✅</span><span style="font-size:13px;">Pontos por fidelidade não conversíveis</span></div>
+          <div class="vs-item"><span>✅</span><span style="font-size:13px;">Crédito interno para produtos próprios</span></div>
+          <div class="vs-item"><span>✅</span><span style="font-size:13px;">Transferência entre membros do programa</span></div>
+          <div class="vs-item"><span>✅</span><span style="font-size:13px;">Pontos com validade definida</span></div>
+          <div class="vs-item"><span>✅</span><span style="font-size:13px;">Parceiros externos que aceitam desconto</span></div>
+        </div>
+      </div>
+      <div class="card card-red">
+        <div style="font-size:14px;font-weight:700;color:var(--red);margin-bottom:16px;">❌ Evitar nas Fases Iniciais</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div class="vs-item"><span>⚠️</span><span style="font-size:13px;">Conversão de BC para reais</span></div>
+          <div class="vs-item"><span>⚠️</span><span style="font-size:13px;">Venda de BC para não associados</span></div>
+          <div class="vs-item"><span>⚠️</span><span style="font-size:13px;">BC como meio de pagamento geral</span></div>
+          <div class="vs-item"><span>⚠️</span><span style="font-size:13px;">BC remunerando capital (juros)</span></div>
+        </div>
+        <div style="margin-top:12px;padding:10px;background:rgba(255,68,68,0.05);border-radius:8px;font-size:12px;color:var(--muted);">
+          Essas funcionalidades são habilitadas nas Fases 3 e 4, com regularização adequada.
+        </div>
+      </div>
+      <div class="card" style="grid-column:1/-1;">
+        <div style="font-size:14px;font-weight:700;margin-bottom:12px;">🛡️ Proteção Anti-Fraude — CPF como Âncora</div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:180px;font-size:13px;color:var(--muted);line-height:1.8;">
+            ✓ CPF vinculado a cada conta<br>
+            ✓ Validação na Receita Federal<br>
+            ✓ Limite de BC por CPF/mês
+          </div>
+          <div style="flex:1;min-width:180px;font-size:13px;color:var(--muted);line-height:1.8;">
+            ✓ Quarentena de 7 dias (novas contas)<br>
+            ✓ Detecção de padrão anormal<br>
+            ✓ Auditoria mensal pela RSo
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10 — RECEITA RSo -->
+  <div class="slide" id="slide-10">
+    <div class="slide-label">Modelo de Negócio</div>
+    <h2 class="slide-title">Como a <span class="highlight">RSo Ganha</span> com a Bold Coin</h2>
+    <p class="slide-subtitle" style="margin-bottom:28px;">Uma parceria onde os dois lados crescem juntos.</p>
+    <div style="width:100%;max-width:860px;display:flex;flex-direction:column;gap:10px;">
+      <div class="grid-3" style="margin-bottom:4px;">
+        <div class="card card-gold" style="text-align:center;">
+          <div style="font-size:28px;margin-bottom:8px;">🔨</div>
+          <div style="font-weight:700;margin-bottom:4px;">Desenvolvimento</div>
+          <div style="font-size:22px;font-weight:900;color:var(--gold);">R$120.000</div>
+          <div style="font-size:12px;color:var(--muted);">Projeto completo</div>
+        </div>
+        <div class="card card-blue" style="text-align:center;">
+          <div style="font-size:28px;margin-bottom:8px;">🔄</div>
+          <div style="font-weight:700;margin-bottom:4px;">Manutenção SaaS</div>
+          <div style="font-size:22px;font-weight:900;color:var(--cyan);">R$9.000/mês</div>
+          <div style="font-size:12px;color:var(--muted);">Contrato recorrente</div>
+        </div>
+        <div class="card card-green" style="text-align:center;">
+          <div style="font-size:28px;margin-bottom:8px;">💸</div>
+          <div style="font-weight:700;margin-bottom:4px;">Taxa de Transação</div>
+          <div style="font-size:22px;font-weight:900;color:var(--green);">0,5% por BC</div>
+          <div style="font-size:12px;color:var(--muted);">Escala com a rede</div>
+        </div>
+      </div>
+      <div class="card card-gold" style="padding:24px;">
+        <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:16px;">📈 Projeção de Receita RSo — 24 Meses</div>
+        <div style="display:flex;gap:0;align-items:stretch;">
+          <div style="flex:1;text-align:center;padding:16px;border-right:1px solid var(--border);">
+            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Meses 1–3</div>
+            <div style="font-size:24px;font-weight:900;color:var(--gold);">R$120k</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px;">Desenvolvimento</div>
+          </div>
+          <div style="flex:1;text-align:center;padding:16px;border-right:1px solid var(--border);">
+            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Meses 4–12</div>
+            <div style="font-size:24px;font-weight:900;color:var(--cyan);">R$81k</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px;">Manutenção</div>
+          </div>
+          <div style="flex:1;text-align:center;padding:16px;border-right:1px solid var(--border);">
+            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Meses 13–24</div>
+            <div style="font-size:24px;font-weight:900;color:var(--green);">R$180k</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px;">Manutenção + Transações</div>
+          </div>
+          <div style="flex:1;text-align:center;padding:16px;background:rgba(255,215,0,0.05);border-radius:8px;">
+            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Total 24 meses</div>
+            <div style="font-size:28px;font-weight:900;color:var(--gold);">R$381k</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px;">Receita projetada RSo</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11 — VISÃO FUTURO -->
+  <div class="slide" id="slide-11">
+    <div class="slide-label">Visão de Futuro</div>
+    <h2 class="slide-title">De Rede de Vendas <span class="highlight">ao Bold Bank</span></h2>
+    <div style="display:flex;flex-direction:column;gap:16px;width:100%;max-width:860px;">
+      <div style="display:flex;gap:12px;align-items:stretch;flex-wrap:wrap;">
+        <div class="card card-gold" style="flex:1;min-width:180px;">
+          <div style="font-size:11px;color:var(--gold);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">2026</div>
+          <div style="font-size:16px;font-weight:700;margin-bottom:6px;">Bold Coin</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6;">Programa de pontos lançado. Associados ganham e gastam BC. Retenção aumenta.</div>
+        </div>
+        <div style="display:flex;align-items:center;color:var(--gold);font-size:24px;">→</div>
+        <div class="card card-blue" style="flex:1;min-width:180px;">
+          <div style="font-size:11px;color:var(--blue);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">2027</div>
+          <div style="font-size:16px;font-weight:700;margin-bottom:6px;">Bold Wallet</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6;">Carteira digital completa. QR Code para pagamentos. Transferências entre associados.</div>
+        </div>
+        <div style="display:flex;align-items:center;color:var(--gold);font-size:24px;">→</div>
+        <div class="card" style="flex:1;min-width:180px;border-color:rgba(0,212,255,0.2);">
+          <div style="font-size:11px;color:var(--cyan);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">2028</div>
+          <div style="font-size:16px;font-weight:700;margin-bottom:6px;">Bold Pay</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6;">Cartão pré-pago Bold. Parceiros externos. Inst. de Pagamento registrada no BACEN.</div>
+        </div>
+        <div style="display:flex;align-items:center;color:var(--gold);font-size:24px;">→</div>
+        <div class="card card-green" style="flex:1;min-width:180px;">
+          <div style="font-size:11px;color:var(--green);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">2029+</div>
+          <div style="font-size:16px;font-weight:700;margin-bottom:6px;">Bold Bank</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6;">Conta digital para associados. Recebe salário, faz Pix. A Bold vira banco da rede.</div>
+        </div>
+      </div>
+      <div class="quote-box">
+        <p class="quote-text">
+          O Mercado Livre começou vendendo produtos. Construiu o Mercado Pago. Hoje é a maior fintech da América Latina e vale mais que seus maiores concorrentes somados. <strong style="color:var(--gold);">A Bold Life tem o mesmo potencial — começa com a Bold Coin.</strong>
+        </p>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <div class="tag tag-gold">🏦 Bold Bank em 3 anos</div>
+        <div class="tag tag-blue">50.000+ associados captivos</div>
+        <div class="tag tag-green">Maior fintech da rede direta do Brasil</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 12 — PRÓXIMOS PASSOS -->
+  <div class="slide" id="slide-12">
+    <div class="slide-label">Próximos Passos</div>
+    <h2 class="slide-title">A <span class="highlight">Pergunta</span> Não É Se. É <span class="highlight">Quando.</span></h2>
+    <div style="width:100%;max-width:860px;display:flex;flex-direction:column;gap:20px;align-items:center;">
+      <div class="grid-3" style="width:100%;">
+        <div class="card card-gold" style="text-align:center;padding:24px 16px;">
+          <div style="width:48px;height:48px;background:rgba(255,215,0,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 12px;">🤝</div>
+          <div style="font-weight:700;margin-bottom:6px;">Reunião de Alinhamento</div>
+          <div style="font-size:12px;color:var(--muted);">Apresentar à diretoria Bold a proposta completa com todos os números</div>
+        </div>
+        <div class="card card-blue" style="text-align:center;padding:24px 16px;">
+          <div style="width:48px;height:48px;background:rgba(77,166,214,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 12px;">⚖️</div>
+          <div style="font-weight:700;margin-bottom:6px;">Alinhamento Jurídico</div>
+          <div style="font-size:12px;color:var(--muted);">Advogado da Bold valida o modelo como programa de fidelidade — 15 dias</div>
+        </div>
+        <div class="card card-green" style="text-align:center;padding:24px 16px;">
+          <div style="width:48px;height:48px;background:rgba(0,230,118,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 12px;">🚀</div>
+          <div style="font-weight:700;margin-bottom:6px;">Lançamento Piloto</div>
+          <div style="font-size:12px;color:var(--muted);">500 associados voluntários testam a Bold Coin em 60 dias após contrato</div>
+        </div>
+      </div>
+      <div class="quote-box" style="text-align:center;">
+        <p class="quote-text" style="font-size:clamp(15px,2vw,20px);font-style:normal;font-weight:700;">
+          "A pergunta não é <em style="color:var(--red);">se devemos fazer a Bold Coin</em>.<br>
+          A pergunta é <strong style="color:var(--gold);">por que ainda não fizemos.</strong>"
+        </p>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:14px;color:var(--muted);margin-bottom:8px;">RSo Soluções Digitais — Renata</div>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <div class="tag tag-gold">📱 Minas Gerais, 2026</div>
+          <div class="tag tag-blue">🔗 Proposta Confidencial</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- NAVIGATION -->
+<nav class="nav">
+  <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">←</button>
+  <div class="dots" id="dots"></div>
+  <span class="slide-counter" id="counter">1 / 12</span>
+  <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">→</button>
+</nav>
+
+<script>
+  const totalSlides = 12;
+  let current = 1;
+  let countersAnimated = false;
+
+  // Build dots
+  const dotsContainer = document.getElementById('dots');
+  for (let i = 1; i <= totalSlides; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i === 1 ? ' active' : '');
+    dot.onclick = () => goToSlide(i);
+    dotsContainer.appendChild(dot);
+  }
+
+  function goToSlide(n) {
+    const prev = document.getElementById('slide-' + current);
+    prev.classList.remove('active');
+    prev.classList.add('prev');
+    setTimeout(() => prev.classList.remove('prev'), 500);
+
+    current = n;
+    const next = document.getElementById('slide-' + current);
+    next.classList.add('active');
+
+    document.querySelectorAll('.dot').forEach((d, i) => {
+      d.className = 'dot' + (i === current - 1 ? ' active' : '');
+    });
+    document.getElementById('counter').textContent = current + ' / ' + totalSlides;
+
+    if (current === 6 && !countersAnimated) animateCounters();
+    if (current === 6) animateProgressBars();
+  }
+
+  function changeSlide(dir) {
+    let n = current + dir;
+    if (n < 1) n = totalSlides;
+    if (n > totalSlides) n = 1;
+    goToSlide(n);
+  }
+
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') changeSlide(1);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changeSlide(-1);
+  });
+
+  // Touch swipe
+  let touchX = 0;
+  document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    const diff = touchX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) changeSlide(diff > 0 ? 1 : -1);
+  });
+
+  // Click anywhere to advance (except nav)
+  document.querySelector('.slides-wrapper').addEventListener('click', e => {
+    if (!e.target.closest('.nav')) changeSlide(1);
+  });
+
+  // Animated counters for slide 6
+  function animateCounters() {
+    countersAnimated = true;
+    animateValue('counter-vendas', 0, 40000000, 2000, 'R$', true);
+    setTimeout(() => animateValue('counter-comissoes', 0, 6000000, 1800, 'R$', true), 300);
+    setTimeout(() => animateValue('counter-retido', 0, 2400000, 1800, 'R$', true), 600);
+    setTimeout(() => animateValue('counter-anual', 0, 28800000, 2000, 'R$', true), 900);
+  }
+
+  function animateValue(id, start, end, duration, prefix, money) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const startTime = performance.now();
+    function update(now) {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const value = Math.floor(start + (end - start) * eased);
+      el.textContent = formatMoney(value, prefix, money);
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  }
+
+  function formatMoney(n, prefix, money) {
+    if (!money) return prefix + n.toLocaleString('pt-BR');
+    if (n >= 1000000) return prefix + (n / 1000000).toFixed(1).replace('.', ',') + ' mi';
+    if (n >= 1000) return prefix + (n / 1000).toFixed(0) + ' mil';
+    return prefix + n.toLocaleString('pt-BR');
+  }
+
+  function animateProgressBars() {
+    document.querySelectorAll('.progress-fill').forEach(bar => {
+      const w = bar.getAttribute('data-width') || '70';
+      bar.style.width = '0%';
+      setTimeout(() => { bar.style.width = w + '%'; }, 100);
+    });
+  }
+</script>
+</body>
+</html>
