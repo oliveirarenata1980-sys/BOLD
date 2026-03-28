@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#02040a">
+<title>Ecossistema Digital Bold — 3 Apps que Transformam a Rede</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+:root{
+  --bg:#02040a;--surface:#0d1117;--surface2:#161b22;
+  --blue:#4da6d6;--cyan:#00d4ff;--gold:#ffd700;--gold2:#ffaa00;
+  --green:#00e676;--red:#ff4444;--purple:#c084fc;
+  --app1:#00e676;--app2:#4da6d6;--app3:#ffd700;
+  --text:#e6edf3;--muted:#7d8590;--border:#21262d;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(77,166,214,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(77,166,214,.025) 1px,transparent 1px);background-size:50px 50px;pointer-events:none;z-index:0;}
+canvas#bg{position:fixed;inset:0;pointer-events:none;z-index:0;}
+
+/* ── BOOT ── */
+#boot{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;}
+#boot-logo{font-size:48px;font-weight:900;letter-spacing:4px;background:linear-gradient(135deg,var(--gold2),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;opacity:0;animation:fadeIn .6s .4s ease both;}
+#boot-ring{width:80px;height:80px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;}
+#boot-bar-wrap{width:300px;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;}
+#boot-bar{height:100%;background:linear-gradient(90deg,var(--gold2),var(--gold));width:0%;transition:width .3s ease;border-radius:2px;}
+#boot-msg{font-size:12px;color:var(--muted);letter-spacing:2px;height:16px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeIn{to{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+@keyframes glow1{0%,100%{box-shadow:0 0 20px rgba(0,230,118,.3)}50%{box-shadow:0 0 50px rgba(0,230,118,.7)}}
+@keyframes glow2{0%,100%{box-shadow:0 0 20px rgba(77,166,214,.3)}50%{box-shadow:0 0 50px rgba(77,166,214,.7)}}
+@keyframes glow3{0%,100%{box-shadow:0 0 20px rgba(255,215,0,.3)}50%{box-shadow:0 0 50px rgba(255,215,0,.7)}}
+
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+/* ── LAYOUT ── */
+section{position:relative;z-index:1;padding:90px 24px;}
+.inner{max-width:1060px;margin:0 auto;}
+.sec-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;text-align:center;}
+.sec-title{font-size:clamp(28px,5vw,52px);font-weight:900;text-align:center;line-height:1.1;margin-bottom:14px;}
+.sec-sub{font-size:clamp(14px,2vw,17px);color:var(--muted);text-align:center;max-width:640px;margin:0 auto 48px;line-height:1.7;}
+.divider{width:60px;height:3px;background:linear-gradient(90deg,var(--gold2),var(--gold));border-radius:2px;margin:14px auto 0;}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:90px 24px 60px;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;border-radius:50px;background:rgba(77,166,214,.1);border:1px solid rgba(77,166,214,.3);font-size:12px;font-weight:700;color:var(--cyan);letter-spacing:2px;text-transform:uppercase;margin-bottom:32px;animation:fadeDown .6s ease both;}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:blink 1.2s infinite;}
+.hero-title{font-size:clamp(36px,7vw,78px);font-weight:900;line-height:1.05;margin-bottom:20px;animation:fadeUp .8s .2s ease both;}
+.gold-text{background:linear-gradient(135deg,var(--gold2),var(--gold),#fff9c4,var(--gold));background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 3s linear infinite;}
+.hero-sub{font-size:clamp(15px,2.2vw,20px);color:var(--muted);max-width:640px;margin:0 auto 40px;line-height:1.7;animation:fadeUp .8s .35s ease both;}
+
+/* ── 3 APP ICONS HERO ── */
+.trio{display:flex;gap:20px;justify-content:center;margin-bottom:48px;flex-wrap:wrap;animation:fadeUp .8s .5s ease both;}
+.trio-item{display:flex;flex-direction:column;align-items:center;gap:12px;cursor:pointer;}
+.trio-orb{width:90px;height:90px;border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:36px;position:relative;transition:transform .3s;}
+.trio-orb:hover{transform:translateY(-6px) scale(1.05);}
+.trio-orb-1{background:rgba(0,230,118,.1);border:2px solid rgba(0,230,118,.4);animation:glow1 3s ease-in-out infinite;}
+.trio-orb-2{background:rgba(77,166,214,.1);border:2px solid rgba(77,166,214,.4);animation:glow2 3s ease-in-out infinite;animation-delay:.7s;}
+.trio-orb-3{background:rgba(255,215,0,.1);border:2px solid rgba(255,215,0,.4);animation:glow3 3s ease-in-out infinite;animation-delay:1.4s;}
+.trio-connector{position:absolute;top:50%;right:-22px;width:24px;height:2px;}
+.trio-label{font-size:13px;font-weight:700;}
+.trio-sub{font-size:11px;color:var(--muted);}
+
+/* ── AUDIENCE TABS ── */
+.tabs-wrap{display:flex;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:6px;max-width:420px;margin:0 auto 48px;}
+.tab-btn{flex:1;padding:12px 20px;border-radius:8px;border:none;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;transition:all .3s;color:var(--muted);background:transparent;}
+.tab-btn.active{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#000;}
+
+/* ── APP SECTION ── */
+.app-section{padding:80px 24px;}
+.app-card{
+  background:var(--surface);border-radius:28px;overflow:hidden;
+  max-width:1000px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;
+  border:1px solid var(--border);
+  transition:border-color .3s;
+}
+.app-card-1{border-color:rgba(0,230,118,.2);}
+.app-card-2{border-color:rgba(77,166,214,.2);}
+.app-card-3{border-color:rgba(255,215,0,.2);}
+
+.app-visual{padding:40px;display:flex;align-items:center;justify-content:center;position:relative;}
+.app-bg-1{background:radial-gradient(ellipse at center,rgba(0,230,118,.08) 0%,transparent 70%);}
+.app-bg-2{background:radial-gradient(ellipse at center,rgba(77,166,214,.08) 0%,transparent 70%);}
+.app-bg-3{background:radial-gradient(ellipse at center,rgba(255,215,0,.08) 0%,transparent 70%);}
+
+/* PHONE MOCKUP */
+.phone{width:180px;height:340px;background:var(--surface2);border-radius:28px;border:3px solid var(--border);position:relative;overflow:hidden;flex-shrink:0;animation:float 4s ease-in-out infinite;}
+.phone-notch{width:60px;height:10px;background:var(--border);border-radius:0 0 8px 8px;position:absolute;top:0;left:50%;transform:translateX(-50%);}
+.phone-screen{position:absolute;inset:18px 8px 8px;border-radius:18px;overflow:hidden;display:flex;flex-direction:column;}
+.phone-header{padding:8px 10px;font-size:9px;font-weight:700;}
+.ph1-header{background:rgba(0,230,118,.15);color:var(--green);}
+.ph2-header{background:rgba(77,166,214,.15);color:var(--cyan);}
+.ph3-header{background:rgba(255,215,0,.15);color:var(--gold);}
+.phone-body{flex:1;padding:8px;display:flex;flex-direction:column;gap:5px;background:var(--bg);}
+.ph-row{height:22px;border-radius:5px;display:flex;align-items:center;padding:0 6px;font-size:8px;font-weight:600;}
+.ph-bar{height:8px;border-radius:4px;margin-top:2px;}
+.phone-nav{height:28px;background:var(--surface2);display:flex;align-items:center;justify-content:space-around;padding:0 8px;}
+.ph-nav-dot{width:28px;height:5px;border-radius:3px;}
+
+.app-info{padding:40px;}
+.app-num{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;}
+.app-num-1{color:var(--app1);}
+.app-num-2{color:var(--app2);}
+.app-num-3{color:var(--app3);}
+.app-title{font-size:clamp(22px,3vw,32px);font-weight:900;margin-bottom:8px;}
+.app-tagline{font-size:15px;color:var(--muted);line-height:1.6;margin-bottom:24px;}
+
+.app-features{display:flex;flex-direction:column;gap:10px;margin-bottom:28px;}
+.feat{display:flex;align-items:flex-start;gap:10px;font-size:13px;line-height:1.5;}
+.feat-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.feat-1{background:rgba(0,230,118,.1);}
+.feat-2{background:rgba(77,166,214,.1);}
+.feat-3{background:rgba(255,215,0,.1);}
+.feat-text strong{display:block;font-size:12px;font-weight:700;margin-bottom:1px;}
+.feat-text span{color:var(--muted);font-size:12px;}
+
+.app-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
+.app-stat{background:var(--surface2);border-radius:10px;padding:12px;text-align:center;}
+.app-stat-val{font-size:20px;font-weight:900;margin-bottom:2px;}
+.app-stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+
+.btn-app{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:50px;font-size:14px;font-weight:700;border:none;cursor:pointer;font-family:inherit;text-decoration:none;transition:all .3s;}
+.btn-1{background:rgba(0,230,118,.15);color:var(--green);border:1px solid rgba(0,230,118,.3);}
+.btn-1:hover{background:rgba(0,230,118,.25);transform:translateY(-2px);}
+.btn-2{background:rgba(77,166,214,.15);color:var(--cyan);border:1px solid rgba(77,166,214,.3);}
+.btn-2:hover{background:rgba(77,166,214,.25);transform:translateY(-2px);}
+.btn-3{background:rgba(255,215,0,.15);color:var(--gold);border:1px solid rgba(255,215,0,.3);}
+.btn-3:hover{background:rgba(255,215,0,.25);transform:translateY(-2px);}
+
+/* ── CPF CONNECTOR ── */
+.cpf-section{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.cpf-diagram{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin-top:40px;}
+.cpf-node{display:flex;flex-direction:column;align-items:center;gap:10px;min-width:140px;}
+.cpf-orb{width:72px;height:72px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:28px;border:2px solid;}
+.cpf-center{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,170,0,.05));border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;flex-direction:column;box-shadow:0 0 40px rgba(255,215,0,.2);}
+.cpf-line{width:48px;height:2px;background:linear-gradient(90deg,var(--border),var(--gold),var(--border));position:relative;}
+.cpf-line::after{content:'';position:absolute;top:-3px;right:-1px;width:8px;height:8px;border-right:2px solid var(--gold);border-top:2px solid var(--gold);transform:rotate(45deg);}
+.cpf-label{font-size:12px;font-weight:700;text-align:center;}
+.cpf-sub{font-size:10px;color:var(--muted);text-align:center;}
+
+/* ── IMPACT TABLE ── */
+.impact-table{width:100%;border-collapse:collapse;font-size:13px;}
+.impact-table th{background:var(--surface2);padding:12px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);}
+.impact-table td{padding:12px 16px;border-bottom:1px solid rgba(33,38,45,.5);}
+.impact-table tr:last-child td{border-bottom:none;}
+.impact-table tr:hover td{background:rgba(255,215,0,.02);}
+.good{color:var(--green);font-weight:700;}
+.gold{color:var(--gold);font-weight:700;}
+
+/* ── AUDIENCE VIEW ── */
+.audience-panel{display:none;}
+.audience-panel.active{display:block;}
+
+/* ── FEATURE COMPARISON ── */
+.compare-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.compare-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;text-align:center;transition:all .3s;}
+.compare-card:hover{transform:translateY(-4px);}
+.cc-icon{font-size:36px;margin-bottom:12px;}
+.cc-title{font-size:15px;font-weight:700;margin-bottom:6px;}
+.cc-sub{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:16px;}
+.cc-items{text-align:left;display:flex;flex-direction:column;gap:6px;}
+.cc-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);}
+.cc-item span:first-child{font-size:14px;}
+
+/* ── NUMBERS IMPACT ── */
+.numbers-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;}
+.num-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;text-align:center;opacity:0;transform:translateY(20px);transition:all .6s ease;}
+.num-card.visible{opacity:1;transform:translateY(0);}
+.num-icon{font-size:28px;margin-bottom:10px;}
+.num-val{font-size:clamp(24px,4vw,36px);font-weight:900;line-height:1;margin-bottom:6px;}
+.num-label{font-size:12px;color:var(--muted);line-height:1.5;}
+
+/* ── TESTIMONIALS ── */
+.test-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;}
+.test-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;}
+.test-text{font-size:14px;color:var(--text);line-height:1.7;margin-bottom:16px;font-style:italic;}
+.test-author{display:flex;align-items:center;gap:12px;}
+.test-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#000;flex-shrink:0;}
+.test-name{font-size:13px;font-weight:700;}
+.test-role{font-size:11px;}
+
+/* ── FINAL CTA ── */
+.final{text-align:center;padding:100px 24px;background:radial-gradient(ellipse at 50% 50%,rgba(77,166,214,.06) 0%,transparent 70%);position:relative;z-index:1;}
+.btn-primary{display:inline-flex;align-items:center;gap:10px;padding:18px 40px;border-radius:50px;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#000;font-size:16px;font-weight:800;border:none;cursor:pointer;text-decoration:none;box-shadow:0 0 30px rgba(255,215,0,.4);transition:all .3s;letter-spacing:.5px;}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 0 60px rgba(255,215,0,.7);}
+.btn-outline{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:50px;border:1px solid var(--border);color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .3s;margin-left:12px;background:transparent;}
+.btn-outline:hover{border-color:var(--blue);color:var(--blue);}
+
+/* ── FOOTER ── */
+footer{text-align:center;padding:32px 24px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);position:relative;z-index:1;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .app-card{grid-template-columns:1fr;}
+  .app-visual{display:none;}
+  .compare-grid{grid-template-columns:1fr;}
+  .cpf-diagram{gap:8px;}
+  .cpf-line{width:24px;}
+  section{padding:60px 16px;}
+  .trio{gap:12px;}
+  .trio-orb{width:72px;height:72px;font-size:28px;}
+}
+
+.tag{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:50px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;}
+.tag-green{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.2);}
+.tag-blue{background:rgba(77,166,214,.1);color:var(--cyan);border:1px solid rgba(77,166,214,.2);}
+.tag-gold{background:rgba(255,215,0,.1);color:var(--gold);border:1px solid rgba(255,215,0,.2);}
+.tag-purple{background:rgba(192,132,252,.1);color:var(--purple);border:1px solid rgba(192,132,252,.2);}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+
+<!-- BOOT -->
+<div id="boot">
+  <div id="boot-logo">BOLD</div>
+  <div id="boot-ring"></div>
+  <div id="boot-bar-wrap"><div id="boot-bar"></div></div>
+  <div id="boot-msg">Inicializando Ecossistema Digital...</div>
+</div>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-badge"><span class="live-dot"></span> Ecossistema Digital Bold — 2026</div>
+  <h1 class="hero-title">3 Apps.<br><span class="gold-text">1 Ecossistema.</span><br>Resultado Real.</h1>
+  <p class="hero-sub">Desenvolvidos especificamente para a Bold Life — para o associado que quer vender mais, o líder que quer gerir melhor e a diretoria que quer escalar sem limite.</p>
+  <div class="trio">
+    <div class="trio-item" onclick="scrollToApp(1)">
+      <div class="trio-orb trio-orb-1">📦</div>
+      <div class="trio-label" style="color:var(--app1)">Bold Gestão</div>
+      <div class="trio-sub">O Escritório</div>
+    </div>
+    <div style="display:flex;align-items:center;padding-bottom:40px;">
+      <div style="width:32px;height:2px;background:linear-gradient(90deg,var(--app1),var(--app2));"></div>
+      <div style="width:8px;height:8px;border-right:2px solid var(--app2);border-top:2px solid var(--app2);transform:rotate(45deg);margin-left:-2px;"></div>
+    </div>
+    <div class="trio-item" onclick="scrollToApp(2)">
+      <div class="trio-orb trio-orb-2">🛍️</div>
+      <div class="trio-label" style="color:var(--app2)">Bold Store</div>
+      <div class="trio-sub">A Loja</div>
+    </div>
+    <div style="display:flex;align-items:center;padding-bottom:40px;">
+      <div style="width:32px;height:2px;background:linear-gradient(90deg,var(--app2),var(--app3));"></div>
+      <div style="width:8px;height:8px;border-right:2px solid var(--app3);border-top:2px solid var(--app3);transform:rotate(45deg);margin-left:-2px;"></div>
+    </div>
+    <div class="trio-item" onclick="scrollToApp(3)">
+      <div class="trio-orb trio-orb-3">🧠</div>
+      <div class="trio-label" style="color:var(--app3)">Bold Intelligence</div>
+      <div class="trio-sub">A Torre de Controle</div>
+    </div>
+  </div>
+  <!-- AUDIENCE TABS -->
+  <div class="tabs-wrap reveal">
+    <button class="tab-btn active" onclick="setAudience('dir',this)">🏢 Para a Diretoria</button>
+    <button class="tab-btn" onclick="setAudience('ass',this)">👤 Para o Associado</button>
+  </div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;animation:fadeUp .8s .7s ease both;">
+    <a href="#app1" class="tag tag-green">📦 Ver Gestão</a>
+    <a href="#app2" class="tag tag-blue">🛍️ Ver Store</a>
+    <a href="#app3" class="tag tag-gold">🧠 Ver Intelligence</a>
+  </div>
+</section>
+
+<!-- ═══ APP 1 — BOLD GESTÃO ═══ -->
+<section class="app-section" id="app1" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid rgba(0,230,118,.15);">
+  <div class="inner">
+    <div class="sec-label" style="color:var(--app1)">App 01 de 03</div>
+    <h2 class="sec-title reveal">Bold <span style="color:var(--app1)">Gestão</span></h2>
+    <div style="width:60px;height:3px;background:var(--app1);border-radius:2px;margin:0 auto 48px;"></div>
+    <div class="app-card app-card-1 reveal">
+      <div class="app-visual app-bg-1">
+        <div class="phone">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="phone-header ph1-header">📦 BOLD GESTÃO</div>
+            <div class="phone-body">
+              <div class="ph-row" style="background:rgba(0,230,118,.1);color:var(--green);">Estoque</div>
+              <div class="ph-bar" style="background:linear-gradient(90deg,var(--green),rgba(0,230,118,.3));width:75%;"></div>
+              <div style="height:4px;"></div>
+              <div class="ph-row" style="background:rgba(0,230,118,.08);color:var(--muted);font-size:7px;">🧴 Proteína 1kg — 12 un</div>
+              <div class="ph-row" style="background:rgba(0,230,118,.08);color:var(--muted);font-size:7px;">💊 Vitamina C — 8 un</div>
+              <div class="ph-row" style="background:rgba(255,68,68,.08);color:var(--red);font-size:7px;">⚠️ Colágeno — 1 un</div>
+              <div style="height:4px;"></div>
+              <div class="ph-row" style="background:rgba(0,230,118,.1);color:var(--green);">Pedidos</div>
+              <div class="ph-bar" style="background:linear-gradient(90deg,var(--green),rgba(0,230,118,.3));width:90%;"></div>
+              <div style="height:4px;"></div>
+              <div class="ph-row" style="background:rgba(255,215,0,.1);color:var(--gold);">Comissões</div>
+              <div class="ph-bar" style="background:linear-gradient(90deg,var(--gold2),rgba(255,215,0,.3));width:60%;"></div>
+              <div style="height:4px;"></div>
+              <div style="font-size:8px;color:var(--green);padding:4px;text-align:center;font-weight:700;">R$ 1.550,00</div>
+            </div>
+            <div class="phone-nav">
+              <div class="ph-nav-dot" style="background:var(--green);"></div>
+              <div class="ph-nav-dot" style="background:var(--border);"></div>
+              <div class="ph-nav-dot" style="background:var(--border);"></div>
+              <div class="ph-nav-dot" style="background:var(--border);"></div>
+              <div class="ph-nav-dot" style="background:var(--border);"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="app-info">
+        <div class="app-num app-num-1">App 01 — O Escritório Digital</div>
+        <div class="app-title">Bold <span style="color:var(--app1)">Gestão</span></div>
+        <div class="app-tagline">O associado que controla o estoque vende mais. O que não controla, perde pedido, erra quantidade e desiste.</div>
+        <div class="app-features">
+          <div class="feat"><div class="feat-icon feat-1">📦</div><div class="feat-text"><strong>Controle de Estoque</strong><span>Alerta quando produto está acabando. Zero pedido perdido por falta de produto.</span></div></div>
+          <div class="feat"><div class="feat-icon feat-1">📋</div><div class="feat-text"><strong>Registro de Pedidos</strong><span>Cada venda registrada com CPF do cliente, produto e status de entrega.</span></div></div>
+          <div class="feat"><div class="feat-icon feat-1">💰</div><div class="feat-text"><strong>Comissões em Tempo Real</strong><span>Vê quanto vai receber por geração — 1ª, 2ª, 3ª — no momento que vende.</span></div></div>
+          <div class="feat"><div class="feat-icon feat-1">👥</div><div class="feat-text"><strong>Visualização da Rede</strong><span>Quem está ativo, quem precisa de ajuda, ranking da equipe.</span></div></div>
+          <div class="feat"><div class="feat-icon feat-1">🎯</div><div class="feat-text"><strong>Metas e Cargo</strong><span>Barra de progresso para o próximo nível. Sabe exatamente o que falta.</span></div></div>
+        </div>
+        <!-- Audience-specific content -->
+        <div class="audience-panel active" id="gestao-dir">
+          <div class="app-stats">
+            <div class="app-stat"><div class="app-stat-val" style="color:var(--app1)">-70%</div><div class="app-stat-label">Pedidos perdidos por desorganização</div></div>
+            <div class="app-stat"><div class="app-stat-val" style="color:var(--app1)">+35%</div><div class="app-stat-label">Volume de vendas com controle</div></div>
+          </div>
+        </div>
+        <div class="audience-panel" id="gestao-ass">
+          <div style="padding:14px;background:rgba(0,230,118,.05);border:1px solid rgba(0,230,118,.2);border-radius:10px;font-size:13px;line-height:1.7;margin-bottom:16px;">
+            💡 <strong>Na prática:</strong> Você nunca mais vai perder uma venda porque não sabia que o estoque acabou. O app avisa antes. Você repõe na hora.
+          </div>
+        </div>
+        <a href="https://oliveirarenata1980-sys.github.io/BOLD/DEMO_BoldGestao.html" target="_blank" class="btn-app btn-1">📱 Abrir Demo do App →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ APP 2 — BOLD STORE ═══ -->
+<section class="app-section" id="app2" style="border-bottom:1px solid rgba(77,166,214,.15);">
+  <div class="inner">
+    <div class="sec-label" style="color:var(--app2)">App 02 de 03</div>
+    <h2 class="sec-title reveal">Bold <span style="color:var(--app2)">Store</span></h2>
+    <div style="width:60px;height:3px;background:var(--app2);border-radius:2px;margin:0 auto 48px;"></div>
+    <div class="app-card app-card-2 reveal" style="direction:rtl;">
+      <div class="app-visual app-bg-2" style="direction:ltr;">
+        <div class="phone">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="phone-header ph2-header">🛍️ BOLD STORE</div>
+            <div class="phone-body">
+              <div style="font-size:8px;color:var(--cyan);padding:2px;text-align:center;font-weight:700;background:rgba(77,166,214,.1);border-radius:4px;margin-bottom:4px;">CPF: 123.456.789-00 ✓</div>
+              <div class="ph-row" style="background:rgba(77,166,214,.1);color:var(--cyan);">Catálogo</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;margin:3px 0;">
+                <div style="background:rgba(77,166,214,.08);border-radius:4px;padding:4px;text-align:center;font-size:7px;">🧴<br>Proteína<br><span style="color:var(--cyan);">R$89</span></div>
+                <div style="background:rgba(77,166,214,.08);border-radius:4px;padding:4px;text-align:center;font-size:7px;">💊<br>Vit C<br><span style="color:var(--cyan);">R$45</span></div>
+                <div style="background:rgba(77,166,214,.08);border-radius:4px;padding:4px;text-align:center;font-size:7px;">🌿<br>Colágeno<br><span style="color:var(--cyan);">R$120</span></div>
+                <div style="background:rgba(255,215,0,.08);border-radius:4px;padding:4px;text-align:center;font-size:7px;">🪙<br>+10 BC<br><span style="color:var(--gold);">Bônus</span></div>
+              </div>
+              <div class="ph-row" style="background:rgba(0,230,118,.1);color:var(--green);font-size:7px;">🛒 Carrinho: R$134 | 2 itens</div>
+              <div style="font-size:7px;color:var(--muted);padding:3px;">Sua comissão: <span style="color:var(--green);">R$20,10</span></div>
+            </div>
+            <div class="phone-nav">
+              <div class="ph-nav-dot" style="background:var(--border);"></div>
+              <div class="ph-nav-dot" style="background:var(--cyan);"></div>
+              <div class="ph-nav-dot" style="background:var(--border);"></div>
+              <div class="ph-nav-dot" style="background:var(--border);"></div>
+              <div class="ph-nav-dot" style="background:var(--border);"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="app-info" style="direction:ltr;">
+        <div class="app-num app-num-2">App 02 — A Loja Digital</div>
+        <div class="app-title">Bold <span style="color:var(--app2)">Store</span></div>
+        <div class="app-tagline">A loja do associado — tudo vinculado ao CPF. Cada compra, cada venda, cada comissão registrada automaticamente na rede.</div>
+        <div class="app-features">
+          <div class="feat"><div class="feat-icon feat-2">🪪</div><div class="feat-text"><strong>Tudo pelo CPF</strong><span>Cadastro, vendas, comissões e posição na rede — tudo vinculado ao CPF. Automático.</span></div></div>
+          <div class="feat"><div class="feat-icon feat-2">🛍️</div><div class="feat-text"><strong>Catálogo Completo</strong><span>30.000+ produtos Bold com filtros, busca e detalhes de comissão em tempo real.</span></div></div>
+          <div class="feat"><div class="feat-icon feat-2">🔗</div><div class="feat-text"><strong>Link de Indicação</strong><span>Cada associado tem um link único. Quem se cadastra pelo link já entra na rede automaticamente.</span></div></div>
+          <div class="feat"><div class="feat-icon feat-2">💰</div><div class="feat-text"><strong>Comissão Visível</strong><span>O associado vê o quanto vai ganhar antes de vender. Tira a dúvida, aumenta a confiança.</span></div></div>
+          <div class="feat"><div class="feat-icon feat-2">🪙</div><div class="feat-text"><strong>Integrado com Bold Coin</strong><span>Cada compra gera BC automaticamente. Usa na próxima compra como desconto.</span></div></div>
+        </div>
+        <div class="audience-panel active" id="store-dir">
+          <div class="app-stats">
+            <div class="app-stat"><div class="app-stat-val" style="color:var(--app2)">100%</div><div class="app-stat-label">Rastreabilidade de vendas por CPF</div></div>
+            <div class="app-stat"><div class="app-stat-val" style="color:var(--app2)">+3×</div><div class="app-stat-label">Capacidade de recrutamento do líder</div></div>
+          </div>
+        </div>
+        <div class="audience-panel" id="store-ass">
+          <div style="padding:14px;background:rgba(77,166,214,.05);border:1px solid rgba(77,166,214,.2);border-radius:10px;font-size:13px;line-height:1.7;margin-bottom:16px;">
+            💡 <strong>Na prática:</strong> Você manda o link para um amigo. Ele se cadastra e já fica na sua rede. Cada venda dele gera comissão para você — automático, sem precisar fazer nada.
+          </div>
+        </div>
+        <a href="https://oliveirarenata1980-sys.github.io/BOLD/BOLD_STORE.html" target="_blank" class="btn-app btn-2">📱 Abrir Demo do App →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ APP 3 — BOLD INTELLIGENCE ═══ -->
+<section class="app-section" id="app3" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid rgba(255,215,0,.15);">
+  <div class="inner">
+    <div class="sec-label" style="color:var(--app3)">App 03 de 03</div>
+    <h2 class="sec-title reveal">Bold <span style="color:var(--app3)">Intelligence</span></h2>
+    <div style="width:60px;height:3px;background:var(--app3);border-radius:2px;margin:0 auto 48px;"></div>
+    <div class="app-card app-card-3 reveal">
+      <div class="app-visual app-bg-3">
+        <div class="phone">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="phone-header ph3-header">🧠 BOLD INTELLIGENCE</div>
+            <div class="phone-body">
+              <div style="text-align:center;font-size:9px;color:var(--gold);font-weight:900;margin:2px 0;">R$ 1.550,00</div>
+              <div style="font-size:7px;color:var(--muted);text-align:center;margin-bottom:4px;">Comissão do mês</div>
+              <div class="ph-bar" style="background:linear-gradient(90deg,var(--gold2),var(--gold));width:62%;margin-bottom:6px;box-shadow:0 0 6px rgba(255,215,0,.4);"></div>
+              <div class="ph-row" style="background:rgba(255,215,0,.1);color:var(--gold);">🏁 Corrida de Metas</div>
+              <div style="margin:3px 0;">
+                <div style="font-size:7px;color:var(--muted);margin-bottom:2px;">Ana — 1ª 🥇</div>
+                <div class="ph-bar" style="background:linear-gradient(90deg,var(--gold),rgba(255,215,0,.3));width:88%;"></div>
+                <div style="font-size:7px;color:var(--muted);margin:2px 0;">Pedro — 2ª 🥈</div>
+                <div class="ph-bar" style="background:linear-gradient(90deg,#aaa,rgba(170,170,170,.3));width:64%;"></div>
+                <div style="font-size:7px;color:var(--muted);margin:2px 0;">Maria — 3ª 🥉</div>
+                <div class="ph-bar" style="background:linear-gradient(90deg,#cd7f32,rgba(205,127,50,.3));width:45%;"></div>
+              </div>
+              <div style="font-size:7px;color:var(--green);padding:2px;text-align:center;">🟢 Feed ao vivo</div>
+              <div style="font-size:6px;color:var(--muted);padding:2px 4px;">João comprou Proteína 1kg</div>
+              <div style="font-size:6px;color:var(--muted);padding:2px 4px;">Maria indicou Ana Silva</div>
+            </div>
+            <div class="phone-nav">
+              <div class="ph-nav-dot" style="background:var(--border);"></div>
+              <div class="ph-nav-dot" style="background:var(--border);"></div>
+              <div class="ph-nav-dot" style="background:var(--border);"></div>
+              <div class="ph-nav-dot" style="background:var(--gold);"></div>
+              <div class="ph-nav-dot" style="background:var(--border);"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="app-info">
+        <div class="app-num app-num-3">App 03 — A Torre de Controle</div>
+        <div class="app-title">Bold <span style="color:var(--app3)">Intelligence</span></div>
+        <div class="app-tagline">Não é só um painel. É uma missão de controle em tempo real. O líder que usa o Intelligence não opera no escuro — opera com dados.</div>
+        <div class="app-features">
+          <div class="feat"><div class="feat-icon feat-3">🏁</div><div class="feat-text"><strong>Corrida de Metas</strong><span>Ranking animado ao vivo. Associados competem em tempo real para subir de cargo.</span></div></div>
+          <div class="feat"><div class="feat-icon feat-3">📡</div><div class="feat-text"><strong>Feed ao Vivo</strong><span>Cada venda, cada indicação, cada conquista da rede aparece em tempo real.</span></div></div>
+          <div class="feat"><div class="feat-icon feat-3">🗺️</div><div class="feat-text"><strong>Mapa da Rede</strong><span>Visualização em canvas de quem indicou quem — a árvore da sua rede ao vivo.</span></div></div>
+          <div class="feat"><div class="feat-icon feat-3">🤖</div><div class="feat-text"><strong>IA de Insights</strong><span>"Seu associado João está próximo de subir de cargo. Fale com ele hoje." Alertas inteligentes.</span></div></div>
+          <div class="feat"><div class="feat-icon feat-3">📊</div><div class="feat-text"><strong>Analytics Completo</strong><span>Gráficos de 6 meses, distribuição por geração, projeção de comissão, tudo visível.</span></div></div>
+        </div>
+        <div class="audience-panel active" id="intel-dir">
+          <div class="app-stats">
+            <div class="app-stat"><div class="app-stat-val" style="color:var(--app3)">5×</div><div class="app-stat-label">Mais velocidade na tomada de decisão</div></div>
+            <div class="app-stat"><div class="app-stat-val" style="color:var(--app3)">-40%</div><div class="app-stat-label">Taxa de inatividade da rede</div></div>
+          </div>
+        </div>
+        <div class="audience-panel" id="intel-ass">
+          <div style="padding:14px;background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.2);border-radius:10px;font-size:13px;line-height:1.7;margin-bottom:16px;">
+            💡 <strong>Na prática:</strong> Você abre o app e já sabe quem na sua equipe está perto de subir. Manda uma mensagem de incentivo na hora. Isso é o que separa o líder mediano do líder que cresce.
+          </div>
+        </div>
+        <a href="https://oliveirarenata1980-sys.github.io/BOLD/BOLD_INTELLIGENCE.html" target="_blank" class="btn-app btn-3">📱 Abrir Demo do App →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CPF CONNECTOR ═══ -->
+<section class="cpf-section">
+  <div class="inner">
+    <div class="sec-label">A Espinha Dorsal</div>
+    <h2 class="sec-title reveal">Os 3 Apps Falam a <span class="gold-text">Mesma Língua</span></h2>
+    <div class="divider"></div>
+    <p class="sec-sub reveal">O CPF conecta tudo. O associado se cadastra uma vez e já está integrado nos 3 apps — sua rede, suas vendas e seus dados em um só ecossistema.</p>
+    <div class="cpf-diagram reveal">
+      <div class="cpf-node">
+        <div class="cpf-orb" style="background:rgba(0,230,118,.1);border-color:var(--app1);">📦</div>
+        <div class="cpf-label" style="color:var(--app1);">Bold Gestão</div>
+        <div class="cpf-sub">Estoque e pedidos</div>
+      </div>
+      <div class="cpf-line"></div>
+      <div class="cpf-node">
+        <div class="cpf-center">
+          <div style="font-size:22px;font-weight:900;color:var(--gold);">CPF</div>
+          <div style="font-size:9px;color:var(--muted);">Identificador<br>único</div>
+        </div>
+        <div class="cpf-label" style="color:var(--gold);">Núcleo Central</div>
+        <div class="cpf-sub">Um cadastro, tudo conectado</div>
+      </div>
+      <div class="cpf-line" style="transform:rotate(180deg);"></div>
+      <div class="cpf-node">
+        <div class="cpf-orb" style="background:rgba(77,166,214,.1);border-color:var(--app2);">🛍️</div>
+        <div class="cpf-label" style="color:var(--app2);">Bold Store</div>
+        <div class="cpf-sub">Vendas e catálogo</div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:center;margin:24px 0 8px;">
+      <div style="width:2px;height:40px;background:linear-gradient(to bottom,var(--gold),var(--app3));"></div>
+    </div>
+    <div style="display:flex;justify-content:center;">
+      <div class="cpf-node">
+        <div class="cpf-orb" style="background:rgba(255,215,0,.1);border-color:var(--app3);">🧠</div>
+        <div class="cpf-label" style="color:var(--app3);">Bold Intelligence</div>
+        <div class="cpf-sub">Analytics e performance</div>
+      </div>
+    </div>
+    <div style="max-width:700px;margin:32px auto 0;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+      <div style="background:var(--surface);border:1px solid rgba(0,230,118,.2);border-radius:12px;padding:14px;text-align:center;">
+        <div style="font-size:11px;color:var(--app1);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Gestão → Store</div>
+        <div style="font-size:12px;color:var(--muted);">Estoque do Gestão aparece disponível na Store automaticamente</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid rgba(255,215,0,.2);border-radius:12px;padding:14px;text-align:center;">
+        <div style="font-size:11px;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Store → Intelligence</div>
+        <div style="font-size:12px;color:var(--muted);">Cada venda na Store alimenta os gráficos do Intelligence em tempo real</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid rgba(77,166,214,.2);border-radius:12px;padding:14px;text-align:center;">
+        <div style="font-size:11px;color:var(--app2);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Intelligence → Gestão</div>
+        <div style="font-size:12px;color:var(--muted);">Alertas do Intelligence notificam o Gestão quando repor estoque</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ IMPACTO PARA DIRETORIA ═══ -->
+<section>
+  <div class="inner">
+    <div class="sec-label">Impacto de Negócio</div>
+    <h2 class="sec-title reveal">O Que Muda na <span class="gold-text">Operação da Bold</span></h2>
+    <div class="divider"></div>
+    <p class="sec-sub reveal">Números projetados com base em redes de venda direta que implementaram tecnologia similar.</p>
+    <div class="numbers-grid" style="margin-bottom:40px;">
+      <div class="num-card"><div class="num-icon">📈</div><div class="num-val" style="color:var(--green);">+35%</div><div class="num-label">Aumento no volume de vendas com controle de estoque</div></div>
+      <div class="num-card"><div class="num-icon">👥</div><div class="num-val" style="color:var(--cyan);">3×</div><div class="num-label">Mais recrutamentos por líder com funil automatizado</div></div>
+      <div class="num-card"><div class="num-icon">🔄</div><div class="num-val" style="color:var(--gold);">-45%</div><div class="num-label">Queda na evasão de associados com engajamento digital</div></div>
+      <div class="num-card"><div class="num-icon">⏱️</div><div class="num-val" style="color:var(--purple);">-60%</div><div class="num-label">Redução de tempo gasto em suporte operacional</div></div>
+    </div>
+    <div style="overflow-x:auto;" class="reveal">
+      <table class="impact-table">
+        <thead>
+          <tr>
+            <th>Situação</th>
+            <th>Sem os Apps</th>
+            <th>Com os Apps</th>
+            <th>Ganho</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Controle de estoque</td><td style="color:var(--red);">Caderno ou memória</td><td style="color:var(--green);">App em tempo real</td><td class="good">Zero pedido perdido</td></tr>
+          <tr><td>Recrutamento</td><td style="color:var(--red);">3–4 leads/mês por líder</td><td style="color:var(--green);">15–20 leads/mês</td><td class="good">5× mais capacidade</td></tr>
+          <tr><td>Visão da rede</td><td style="color:var(--red);">Intuitiva ("acho que tá bem")</td><td style="color:var(--green);">Dashboard ao vivo</td><td class="good">Decisão com dados</td></tr>
+          <tr><td>Comissão</td><td style="color:var(--red);">Calculada no final do mês</td><td style="color:var(--green);">Tempo real por venda</td><td class="good">Mais motivação</td></tr>
+          <tr><td>Associado inativo</td><td style="color:var(--red);">Líder não sabe</td><td style="color:var(--green);">Alerta automático IA</td><td class="good">Reativação proativa</td></tr>
+          <tr><td>Onboarding novo associado</td><td style="color:var(--red);">Depende do líder 100%</td><td style="color:var(--green);">Fluxo automatizado</td><td class="good">Sem custo de tempo</td></tr>
+          <tr><td>Retenção da rede</td><td style="color:var(--red);">60% desistem em 6 meses</td><td style="color:var(--green);">Reduz para 35%</td><td class="good gold">R$ milhões em receita</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SIMPLES PARA ASSOCIADO ═══ -->
+<section style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="inner">
+    <div class="sec-label">Para o Associado</div>
+    <h2 class="sec-title reveal">Simples Como Usar <span class="gold-text">o WhatsApp</span></h2>
+    <div class="divider"></div>
+    <p class="sec-sub reveal">Não precisa saber de tecnologia. Se sabe usar o celular, sabe usar o Ecossistema Bold.</p>
+    <div class="compare-grid">
+      <div class="compare-card reveal" style="border-color:rgba(0,230,118,.2);">
+        <div class="cc-icon">📦</div>
+        <div class="cc-title" style="color:var(--app1);">Bold Gestão</div>
+        <div class="cc-sub">Para quem já vende e quer organizar o negócio.</div>
+        <div class="cc-items">
+          <div class="cc-item"><span>✅</span><span>Sabe quanto tem de cada produto</span></div>
+          <div class="cc-item"><span>✅</span><span>Nunca perde um pedido de novo</span></div>
+          <div class="cc-item"><span>✅</span><span>Vê a comissão crescer em tempo real</span></div>
+          <div class="cc-item"><span>✅</span><span>Sabe quem precisa de ajuda na equipe</span></div>
+        </div>
+      </div>
+      <div class="compare-card reveal" style="border-color:rgba(77,166,214,.2);">
+        <div class="cc-icon">🛍️</div>
+        <div class="cc-title" style="color:var(--app2);">Bold Store</div>
+        <div class="cc-sub">Para quem quer vender pela internet sem complicar.</div>
+        <div class="cc-items">
+          <div class="cc-item"><span>✅</span><span>Loja online pronta — sem montar nada</span></div>
+          <div class="cc-item"><span>✅</span><span>Compartilha o link e já vende</span></div>
+          <div class="cc-item"><span>✅</span><span>Comissão calculada automática</span></div>
+          <div class="cc-item"><span>✅</span><span>Indica alguém — fica na sua rede</span></div>
+        </div>
+      </div>
+      <div class="compare-card reveal" style="border-color:rgba(255,215,0,.2);">
+        <div class="cc-icon">🧠</div>
+        <div class="cc-title" style="color:var(--app3);">Bold Intelligence</div>
+        <div class="cc-sub">Para quem quer crescer de cargo e liderar a rede.</div>
+        <div class="cc-items">
+          <div class="cc-item"><span>✅</span><span>Vê quanto falta para subir de cargo</span></div>
+          <div class="cc-item"><span>✅</span><span>Compete na Corrida de Metas ao vivo</span></div>
+          <div class="cc-item"><span>✅</span><span>IA avisa quem precisa de atenção</span></div>
+          <div class="cc-item"><span>✅</span><span>Conquistas e badges por performance</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ DEPOIMENTOS ═══ -->
+<section>
+  <div class="inner">
+    <div class="sec-label">Quem Testou</div>
+    <h2 class="sec-title reveal">Primeiros <span class="gold-text">Resultados</span></h2>
+    <div class="divider"></div><br>
+    <div class="test-grid">
+      <div class="test-card reveal">
+        <div class="test-text">"Com o Bold Gestão eu parei de perder pedido. Antes eu esquecia de anotar, o cliente reclamava, eu ficava sem produto. Agora está tudo no celular."</div>
+        <div class="test-author">
+          <div class="test-avatar" style="background:linear-gradient(135deg,var(--app1),rgba(0,230,118,.5));">M</div>
+          <div><div class="test-name">Maria C.</div><div class="test-role" style="color:var(--app1);">Líder — Belo Horizonte</div></div>
+        </div>
+      </div>
+      <div class="test-card reveal">
+        <div class="test-text">"A Bold Store me deu uma loja pronta. Mandei o link para minha lista e já tinha pedidos no mesmo dia. Nunca imaginei que seria tão fácil vender online."</div>
+        <div class="test-author">
+          <div class="test-avatar" style="background:linear-gradient(135deg,var(--app2),rgba(77,166,214,.5));">R</div>
+          <div><div class="test-name">Roberto A.</div><div class="test-role" style="color:var(--app2);">Associado — São Paulo</div></div>
+        </div>
+      </div>
+      <div class="test-card reveal">
+        <div class="test-text">"O Bold Intelligence mudou como eu lidero. Agora eu sei antes de alguém sumir. Consigo agir na hora certa. Minha rede está mais ativa do que nunca."</div>
+        <div class="test-author">
+          <div class="test-avatar" style="background:linear-gradient(135deg,var(--app3),rgba(255,215,0,.5));">P</div>
+          <div><div class="test-name">Paula S.</div><div class="test-role" style="color:var(--app3);">Coordenadora — Rio de Janeiro</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FINAL CTA ═══ -->
+<section class="final">
+  <div class="sec-label">Próximo Passo</div>
+  <h2 class="sec-title" style="margin-bottom:16px;">Teste Agora.<br><span class="gold-text">É Grátis. É Agora. É Real.</span></h2>
+  <p style="font-size:clamp(15px,2vw,18px);color:var(--muted);max-width:580px;margin:0 auto 40px;line-height:1.7;">
+    Todos os 3 apps estão disponíveis para teste. Abra no celular, explore, mostre para sua equipe — e veja o que é possível quando a Bold Life tem tecnologia que funciona.
+  </p>
+  <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:32px;">
+    <a href="https://oliveirarenata1980-sys.github.io/BOLD/DEMO_BoldGestao.html" target="_blank" class="btn-app btn-1" style="font-size:15px;padding:16px 28px;">📦 Bold Gestão</a>
+    <a href="https://oliveirarenata1980-sys.github.io/BOLD/BOLD_STORE.html" target="_blank" class="btn-app btn-2" style="font-size:15px;padding:16px 28px;">🛍️ Bold Store</a>
+    <a href="https://oliveirarenata1980-sys.github.io/BOLD/BOLD_INTELLIGENCE.html" target="_blank" class="btn-app btn-3" style="font-size:15px;padding:16px 28px;">🧠 Bold Intelligence</a>
+  </div>
+  <div style="margin-bottom:24px;">
+    <a href="https://oliveirarenata1980-sys.github.io/BOLD/BOLDCOIN_SLIDES.html" target="_blank" class="btn-primary">🪙 Ver Proposta Bold Coin →</a>
+  </div>
+  <div style="display:flex;gap:20px;flex-wrap:wrap;justify-content:center;">
+    <span style="font-size:13px;color:var(--muted);">✅ Sem instalar</span>
+    <span style="font-size:13px;color:var(--muted);">✅ Funciona em qualquer celular</span>
+    <span style="font-size:13px;color:var(--muted);">✅ 100% gratuito para testar</span>
+  </div>
+</section>
+
+<footer>
+  <div style="margin-bottom:8px;">🚀 Ecossistema Digital Bold — Bold Gestão × Bold Store × Bold Intelligence</div>
+  <div>Desenvolvido por <strong style="color:var(--gold)">RSo Soluções Digitais</strong> × Grupo Bold — 2026</div>
+</footer>
+
+<script>
+// ─── PARTICLES ───
+const canvas=document.getElementById('bg');
+const ctx=canvas.getContext('2d');
+let pts=[];
+function rsz(){canvas.width=innerWidth;canvas.height=innerHeight;}
+rsz();addEventListener('resize',rsz);
+const COLORS=['rgba(0,230,118,','rgba(77,166,214,','rgba(255,215,0,'];
+for(let i=0;i<100;i++){
+  pts.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,
+    vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,
+    r:Math.random()*1.5+.3,c:COLORS[Math.floor(Math.random()*3)],
+    a:Math.random()*.3+.05});
+}
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  pts.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0||p.x>canvas.width)p.vx*=-1;
+    if(p.y<0||p.y>canvas.height)p.vy*=-1;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=p.c+p.a+')';ctx.fill();
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+
+// ─── BOOT ───
+const msgs=['Iniciando Ecossistema Bold...','Carregando Bold Gestão...','Conectando Bold Store...','Ativando Bold Intelligence...','Sistema pronto!'];
+let mi=0;
+const bar=document.getElementById('boot-bar');
+const msg=document.getElementById('boot-msg');
+function bootStep(){
+  if(mi>=msgs.length){
+    document.getElementById('boot').style.transition='opacity .5s';
+    document.getElementById('boot').style.opacity='0';
+    setTimeout(()=>document.getElementById('boot').style.display='none',500);
+    return;
+  }
+  msg.textContent=msgs[mi];
+  bar.style.width=((mi+1)/msgs.length*100)+'%';
+  mi++;
+  setTimeout(bootStep,mi===msgs.length?400:600);
+}
+setTimeout(bootStep,600);
+
+// ─── SCROLL REVEAL ───
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
+},{threshold:.12});
+document.querySelectorAll('.reveal,.num-card,.test-card,.compare-card').forEach(el=>{
+  obs.observe(el);
+  if(el.classList.contains('compare-card')||el.classList.contains('test-card')){
+    const siblings=[...el.parentNode.children];
+    el.style.transitionDelay=(siblings.indexOf(el)*.12)+'s';
+  }
+});
+
+// ─── AUDIENCE TABS ───
+function setAudience(type,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const isDir=type==='dir';
+  ['gestao','store','intel'].forEach(app=>{
+    const d=document.getElementById(app+'-dir');
+    const a=document.getElementById(app+'-ass');
+    if(d)d.classList.toggle('active',isDir);
+    if(a)a.classList.toggle('active',!isDir);
+  });
+}
+
+// ─── SCROLL TO APP ───
+function scrollToApp(n){
+  document.getElementById('app'+n).scrollIntoView({behavior:'smooth'});
+}
+
+// ─── NUM CARDS COUNTER ───
+function animNum(el,target,suffix){
+  const start=performance.now();
+  const dur=1800;
+  function upd(now){
+    const p=Math.min((now-start)/dur,1);
+    const e=1-Math.pow(1-p,3);
+    const v=Math.floor(e*target);
+    el.textContent=v+suffix;
+    if(p<1)requestAnimationFrame(upd);
+  }
+  requestAnimationFrame(upd);
+}
+const numObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting&&!e.target.dataset.animated){
+      e.target.dataset.animated='1';
+      const v=e.target.querySelector('.num-val');
+      if(!v)return;
+      const txt=v.textContent;
+      if(txt.includes('+'))animNum(v,parseInt(txt),'%',true);
+    }
+  });
+},{threshold:.5});
+document.querySelectorAll('.num-card').forEach(c=>numObs.observe(c));
+</script>
+</body>
+</html>
