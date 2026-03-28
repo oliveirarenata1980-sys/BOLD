@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#02040a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Bold Life — Central de Materiais</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+:root{
+  --bg:#02040a;--s1:#0d1117;--s2:#161b22;
+  --blue:#4da6d6;--cyan:#00d4ff;--gold:#ffd700;--gold2:#ffaa00;
+  --green:#00e676;--red:#ff4444;--purple:#c084fc;
+  --text:#e6edf3;--muted:#7d8590;--border:#21262d;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(77,166,214,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(77,166,214,.025) 1px,transparent 1px);background-size:50px 50px;pointer-events:none;z-index:0;}
+canvas{position:fixed;inset:0;pointer-events:none;z-index:0;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(2,4,10,.95);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 20px;height:64px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--bold-dark,#1a1f4b),var(--blue));display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;flex-shrink:0;}
+.logo-text{font-size:16px;font-weight:900;letter-spacing:2px;color:var(--text);}
+.logo-text span{color:var(--gold);}
+.nav-live{display:flex;align-items:center;gap:6px;padding:6px 14px;background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.2);border-radius:50px;font-size:11px;font-weight:700;color:var(--green);}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 1.2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* HERO */
+.hero{max-width:1200px;margin:0 auto;padding:48px 20px 32px;position:relative;z-index:1;text-align:center;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:50px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.25);font-size:11px;font-weight:700;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;}
+.hero-title{font-size:clamp(28px,5vw,56px);font-weight:900;line-height:1.05;margin-bottom:12px;}
+.gold-txt{background:linear-gradient(135deg,var(--gold2),var(--gold),#fff9c0,var(--gold));background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 3s linear infinite;}
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+.hero-sub{font-size:clamp(14px,2vw,17px);color:var(--muted);max-width:560px;margin:0 auto 28px;line-height:1.7;}
+
+/* STATS */
+.stats{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:40px;}
+.stat{padding:10px 18px;background:var(--s1);border:1px solid var(--border);border-radius:50px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;}
+
+/* SEARCH */
+.search-wrap{max-width:420px;margin:0 auto 48px;position:relative;}
+.search-input{width:100%;padding:14px 20px 14px 46px;background:var(--s1);border:2px solid var(--border);border-radius:50px;color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:border-color .25s;}
+.search-input:focus{border-color:var(--blue);}
+.search-input::placeholder{color:var(--muted);}
+.search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;}
+
+/* SECTION */
+.section{max-width:1200px;margin:0 auto;padding:0 20px 48px;position:relative;z-index:1;}
+.sec-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.sec-line{flex:1;height:1px;background:var(--border);}
+.sec-tag{display:flex;align-items:center;gap:8px;padding:6px 16px;border-radius:50px;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;}
+
+/* CARDS GRID */
+.cards{display:grid;gap:16px;}
+.cards-1{grid-template-columns:1fr;}
+.cards-2{grid-template-columns:repeat(2,1fr);}
+.cards-3{grid-template-columns:repeat(3,1fr);}
+.cards-4{grid-template-columns:repeat(4,1fr);}
+
+/* CARD */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:20px;overflow:hidden;transition:all .3s;cursor:pointer;text-decoration:none;color:inherit;display:flex;flex-direction:column;position:relative;}
+.card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.4);}
+.card-top{padding:24px 24px 0;}
+.card-icon-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.card-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.card-badges{display:flex;gap:6px;flex-wrap:wrap;}
+.badge{padding:3px 10px;border-radius:50px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.badge-live{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.2);}
+.badge-new{background:rgba(255,215,0,.1);color:var(--gold);border:1px solid rgba(255,215,0,.2);}
+.badge-demo{background:rgba(77,166,214,.1);color:var(--blue);border:1px solid rgba(77,166,214,.2);}
+.badge-form{background:rgba(192,132,252,.1);color:var(--purple);border:1px solid rgba(192,132,252,.2);}
+.card-title{font-size:clamp(16px,2vw,20px);font-weight:800;margin-bottom:6px;line-height:1.2;}
+.card-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px;}
+.card-features{display:flex;flex-direction:column;gap:5px;margin-bottom:16px;}
+.card-feat{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);}
+.card-feat span:first-child{font-size:13px;}
+.card-bottom{padding:16px 24px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;margin-top:auto;background:rgba(255,255,255,.01);}
+.card-url{font-size:11px;color:var(--muted);font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:65%;}
+.btn-open{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:50px;font-size:12px;font-weight:700;border:none;cursor:pointer;font-family:inherit;transition:all .25s;text-decoration:none;white-space:nowrap;}
+.btn-copy{width:32px;height:32px;border-radius:50%;background:var(--s2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .25s;flex-shrink:0;}
+.btn-copy:hover{background:var(--border);}
+.card-accent{position:absolute;top:0;left:0;right:0;height:3px;}
+
+/* CARD VARIANTS */
+.card-gold .card-accent{background:linear-gradient(90deg,var(--gold2),var(--gold));}
+.card-gold:hover{border-color:rgba(255,215,0,.3);}
+.card-blue .card-accent{background:linear-gradient(90deg,var(--blue),var(--cyan));}
+.card-blue:hover{border-color:rgba(77,166,214,.3);}
+.card-green .card-accent{background:linear-gradient(90deg,var(--green),#00b050);}
+.card-green:hover{border-color:rgba(0,230,118,.3);}
+.card-purple .card-accent{background:linear-gradient(90deg,var(--purple),#a855f7);}
+.card-purple:hover{border-color:rgba(192,132,252,.3);}
+.card-cyan .card-accent{background:linear-gradient(90deg,var(--cyan),var(--blue));}
+.card-cyan:hover{border-color:rgba(0,212,255,.3);}
+
+/* FEATURED CARD */
+.card-featured{grid-column:1/-1;}
+.card-featured .card-top{display:flex;gap:24px;align-items:center;padding:28px;}
+.card-featured .card-info{flex:1;}
+.card-featured .card-icon{width:72px;height:72px;font-size:36px;border-radius:18px;flex-shrink:0;}
+.card-featured .card-title{font-size:clamp(20px,3vw,28px);}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--s2);border:1px solid var(--green);border-radius:50px;padding:12px 24px;font-size:13px;font-weight:700;color:var(--green);z-index:999;transition:transform .35s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);text-align:center;padding:28px 20px;font-size:12px;color:var(--muted);position:relative;z-index:1;}
+
+/* RESPONSIVE */
+@media(max-width:900px){.cards-4{grid-template-columns:repeat(2,1fr);}.cards-3{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:600px){
+  .cards-2,.cards-3,.cards-4{grid-template-columns:1fr;}
+  .card-featured .card-top{flex-direction:column;gap:16px;}
+  .hero{padding:32px 16px 24px;}
+  .section{padding:0 16px 36px;}
+}
+
+/* ANIMATIONS */
+.card{opacity:0;transform:translateY(24px);transition:opacity .5s ease,transform .5s ease,box-shadow .3s,border-color .3s;}
+.card.visible{opacity:1;transform:translateY(0);}
+.card:hover{transform:translateY(-4px)!important;}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="logo" href="#">
+      <div class="logo-icon">BL</div>
+      <div class="logo-text">BOLD <span>LIFE</span></div>
+    </a>
+    <div class="nav-live"><span class="live-dot"></span> Todos os materiais online</div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">🚀 Central de Materiais — 2026</div>
+  <h1 class="hero-title">Tudo em um<br><span class="gold-txt">só lugar.</span></h1>
+  <p class="hero-sub">Apresentações, apps, propostas e formulário de ativação — organizados e prontos para abrir em qualquer dispositivo.</p>
+  <div class="stats">
+    <div class="stat">📊 <span style="color:var(--gold)">8</span> materiais</div>
+    <div class="stat">✅ <span style="color:var(--green)">100%</span> online</div>
+    <div class="stat">📱 <span style="color:var(--blue)">Qualquer dispositivo</span></div>
+    <div class="stat">⚡ <span style="color:var(--cyan)">Sem instalar</span></div>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" id="search" type="text" placeholder="Buscar material..." oninput="filterCards(this.value)">
+  </div>
+</div>
+
+<!-- ═══════ SEÇÃO 1 — AUDITÓRIO ═══════ -->
+<div class="section">
+  <div class="sec-header">
+    <div class="sec-tag" style="background:rgba(255,215,0,.07);color:var(--gold);border:1px solid rgba(255,215,0,.2);">🎤 Para o Auditório</div>
+    <div class="sec-line"></div>
+  </div>
+  <div class="cards cards-1">
+    <a class="card card-gold card-featured" href="https://oliveirarenata1980-sys.github.io/BOLD/APN_BOLD_APRESENTACAO.html" target="_blank" data-search="apresentação auditório apn bold life slides">
+      <div class="card-accent"></div>
+      <div class="card-top">
+        <div class="card-icon" style="background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.2);">🎤</div>
+        <div class="card-info">
+          <div class="card-icon-row" style="margin-bottom:10px;">
+            <div></div>
+            <div class="card-badges">
+              <span class="badge badge-live">✅ Online</span>
+              <span class="badge badge-new">⭐ Principal</span>
+            </div>
+          </div>
+          <div class="card-title">Apresentação Oficial Bold Life <span style="color:var(--gold)">2026</span></div>
+          <div class="card-desc">A apresentação completa para o telão do auditório. 14 slides cinematográficos — da filosofia da empresa até a chamada para ação. Navega com clique, seta ou swipe.</div>
+          <div class="card-features">
+            <div class="card-feat"><span>🌐</span><span>Missão, Visão e Meta da Bold Life</span></div>
+            <div class="card-feat"><span>📈</span><span>Mercado de R$200 bilhões + citações de milionários</span></div>
+            <div class="card-feat"><span>💰</span><span>Plano de carreira: R$50 → R$39.050/mês animado</span></div>
+            <div class="card-feat"><span>✈️</span><span>Premiações: cruzeiro + França, Japão, Itália e mais</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <span class="card-url">.../APN_BOLD_APRESENTACAO.html</span>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div class="btn-copy" onclick="copyLink(event,'https://oliveirarenata1980-sys.github.io/BOLD/APN_BOLD_APRESENTACAO.html')" title="Copiar link">📋</div>
+          <span class="btn-open" style="background:linear-gradient(135deg,var(--gold2),var(--gold));color:#000;">Abrir →</span>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- ═══════ SEÇÃO 2 — APPS ═══════ -->
+<div class="section">
+  <div class="sec-header">
+    <div class="sec-tag" style="background:rgba(77,166,214,.07);color:var(--blue);border:1px solid rgba(77,166,214,.2);">📱 Os 3 Apps + Ecossistema</div>
+    <div class="sec-line"></div>
+  </div>
+  <div class="cards cards-2" style="margin-bottom:16px;">
+    <a class="card card-blue card-featured" href="https://oliveirarenata1980-sys.github.io/BOLD/ECOSSISTEMA_BOLD.html" target="_blank" data-search="ecossistema apps 3 gestão store intelligence">
+      <div class="card-accent"></div>
+      <div class="card-top">
+        <div class="card-icon-row">
+          <div class="card-icon" style="background:rgba(77,166,214,.1);border:1px solid rgba(77,166,214,.2);">🌐</div>
+          <div class="card-badges"><span class="badge badge-live">✅ Online</span></div>
+        </div>
+        <div class="card-title">Ecossistema Digital Bold</div>
+        <div class="card-desc">Apresenta os 3 apps juntos para diretoria e associados. Alterna entre visão da diretoria e do associado com um clique.</div>
+        <div class="card-features">
+          <div class="card-feat"><span>📦</span><span>Bold Gestão — o escritório</span></div>
+          <div class="card-feat"><span>🛍️</span><span>Bold Store — a loja</span></div>
+          <div class="card-feat"><span>🧠</span><span>Bold Intelligence — a torre de controle</span></div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <span class="card-url">.../ECOSSISTEMA_BOLD.html</span>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div class="btn-copy" onclick="copyLink(event,'https://oliveirarenata1980-sys.github.io/BOLD/ECOSSISTEMA_BOLD.html')" title="Copiar link">📋</div>
+          <span class="btn-open" style="background:rgba(77,166,214,.15);color:var(--cyan);border:1px solid rgba(77,166,214,.3);">Abrir →</span>
+        </div>
+      </div>
+    </a>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <a class="card card-green" href="https://oliveirarenata1980-sys.github.io/BOLD/DEMO_BoldGestao.html" target="_blank" data-search="gestão estoque pedidos comissões app demo">
+        <div class="card-accent"></div>
+        <div class="card-top">
+          <div class="card-icon-row">
+            <div class="card-icon" style="background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.2);">📦</div>
+            <div class="card-badges"><span class="badge badge-demo">Demo</span></div>
+          </div>
+          <div class="card-title" style="color:var(--green);">Bold Gestão</div>
+          <div class="card-desc">Estoque, pedidos, comissões e rede. O escritório digital do associado.</div>
+        </div>
+        <div class="card-bottom">
+          <span class="card-url">.../DEMO_BoldGestao.html</span>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <div class="btn-copy" onclick="copyLink(event,'https://oliveirarenata1980-sys.github.io/BOLD/DEMO_BoldGestao.html')">📋</div>
+            <span class="btn-open" style="background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.2);">Abrir →</span>
+          </div>
+        </div>
+      </a>
+      <a class="card card-blue" href="https://oliveirarenata1980-sys.github.io/BOLD/BOLD_STORE.html" target="_blank" data-search="store loja cpf catálogo produtos compra venda">
+        <div class="card-accent"></div>
+        <div class="card-top">
+          <div class="card-icon-row">
+            <div class="card-icon" style="background:rgba(77,166,214,.1);border:1px solid rgba(77,166,214,.2);">🛍️</div>
+            <div class="card-badges"><span class="badge badge-demo">Demo</span></div>
+          </div>
+          <div class="card-title" style="color:var(--cyan);">Bold Store</div>
+          <div class="card-desc">Loja digital vinculada ao CPF. Catálogo, carrinho e comissão automática.</div>
+        </div>
+        <div class="card-bottom">
+          <span class="card-url">.../BOLD_STORE.html</span>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <div class="btn-copy" onclick="copyLink(event,'https://oliveirarenata1980-sys.github.io/BOLD/BOLD_STORE.html')">📋</div>
+            <span class="btn-open" style="background:rgba(77,166,214,.1);color:var(--cyan);border:1px solid rgba(77,166,214,.2);">Abrir →</span>
+          </div>
+        </div>
+      </a>
+      <a class="card card-gold" href="https://oliveirarenata1980-sys.github.io/BOLD/BOLD_INTELLIGENCE.html" target="_blank" data-search="intelligence dashboard corrida metas rede analytics ia">
+        <div class="card-accent"></div>
+        <div class="card-top">
+          <div class="card-icon-row">
+            <div class="card-icon" style="background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.2);">🧠</div>
+            <div class="card-badges"><span class="badge badge-new">⭐ Destaque</span></div>
+          </div>
+          <div class="card-title" style="color:var(--gold);">Bold Intelligence</div>
+          <div class="card-desc">Mission Control ao vivo. Corrida de metas, mapa da rede e IA de insights.</div>
+        </div>
+        <div class="card-bottom">
+          <span class="card-url">.../BOLD_INTELLIGENCE.html</span>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <div class="btn-copy" onclick="copyLink(event,'https://oliveirarenata1980-sys.github.io/BOLD/BOLD_INTELLIGENCE.html')">📋</div>
+            <span class="btn-open" style="background:rgba(255,215,0,.1);color:var(--gold);border:1px solid rgba(255,215,0,.2);">Abrir →</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ SEÇÃO 3 — BOLD COIN ═══════ -->
+<div class="section">
+  <div class="sec-header">
+    <div class="sec-tag" style="background:rgba(255,215,0,.07);color:var(--gold);border:1px solid rgba(255,215,0,.2);">🪙 Bold Coin</div>
+    <div class="sec-line"></div>
+  </div>
+  <div class="cards cards-2">
+    <a class="card card-gold" href="https://oliveirarenata1980-sys.github.io/BOLD/BOLDCOIN_SLIDES.html" target="_blank" data-search="bold coin slides proposta diretoria moeda">
+      <div class="card-accent"></div>
+      <div class="card-top">
+        <div class="card-icon-row">
+          <div class="card-icon" style="background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.2);">📊</div>
+          <div class="card-badges"><span class="badge badge-new">Proposta</span></div>
+        </div>
+        <div class="card-title">Slides Bold Coin</div>
+        <div class="card-desc">Apresentação de 12 slides da proposta Bold Coin para a diretoria. Mercado, fases, receita e visão Bold Bank 2029.</div>
+        <div class="card-features">
+          <div class="card-feat"><span>💰</span><span>R$28 milhões retidos no ecossistema</span></div>
+          <div class="card-feat"><span>🏦</span><span>Visão Bold Bank 2029</span></div>
+          <div class="card-feat"><span>📈</span><span>Receita RSo: R$381k em 24 meses</span></div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <span class="card-url">.../BOLDCOIN_SLIDES.html</span>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div class="btn-copy" onclick="copyLink(event,'https://oliveirarenata1980-sys.github.io/BOLD/BOLDCOIN_SLIDES.html')">📋</div>
+          <span class="btn-open" style="background:rgba(255,215,0,.1);color:var(--gold);border:1px solid rgba(255,215,0,.2);">Abrir →</span>
+        </div>
+      </div>
+    </a>
+    <a class="card card-cyan" href="https://oliveirarenata1980-sys.github.io/BOLD/BOLDCOIN_LANDING.html" target="_blank" data-search="bold coin landing associado conversão moeda calculadora">
+      <div class="card-accent"></div>
+      <div class="card-top">
+        <div class="card-icon-row">
+          <div class="card-icon" style="background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.2);">🪙</div>
+          <div class="card-badges"><span class="badge badge-live">Conversão</span></div>
+        </div>
+        <div class="card-title">Landing Bold Coin</div>
+        <div class="card-desc">Página para converter associados à Bold Coin. Calculadora interativa, contador ao vivo e chamada para ação.</div>
+        <div class="card-features">
+          <div class="card-feat"><span>🧮</span><span>Calculadora: quanto você vai ganhar</span></div>
+          <div class="card-feat"><span>📊</span><span>Contador ao vivo de associados</span></div>
+          <div class="card-feat"><span>⏱️</span><span>Timer de urgência + bônus de lançamento</span></div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <span class="card-url">.../BOLDCOIN_LANDING.html</span>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div class="btn-copy" onclick="copyLink(event,'https://oliveirarenata1980-sys.github.io/BOLD/BOLDCOIN_LANDING.html')">📋</div>
+          <span class="btn-open" style="background:rgba(0,212,255,.1);color:var(--cyan);border:1px solid rgba(0,212,255,.2);">Abrir →</span>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- ═══════ SEÇÃO 4 — FORMULÁRIO ═══════ -->
+<div class="section">
+  <div class="sec-header">
+    <div class="sec-tag" style="background:rgba(192,132,252,.07);color:var(--purple);border:1px solid rgba(192,132,252,.2);">📝 Formulário de Ativação</div>
+    <div class="sec-line"></div>
+  </div>
+  <div class="cards cards-1">
+    <a class="card card-purple card-featured" href="https://oliveirarenata1980-sys.github.io/BOLD/FORMULARIO_ATIVACAO.html" target="_blank" data-search="formulário ativação cadastro associado whatsapp google sheets">
+      <div class="card-accent"></div>
+      <div class="card-top">
+        <div class="card-icon" style="background:rgba(192,132,252,.1);border:1px solid rgba(192,132,252,.2);">📝</div>
+        <div class="card-info">
+          <div class="card-icon-row" style="margin-bottom:10px;">
+            <div></div>
+            <div class="card-badges">
+              <span class="badge badge-live">✅ Online</span>
+              <span class="badge badge-form">💾 Salva dados</span>
+            </div>
+          </div>
+          <div class="card-title">Formulário de <span style="color:var(--purple)">Ativação</span> — Dia do Auditório</div>
+          <div class="card-desc">Formulário em 5 passos para novos associados preencherem no celular durante o evento. Dados salvos automaticamente no Google Sheets e enviados por WhatsApp.</div>
+          <div class="card-features">
+            <div class="card-feat"><span>📋</span><span>5 passos guiados: dados, endereço, rede, plano e confirmação</span></div>
+            <div class="card-feat"><span>📊</span><span>Salva na planilha Google automaticamente</span></div>
+            <div class="card-feat"><span>💬</span><span>Envia resumo por WhatsApp para 31 99703-5583</span></div>
+            <div class="card-feat"><span>🖨️</span><span>Gera comprovante para imprimir na hora</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <span class="card-url">.../FORMULARIO_ATIVACAO.html</span>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div class="btn-copy" onclick="copyLink(event,'https://oliveirarenata1980-sys.github.io/BOLD/FORMULARIO_ATIVACAO.html')" title="Copiar link">📋</div>
+          <span class="btn-open" style="background:linear-gradient(135deg,var(--purple),#a855f7);color:#fff;">Abrir →</span>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- ═══════ QRCODE SECTION ═══════ -->
+<div class="section">
+  <div class="sec-header">
+    <div class="sec-tag" style="background:rgba(0,230,118,.07);color:var(--green);border:1px solid rgba(0,230,118,.2);">📲 Compartilhar</div>
+    <div class="sec-line"></div>
+  </div>
+  <div style="background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:28px;text-align:center;">
+    <div style="font-size:14px;color:var(--muted);margin-bottom:16px;">Envie este painel completo para sua equipe e associados</div>
+    <div style="font-size:22px;font-weight:900;color:var(--gold);word-break:break-all;margin-bottom:20px;font-family:monospace;">
+      oliveirarenata1980-sys.github.io/BOLD
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+      <button onclick="copyLink(event,'https://oliveirarenata1980-sys.github.io/BOLD/')" style="padding:12px 24px;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.3);color:var(--gold);border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .3s;">📋 Copiar Link do Painel</button>
+      <button onclick="shareAll()" style="padding:12px 24px;background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.3);color:var(--green);border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .3s;">📤 Compartilhar</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div style="margin-bottom:6px;font-weight:700;color:var(--text);">BOLD LIFE — Central de Materiais 2026</div>
+  <div>Desenvolvido por <strong style="color:var(--gold)">RSo Soluções Digitais</strong> — Renata · Minas Gerais</div>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✅ Link copiado!</div>
+
+<script>
+// PARTICLES
+const cv=document.getElementById('c'),cx=cv.getContext('2d');
+function rsz(){cv.width=innerWidth;cv.height=innerHeight;}rsz();addEventListener('resize',rsz);
+const pts=[];
+const COLS=['rgba(255,215,0,','rgba(77,166,214,','rgba(0,230,118,'];
+for(let i=0;i<80;i++)pts.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,vx:(Math.random()-.5)*.2,vy:(Math.random()-.5)*.2,r:Math.random()*1.2+.3,c:COLS[i%3],a:Math.random()*.2+.05});
+function draw(){cx.clearRect(0,0,cv.width,cv.height);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>cv.width)p.vx*=-1;if(p.y<0||p.y>cv.height)p.vy*=-1;cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);cx.fillStyle=p.c+p.a+')';cx.fill();});requestAnimationFrame(draw);}
+draw();
+
+// REVEAL CARDS
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*80);}});
+},{threshold:.1});
+document.querySelectorAll('.card').forEach((c,i)=>{c.style.transitionDelay=(i%4*.08)+'s';obs.observe(c);});
+
+// COPY LINK
+function copyLink(e,url){
+  e.preventDefault();e.stopPropagation();
+  navigator.clipboard.writeText(url).then(()=>showToast('✅ Link copiado!')).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=url;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast('✅ Link copiado!');
+  });
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// SHARE
+function shareAll(){
+  const url='https://oliveirarenata1980-sys.github.io/BOLD/';
+  const text='📱 Materiais Bold Life 2026\n\nAcesse todos os apps, apresentações e formulário de ativação:\n'+url;
+  if(navigator.share){navigator.share({title:'Bold Life — Materiais',text,url}).catch(()=>{});}
+  else{copyLink({preventDefault:()=>{},stopPropagation:()=>{}},url);}
+}
+
+// SEARCH
+function filterCards(q){
+  const term=q.toLowerCase().trim();
+  document.querySelectorAll('.card').forEach(c=>{
+    const search=c.getAttribute('data-search')||'';
+    const title=c.querySelector('.card-title')?.textContent||'';
+    const desc=c.querySelector('.card-desc')?.textContent||'';
+    const match=!term||(search+title+desc).toLowerCase().includes(term);
+    c.style.display=match?'':'none';
+    c.closest('.cards')?.querySelectorAll('.card').forEach(()=>{});
+  });
+}
+</script>
+</body>
+</html>
