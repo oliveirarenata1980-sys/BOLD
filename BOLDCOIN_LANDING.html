@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#02040a">
+<title>Bold Coin — A Moeda que Paga Você Por Vender</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+:root{
+  --bg:#02040a;--surface:#0d1117;--surface2:#161b22;
+  --blue:#4da6d6;--cyan:#00d4ff;--gold:#ffd700;--gold2:#ffaa00;
+  --green:#00e676;--red:#ff4444;--purple:#c084fc;
+  --text:#e6edf3;--muted:#7d8590;--border:#21262d;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;}
+
+/* GRID BG */
+body::before{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+  background-image:linear-gradient(rgba(77,166,214,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(77,166,214,.03) 1px,transparent 1px);
+  background-size:50px 50px;pointer-events:none;z-index:0;
+}
+
+/* PARTICLES */
+#particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+
+/* HERO */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:80px 24px 60px;
+  position:relative;z-index:1;
+}
+
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 20px;border-radius:50px;
+  background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.3);
+  font-size:12px;font-weight:700;color:var(--gold);
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:32px;
+  animation:fadeDown .6s ease both;
+}
+
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:blink 1.2s infinite;}
+
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-16px) rotate(2deg)}}
+@keyframes coinSpin{0%{transform:rotateY(0deg)}50%{transform:rotateY(180deg)}100%{transform:rotateY(360deg)}}
+@keyframes ringPulse{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.3);opacity:0}}
+@keyframes countUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* COIN */
+.coin-wrap{position:relative;margin:0 auto 40px;width:160px;height:160px;animation:float 4s ease-in-out infinite;}
+.coin-main{
+  width:160px;height:160px;border-radius:50%;
+  background:conic-gradient(var(--gold2),var(--gold),#fff9c4,var(--gold),var(--gold2),var(--gold));
+  display:flex;align-items:center;justify-content:center;
+  font-size:56px;font-weight:900;color:#1a1000;
+  box-shadow:0 0 60px rgba(255,215,0,.6),0 0 120px rgba(255,215,0,.2),inset 0 4px 8px rgba(255,255,255,.4);
+  position:relative;z-index:2;animation:coinSpin 6s linear infinite;
+  text-shadow:0 2px 4px rgba(0,0,0,.3);
+}
+.coin-ring{
+  position:absolute;border-radius:50%;border:2px solid rgba(255,215,0,.4);
+  animation:ringPulse 2s ease-in-out infinite;
+}
+.coin-ring-1{inset:-16px;animation-delay:0s;}
+.coin-ring-2{inset:-32px;animation-delay:.5s;}
+.coin-ring-3{inset:-48px;animation-delay:1s;}
+
+/* TITLE */
+.hero-title{
+  font-size:clamp(36px,7vw,80px);font-weight:900;line-height:1.05;
+  margin-bottom:20px;animation:fadeUp .8s .2s ease both;
+}
+.hero-title .line2{
+  background:linear-gradient(135deg,var(--gold),var(--gold2),#fff9c4,var(--gold));
+  background-size:200% auto;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;animation:shimmer 3s linear infinite;
+}
+.hero-sub{
+  font-size:clamp(16px,2.5vw,22px);color:var(--muted);max-width:620px;
+  line-height:1.6;margin:0 auto 40px;animation:fadeUp .8s .4s ease both;
+}
+
+/* LIVE COUNTER */
+.live-bar{
+  display:flex;gap:24px;flex-wrap:wrap;justify-content:center;
+  margin-bottom:40px;animation:fadeUp .8s .5s ease both;
+}
+.live-stat{
+  background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.2);
+  border-radius:12px;padding:12px 20px;text-align:center;min-width:130px;
+}
+.live-stat-val{font-size:24px;font-weight:900;color:var(--gold);}
+.live-stat-label{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* CTA */
+.btn-primary{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:18px 40px;border-radius:50px;
+  background:linear-gradient(135deg,var(--gold2),var(--gold));
+  color:#000;font-size:16px;font-weight:800;
+  border:none;cursor:pointer;text-decoration:none;
+  box-shadow:0 0 30px rgba(255,215,0,.4);
+  transition:all .3s;animation:fadeUp .8s .6s ease both;
+  letter-spacing:.5px;
+}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 0 50px rgba(255,215,0,.7);}
+
+.btn-secondary{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:14px 28px;border-radius:50px;
+  background:transparent;border:1px solid var(--border);
+  color:var(--muted);font-size:14px;font-weight:600;
+  cursor:pointer;text-decoration:none;transition:all .3s;
+  margin-left:12px;
+}
+.btn-secondary:hover{border-color:var(--blue);color:var(--blue);}
+
+/* SECTIONS */
+section{position:relative;z-index:1;padding:80px 24px;}
+.section-inner{max-width:1000px;margin:0 auto;}
+.section-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;text-align:center;}
+.section-title{font-size:clamp(28px,5vw,48px);font-weight:900;text-align:center;line-height:1.1;margin-bottom:16px;}
+.section-sub{font-size:clamp(14px,2vw,17px);color:var(--muted);text-align:center;max-width:600px;margin:0 auto 48px;line-height:1.7;}
+
+/* DIVIDER */
+.divider{width:60px;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:2px;margin:16px auto 0;}
+
+/* PROBLEM SECTION */
+.problem-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:800px;margin:0 auto;}
+.problem-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:24px;
+}
+.problem-card.bad{border-color:rgba(255,68,68,.3);background:rgba(255,68,68,.03);}
+.problem-card.good{border-color:rgba(255,215,0,.3);background:rgba(255,215,0,.03);}
+.prob-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;}
+.prob-title.red{color:var(--red);}
+.prob-title.gold{color:var(--gold);}
+.prob-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:13px;line-height:1.5;color:var(--muted);}
+.prob-item strong{color:var(--text);}
+
+/* HOW IT WORKS */
+.steps{display:flex;flex-direction:column;gap:0;max-width:700px;margin:0 auto;}
+.step{
+  display:flex;gap:24px;align-items:flex-start;
+  padding:24px 0;border-bottom:1px solid var(--border);
+  opacity:0;transform:translateX(-30px);transition:all .6s ease;
+}
+.step.visible{opacity:1;transform:translateX(0);}
+.step:last-child{border-bottom:none;}
+.step-num{
+  width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold2),var(--gold));
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:900;color:#000;flex-shrink:0;
+  box-shadow:0 0 20px rgba(255,215,0,.3);
+}
+.step-content{}
+.step-title{font-size:18px;font-weight:700;margin-bottom:6px;}
+.step-desc{font-size:14px;color:var(--muted);line-height:1.6;}
+.step-example{
+  margin-top:10px;padding:10px 14px;
+  background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.15);
+  border-radius:8px;font-size:13px;color:var(--text);
+}
+
+/* EARN GRID */
+.earn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;}
+.earn-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:24px;text-align:center;
+  transition:all .3s;opacity:0;transform:translateY(20px);
+}
+.earn-card.visible{opacity:1;transform:translateY(0);}
+.earn-card:hover{border-color:var(--gold);transform:translateY(-4px);box-shadow:0 8px 30px rgba(255,215,0,.1);}
+.earn-icon{font-size:36px;margin-bottom:12px;}
+.earn-title{font-size:14px;font-weight:700;margin-bottom:6px;}
+.earn-val{font-size:22px;font-weight:900;color:var(--gold);margin-bottom:4px;}
+.earn-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+
+/* CALCULATOR */
+.calc-box{
+  background:var(--surface);border:1px solid rgba(255,215,0,.3);
+  border-radius:24px;padding:40px;max-width:700px;margin:0 auto;
+  box-shadow:0 0 60px rgba(255,215,0,.07);
+}
+.calc-title{font-size:22px;font-weight:800;margin-bottom:8px;text-align:center;}
+.calc-sub{font-size:14px;color:var(--muted);text-align:center;margin-bottom:32px;}
+
+.calc-label{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px;}
+.calc-input{
+  width:100%;padding:16px 20px;
+  background:var(--surface2);border:2px solid var(--border);
+  border-radius:12px;color:var(--text);font-size:20px;font-weight:700;
+  font-family:inherit;transition:border-color .3s;outline:none;
+}
+.calc-input:focus{border-color:var(--gold);}
+
+.calc-result{
+  margin-top:24px;display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:12px;
+}
+.calc-res-card{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:12px;padding:16px;text-align:center;transition:all .3s;
+}
+.calc-res-card.highlight-gold{border-color:rgba(255,215,0,.4);background:rgba(255,215,0,.05);}
+.calc-res-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+.calc-res-val{font-size:24px;font-weight:900;}
+.calc-res-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+
+.calc-bar-wrap{margin-top:24px;}
+.calc-bar-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px;}
+.calc-bar{height:10px;background:var(--surface2);border-radius:5px;overflow:hidden;}
+.calc-bar-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--gold2),var(--gold));transition:width .8s ease;box-shadow:0 0 10px rgba(255,215,0,.5);}
+
+.calc-msg{
+  margin-top:20px;padding:16px 20px;
+  background:rgba(0,230,118,.05);border:1px solid rgba(0,230,118,.2);
+  border-radius:12px;font-size:14px;color:var(--text);line-height:1.6;text-align:center;
+}
+
+/* SPENDING */
+.spend-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;}
+.spend-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:24px;
+  opacity:0;transform:translateY(20px);transition:all .6s ease;
+}
+.spend-card.visible{opacity:1;transform:translateY(0);}
+.spend-card:hover{border-color:var(--cyan);transform:translateY(-4px);}
+.spend-top{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.spend-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.spend-name{font-size:15px;font-weight:700;}
+.spend-sub{font-size:12px;color:var(--muted);}
+.spend-items{display:flex;flex-direction:column;gap:6px;}
+.spend-item{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.spend-item:last-child{border-bottom:none;}
+.spend-price{font-weight:700;color:var(--gold);}
+
+/* PROGRESSION */
+.prog-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;}
+.prog-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;padding:20px;text-align:center;
+  transition:all .3s;position:relative;overflow:hidden;
+}
+.prog-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--gold2),var(--gold));
+}
+.prog-cargo{font-size:12px;font-weight:700;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+.prog-royalty{font-size:28px;font-weight:900;color:var(--green);}
+.prog-label{font-size:11px;color:var(--muted);margin-top:4px;}
+
+/* URGENCY */
+.urgency-section{
+  background:linear-gradient(135deg,rgba(255,215,0,.05),rgba(255,170,0,.02));
+  border-top:1px solid rgba(255,215,0,.1);border-bottom:1px solid rgba(255,215,0,.1);
+}
+.countdown{display:flex;gap:16px;justify-content:center;margin:32px 0;}
+.countdown-item{text-align:center;}
+.countdown-val{
+  width:80px;height:80px;background:var(--surface2);border:2px solid rgba(255,215,0,.3);
+  border-radius:16px;display:flex;align-items:center;justify-content:center;
+  font-size:32px;font-weight:900;color:var(--gold);
+  box-shadow:0 0 20px rgba(255,215,0,.1);
+}
+.countdown-label{font-size:11px;color:var(--muted);margin-top:6px;letter-spacing:1px;text-transform:uppercase;}
+
+.progress-wrap{max-width:600px;margin:0 auto;}
+.progress-header{display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;}
+.progress-bar-bg{height:12px;background:var(--surface2);border-radius:6px;overflow:hidden;}
+.progress-bar-fill{
+  height:100%;border-radius:6px;
+  background:linear-gradient(90deg,var(--gold2),var(--gold));
+  box-shadow:0 0 12px rgba(255,215,0,.5);
+  transition:width 2s ease;
+}
+
+/* OBJECTIONS */
+.obj-list{display:flex;flex-direction:column;gap:12px;max-width:700px;margin:0 auto;}
+.obj-item{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;overflow:hidden;cursor:pointer;
+}
+.obj-q{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:18px 20px;font-size:15px;font-weight:600;
+  transition:background .2s;
+}
+.obj-q:hover{background:var(--surface2);}
+.obj-icon{font-size:18px;transition:transform .3s;color:var(--gold);}
+.obj-item.open .obj-icon{transform:rotate(45deg);}
+.obj-a{
+  max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s;
+  font-size:14px;color:var(--muted);line-height:1.7;padding:0 20px;
+  border-top:0 solid var(--border);
+}
+.obj-item.open .obj-a{max-height:200px;padding:16px 20px;border-top-width:1px;}
+
+/* SOCIAL PROOF */
+.proof-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;}
+.proof-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:24px;
+}
+.proof-text{font-size:14px;color:var(--text);line-height:1.7;margin-bottom:16px;font-style:italic;}
+.proof-author{display:flex;align-items:center;gap:12px;}
+.proof-avatar{
+  width:40px;height:40px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold2),var(--gold));
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:900;color:#000;flex-shrink:0;
+}
+.proof-name{font-size:13px;font-weight:700;}
+.proof-role{font-size:11px;color:var(--gold);}
+
+/* FINAL CTA */
+.final-cta{
+  text-align:center;padding:100px 24px;
+  background:radial-gradient(ellipse at center,rgba(255,215,0,.06) 0%,transparent 70%);
+  position:relative;z-index:1;
+}
+.final-coin{font-size:80px;animation:float 3s ease-in-out infinite;display:block;margin-bottom:24px;}
+
+/* FOOTER */
+footer{
+  text-align:center;padding:32px 24px;
+  border-top:1px solid var(--border);
+  font-size:12px;color:var(--muted);position:relative;z-index:1;
+}
+
+/* FLOATING COINS ANIMATION */
+.floating-coin{
+  position:fixed;pointer-events:none;z-index:0;
+  font-size:20px;opacity:0;
+  animation:floatUp 4s ease-in forwards;
+}
+@keyframes floatUp{
+  0%{opacity:.8;transform:translateY(0) rotate(0deg);}
+  100%{opacity:0;transform:translateY(-300px) rotate(360deg);}
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .problem-grid{grid-template-columns:1fr;}
+  .calc-result{grid-template-columns:1fr 1fr;}
+  .countdown-val{width:60px;height:60px;font-size:24px;}
+  .hero-title{font-size:38px;}
+  section{padding:60px 16px;}
+}
+
+/* SCROLL ANIMATIONS */
+.reveal{opacity:0;transform:translateY(30px);transition:all .7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+<canvas id="particles"></canvas>
+
+<!-- ═══════════ HERO ═══════════ -->
+<section class="hero">
+  <div class="hero-badge"><span class="live-dot"></span> Lançamento Oficial — Bold Life 2026</div>
+  <div class="coin-wrap">
+    <div class="coin-ring coin-ring-1"></div>
+    <div class="coin-ring coin-ring-2"></div>
+    <div class="coin-ring coin-ring-3"></div>
+    <div class="coin-main">₿C</div>
+  </div>
+  <h1 class="hero-title">
+    A Moeda que<br>
+    <span class="line2">Paga Você Por Vender</span>
+  </h1>
+  <p class="hero-sub">Cada venda, cada indicação, cada meta batida — vira Bold Coin na sua carteira. Use para pagar seus produtos e nunca mais tirar dinheiro do bolso.</p>
+  <div class="live-bar">
+    <div class="live-stat">
+      <div class="live-stat-val" id="lv-associados">12.847</div>
+      <div class="live-stat-label">Associados já acumulando</div>
+    </div>
+    <div class="live-stat">
+      <div class="live-stat-val" id="lv-coins">4.293.180</div>
+      <div class="live-stat-label">Bold Coins distribuídas</div>
+    </div>
+    <div class="live-stat">
+      <div class="live-stat-val" id="lv-valor">R$429.318</div>
+      <div class="live-stat-label">Em créditos gerados</div>
+    </div>
+  </div>
+  <div>
+    <a href="#calculadora" class="btn-primary">🪙 Calcule Quanto Você Vai Ganhar</a>
+    <a href="#como-funciona" class="btn-secondary">Ver como funciona ↓</a>
+  </div>
+</section>
+
+<!-- ═══════════ PROBLEMA ═══════════ -->
+<section style="padding:60px 24px;">
+  <div class="section-inner">
+    <div class="section-label">O Cenário Atual</div>
+    <h2 class="section-title reveal">Você Vende. A Bold Paga. O Dinheiro <span style="color:var(--red)">Some.</span></h2>
+    <div class="divider"></div>
+    <p class="section-sub reveal">Isso acontece com a maioria dos associados. Mas agora existe uma solução.</p>
+    <div class="problem-grid">
+      <div class="problem-card bad reveal">
+        <div class="prob-title red">❌ Como Era Antes</div>
+        <div class="prob-item">💸 <span>Você vendia R$1.000 e recebia <strong>só a comissão</strong></span></div>
+        <div class="prob-item">🏃 <span>O dinheiro ia para <strong>fora da Bold</strong></span></div>
+        <div class="prob-item">🔄 <span>Você precisava <strong>tirar do bolso</strong> para repor estoque</span></div>
+        <div class="prob-item">😔 <span>Sem <strong>benefício extra</strong> por ser fiel à rede</span></div>
+        <div class="prob-item">📉 <span>Cada real da comissão <strong>financiava a concorrência</strong></span></div>
+      </div>
+      <div class="problem-card good reveal">
+        <div class="prob-title gold">✅ Como É Agora — Com Bold Coin</div>
+        <div class="prob-item">🪙 <span>Você vende R$1.000 e recebe <strong>comissão + 120 BC</strong></span></div>
+        <div class="prob-item">🛍️ <span>Usa os BC para <strong>pagar produtos</strong> na Bold Store</span></div>
+        <div class="prob-item">🔄 <span>Reabastece o estoque <strong>sem gastar do próprio bolso</strong></span></div>
+        <div class="prob-item">🏆 <span><strong>Bônus por ser fiel</strong> — quem fica, acumula mais</span></div>
+        <div class="prob-item">📈 <span>Cada venda gera <strong>mais poder de compra</strong> na Bold</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ COMO FUNCIONA ═══════════ -->
+<section id="como-funciona" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="section-inner">
+    <div class="section-label">Simples Assim</div>
+    <h2 class="section-title reveal">Como Funciona em <span style="color:var(--gold)">3 Passos</span></h2>
+    <div class="divider"></div><br>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Você Faz o Que Já Faz</div>
+          <div class="step-desc">Continue vendendo, indicando e participando da rede como sempre fez. Não precisa mudar nada na sua rotina.</div>
+          <div class="step-example">💡 Exemplo: Vendeu R$500 essa semana → automático, sem fazer nada diferente.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">A Bold Coin Cai na Sua Carteira</div>
+          <div class="step-desc">Cada ação gera Bold Coins automaticamente. Você abre o app e vê o saldo crescendo em tempo real.</div>
+          <div class="step-example">💡 Exemplo: R$500 em vendas → 50 BC creditados na hora. Indicou alguém → mais 50 BC.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Usa Para Pagar Seus Produtos</div>
+          <div class="step-desc">Na Bold Store, você escolhe pagar com BC, com real ou metade de cada. Seu estoque nunca mais vai custar o mesmo.</div>
+          <div class="step-example">💡 Exemplo: Produto de R$180 → paga R$90 + 750 BC. Economizou R$90 do próprio bolso.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ COMO GANHAR ═══════════ -->
+<section>
+  <div class="section-inner">
+    <div class="section-label">Formas de Ganhar</div>
+    <h2 class="section-title reveal">Tudo Que Você Faz <span style="color:var(--gold)">Gera Moeda</span></h2>
+    <div class="divider"></div>
+    <p class="section-sub reveal">6 formas de acumular Bold Coin — e você provavelmente já faz a maioria.</p>
+    <div class="earn-grid">
+      <div class="earn-card">
+        <div class="earn-icon">🛒</div>
+        <div class="earn-title">Vendas</div>
+        <div class="earn-val">10 BC / R$100</div>
+        <div class="earn-desc">Por cada R$100 em produtos vendidos. Quanto mais vende, maior o bônus.</div>
+      </div>
+      <div class="earn-card">
+        <div class="earn-icon">👥</div>
+        <div class="earn-title">Recrutamento</div>
+        <div class="earn-val">100 BC</div>
+        <div class="earn-desc">Por cada novo associado que você indica e que faz a primeira venda.</div>
+      </div>
+      <div class="earn-card">
+        <div class="earn-icon">🎯</div>
+        <div class="earn-title">Meta Batida</div>
+        <div class="earn-val">50–1.000 BC</div>
+        <div class="earn-desc">Bateu a meta mensal? Ganhou. Superou? Ganhou ainda mais.</div>
+      </div>
+      <div class="earn-card">
+        <div class="earn-icon">📱</div>
+        <div class="earn-title">Login Diário</div>
+        <div class="earn-val">2 BC / dia</div>
+        <div class="earn-desc">Só de abrir o app todo dia você acumula até 60 BC por mês.</div>
+      </div>
+      <div class="earn-card">
+        <div class="earn-icon">⭐</div>
+        <div class="earn-title">Cargo na Rede</div>
+        <div class="earn-val">Royalty mensal</div>
+        <div class="earn-desc">Coordenadores e acima ganham % em BC sobre cada venda da equipe.</div>
+      </div>
+      <div class="earn-card">
+        <div class="earn-icon">🎓</div>
+        <div class="earn-title">Treinamentos</div>
+        <div class="earn-val">10–30 BC</div>
+        <div class="earn-desc">Assista aos módulos de treinamento da Bold e ganhe moedas por aprender.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CALCULADORA ═══════════ -->
+<section id="calculadora" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="section-inner">
+    <div class="section-label">Ferramenta Interativa</div>
+    <h2 class="section-title reveal">Quanto <span style="color:var(--gold)">Você Vai Ganhar?</span></h2>
+    <div class="divider"></div>
+    <p class="section-sub reveal">Digite sua venda mensal e veja em tempo real quanto em Bold Coin você acumula.</p>
+    <div class="calc-box reveal">
+      <div class="calc-title">🪙 Calculadora Bold Coin</div>
+      <div class="calc-sub">Arraste ou digite o valor das suas vendas mensais</div>
+      <div class="calc-label">Suas vendas mensais em reais:</div>
+      <input type="range" id="calc-slider" min="100" max="10000" value="1000" step="100"
+        style="width:100%;margin-bottom:12px;accent-color:var(--gold);">
+      <input class="calc-input" type="number" id="calc-input" value="1000" placeholder="Ex: 1000">
+      <div class="calc-result">
+        <div class="calc-res-card highlight-gold">
+          <div class="calc-res-label">Bold Coins Ganhos</div>
+          <div class="calc-res-val" id="res-bc" style="color:var(--gold)">120 BC</div>
+          <div class="calc-res-sub">por mês</div>
+        </div>
+        <div class="calc-res-card">
+          <div class="calc-res-label">Valor em Crédito</div>
+          <div class="calc-res-val" id="res-val" style="color:var(--green)">R$12</div>
+          <div class="calc-res-sub">para gastar em produtos</div>
+        </div>
+        <div class="calc-res-card">
+          <div class="calc-res-label">Em 12 Meses</div>
+          <div class="calc-res-val" id="res-anual" style="color:var(--cyan)">R$144</div>
+          <div class="calc-res-sub">acumulado no ano</div>
+        </div>
+      </div>
+      <div class="calc-bar-wrap">
+        <div class="calc-bar-label">
+          <span>Bônus de escala:</span>
+          <span id="bonus-label" style="color:var(--gold)">+20%</span>
+        </div>
+        <div class="calc-bar"><div class="calc-bar-fill" id="bonus-bar" style="width:20%"></div></div>
+      </div>
+      <div class="calc-msg" id="calc-msg">
+        🎉 Vendendo R$1.000/mês você ganha <strong style="color:var(--gold)">120 BC = R$12 em crédito Bold</strong> todo mês — além da sua comissão normal!
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ ONDE GASTAR ═══════════ -->
+<section>
+  <div class="section-inner">
+    <div class="section-label">Onde Usar</div>
+    <h2 class="section-title reveal">Seu ₿C Aceito em <span style="color:var(--gold)">Todo o Ecossistema</span></h2>
+    <div class="divider"></div>
+    <p class="section-sub reveal">Você escolhe onde quer usar — sempre dentro da Bold, sempre a seu favor.</p>
+    <div class="spend-grid">
+      <div class="spend-card">
+        <div class="spend-top">
+          <div class="spend-icon" style="background:rgba(255,215,0,.1);">🛍️</div>
+          <div><div class="spend-name">Bold Store</div><div class="spend-sub">Pague com BC</div></div>
+        </div>
+        <div class="spend-items">
+          <div class="spend-item"><span>Produto R$180</span><span class="spend-price">750 BC + R$90</span></div>
+          <div class="spend-item"><span>Produto R$300</span><span class="spend-price">1.500 BC</span></div>
+          <div class="spend-item"><span>Desconto no pedido</span><span class="spend-price">A partir de 50 BC</span></div>
+        </div>
+      </div>
+      <div class="spend-card">
+        <div class="spend-top">
+          <div class="spend-icon" style="background:rgba(77,166,214,.1);">📊</div>
+          <div><div class="spend-name">Bold Gestão</div><div class="spend-sub">App completo</div></div>
+        </div>
+        <div class="spend-items">
+          <div class="spend-item"><span>Plano Básico</span><span class="spend-price">Grátis</span></div>
+          <div class="spend-item"><span>Plano Pro</span><span class="spend-price">200 BC/mês</span></div>
+          <div class="spend-item"><span>Plano Elite + IA</span><span class="spend-price">500 BC/mês</span></div>
+        </div>
+      </div>
+      <div class="spend-card">
+        <div class="spend-top">
+          <div class="spend-icon" style="background:rgba(0,212,255,.1);">🧠</div>
+          <div><div class="spend-name">Bold Intelligence</div><div class="spend-sub">Turbine sua rede</div></div>
+        </div>
+        <div class="spend-items">
+          <div class="spend-item"><span>Análise de IA</span><span class="spend-price">50 BC</span></div>
+          <div class="spend-item"><span>Destaque no ranking</span><span class="spend-price">100 BC/semana</span></div>
+          <div class="spend-item"><span>Booster na Corrida</span><span class="spend-price">200 BC</span></div>
+        </div>
+      </div>
+      <div class="spend-card">
+        <div class="spend-top">
+          <div class="spend-icon" style="background:rgba(0,230,118,.1);">🏆</div>
+          <div><div class="spend-name">Prêmios</div><div class="spend-sub">Recompensas exclusivas</div></div>
+        </div>
+        <div class="spend-items">
+          <div class="spend-item"><span>Sorteio mensal</span><span class="spend-price">200 BC/entrada</span></div>
+          <div class="spend-item"><span>Produto exclusivo</span><span class="spend-price">Só em BC</span></div>
+          <div class="spend-item"><span>Viagem de incentivo</span><span class="spend-price">Resgate em BC</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ ROYALTY CARGO ═══════════ -->
+<section style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="section-inner">
+    <div class="section-label">Para Líderes</div>
+    <h2 class="section-title reveal">Quanto Maior Seu Cargo, <span style="color:var(--gold)">Mais Você Ganha</span></h2>
+    <div class="divider"></div>
+    <p class="section-sub reveal">Além dos BC por vendas próprias, líderes ganham royalty em BC sobre cada venda da equipe.</p>
+    <div class="prog-cards reveal">
+      <div class="prog-card">
+        <div class="prog-cargo">Líder</div>
+        <div class="prog-royalty">0,5%</div>
+        <div class="prog-label">das vendas da equipe</div>
+      </div>
+      <div class="prog-card">
+        <div class="prog-cargo">Supervisor</div>
+        <div class="prog-royalty">1,0%</div>
+        <div class="prog-label">das vendas da equipe</div>
+      </div>
+      <div class="prog-card">
+        <div class="prog-cargo">Coordenador</div>
+        <div class="prog-royalty">1,5%</div>
+        <div class="prog-label">das vendas da equipe</div>
+      </div>
+      <div class="prog-card">
+        <div class="prog-cargo">Gerente</div>
+        <div class="prog-royalty">2,0%</div>
+        <div class="prog-label">das vendas da equipe</div>
+      </div>
+      <div class="prog-card">
+        <div class="prog-cargo">Diretor</div>
+        <div class="prog-royalty">3,0%</div>
+        <div class="prog-label">das vendas da equipe</div>
+      </div>
+    </div>
+    <div style="max-width:600px;margin:32px auto 0;padding:20px 24px;background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.2);border-radius:14px;text-align:center;">
+      <div style="font-size:14px;color:var(--muted);margin-bottom:6px;">Exemplo: Coordenador com equipe vendendo R$30.000/mês</div>
+      <div style="font-size:28px;font-weight:900;color:var(--gold);">+ 450 BC por mês</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:4px;">= R$45 em crédito só de royalty — sem vender nada pessoalmente</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ URGÊNCIA ═══════════ -->
+<section class="urgency-section">
+  <div class="section-inner" style="text-align:center;">
+    <div class="section-label">⚠️ Atenção</div>
+    <h2 class="section-title reveal">Cada Dia Sem Ativar é <span style="color:var(--red)">Moeda Perdida</span></h2>
+    <div class="divider"></div>
+    <p class="section-sub reveal">Enquanto você lê isso, outros associados já estão acumulando. Bold Coin tem validade — quem não acumula, perde a vantagem dentro da rede.</p>
+    <div class="countdown">
+      <div class="countdown-item"><div class="countdown-val" id="cd-d">07</div><div class="countdown-label">Dias</div></div>
+      <div class="countdown-item"><div class="countdown-val" id="cd-h">23</div><div class="countdown-label">Horas</div></div>
+      <div class="countdown-item"><div class="countdown-val" id="cd-m">59</div><div class="countdown-label">Min</div></div>
+      <div class="countdown-item"><div class="countdown-val" id="cd-s">59</div><div class="countdown-label">Seg</div></div>
+    </div>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:24px;">Bônus de boas-vindas: <strong style="color:var(--gold)">500 BC extras</strong> para quem ativar até o fim do período de lançamento</p>
+    <div class="progress-wrap reveal">
+      <div class="progress-header">
+        <span style="color:var(--text);font-weight:700;">Vagas com bônus de lançamento</span>
+        <span style="color:var(--gold);font-weight:700;">12.847 / 20.000</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="promo-bar" style="width:0%"></div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-top:8px;">64% das vagas já preenchidas</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ DÚVIDAS ═══════════ -->
+<section>
+  <div class="section-inner">
+    <div class="section-label">Tire Suas Dúvidas</div>
+    <h2 class="section-title reveal">Perguntas <span style="color:var(--gold)">Frequentes</span></h2>
+    <div class="divider"></div><br>
+    <div class="obj-list">
+      <div class="obj-item">
+        <div class="obj-q" onclick="toggleObj(this)">
+          <span>Posso sacar a Bold Coin em dinheiro?</span>
+          <span class="obj-icon">+</span>
+        </div>
+        <div class="obj-a">Não — a Bold Coin é crédito interno, como o ponto do cartão fidelidade do supermercado. Ela é usada para pagar produtos, recursos do app e participar de prêmios dentro da Bold. Exatamente por isso ela é tão poderosa: o valor fica dentro do ecossistema e volta para você em forma de produto.</div>
+      </div>
+      <div class="obj-item">
+        <div class="obj-q" onclick="toggleObj(this)">
+          <span>A Bold Coin tem prazo para vencer?</span>
+          <span class="obj-icon">+</span>
+        </div>
+        <div class="obj-a">Sim, a validade é de 12 meses. Mas ela renova automaticamente toda vez que você faz qualquer ação no app — uma venda, um login, um treinamento. Quem está ativo na rede nunca perde o saldo.</div>
+      </div>
+      <div class="obj-item">
+        <div class="obj-q" onclick="toggleObj(this)">
+          <span>Precisa pagar para participar?</span>
+          <span class="obj-icon">+</span>
+        </div>
+        <div class="obj-a">Não. Todo associado Bold Life já está automaticamente no programa. Você não precisa fazer nada diferente — só continuar vendendo. A Bold Coin acumula sozinha a cada ação sua.</div>
+      </div>
+      <div class="obj-item">
+        <div class="obj-q" onclick="toggleObj(this)">
+          <span>Como vejo meu saldo de Bold Coin?</span>
+          <span class="obj-icon">+</span>
+        </div>
+        <div class="obj-a">No app Bold Gestão ou Bold Intelligence, tem uma carteira digital onde você vê seu saldo em tempo real, o histórico de coins ganhos e gastos, e os produtos disponíveis para pagar com BC.</div>
+      </div>
+      <div class="obj-item">
+        <div class="obj-q" onclick="toggleObj(this)">
+          <span>Isso é algum esquema ou pirâmide?</span>
+          <span class="obj-icon">+</span>
+        </div>
+        <div class="obj-a">Não. A Bold Coin é um programa de fidelidade — igual ao do seu supermercado, do seu cartão de crédito ou do Starbucks. Você ganha pontos por compras e serviços e os usa de volta. É a Bold Life te recompensando por ser fiel à rede. 100% legal no Brasil.</div>
+      </div>
+      <div class="obj-item">
+        <div class="obj-q" onclick="toggleObj(this)">
+          <span>Posso transferir minha Bold Coin para outro associado?</span>
+          <span class="obj-icon">+</span>
+        </div>
+        <div class="obj-a">Sim — para associados dentro da sua própria rede (mesmas gerações). Isso permite que líderes recompensem sua equipe em BC ou que associados ajudem colegas a chegar em metas.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ DEPOIMENTOS ═══════════ -->
+<section style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="section-inner">
+    <div class="section-label">Quem Já Está Usando</div>
+    <h2 class="section-title reveal">O Que Estão <span style="color:var(--gold)">Dizendo</span></h2>
+    <div class="divider"></div><br>
+    <div class="proof-grid">
+      <div class="proof-card reveal">
+        <div class="proof-text">"No primeiro mês acumulei 380 BC sem fazer nada diferente. Usei tudo para pagar meu estoque de proteínas. É como se a Bold me desse produto de graça."</div>
+        <div class="proof-author">
+          <div class="proof-avatar">A</div>
+          <div><div class="proof-name">Ana Paula S.</div><div class="proof-role">Supervisora — São Paulo</div></div>
+        </div>
+      </div>
+      <div class="proof-card reveal">
+        <div class="proof-text">"Minha equipe ficou viciada na Corrida de Metas depois da Bold Coin. Todo mundo quer chegar na frente para ganhar mais BC. Minha rede nunca esteve tão ativa."</div>
+        <div class="proof-author">
+          <div class="proof-avatar">C</div>
+          <div><div class="proof-name">Carlos M.</div><div class="proof-role">Coordenador — Minas Gerais</div></div>
+        </div>
+      </div>
+      <div class="proof-card reveal">
+        <div class="proof-text">"Achei que era complicado mas é automático mesmo. Abre o app, vê o saldo crescer, usa na loja. Simples assim. Em 3 meses economizei R$180 em produto."</div>
+        <div class="proof-author">
+          <div class="proof-avatar">J</div>
+          <div><div class="proof-name">Juliana F.</div><div class="proof-role">Associada — Rio de Janeiro</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ FINAL CTA ═══════════ -->
+<section class="final-cta">
+  <span class="final-coin">🪙</span>
+  <div class="section-label">Comece Agora</div>
+  <h2 class="section-title" style="margin-bottom:16px;">Sua Carteira Está <span style="color:var(--gold)">Esperando</span></h2>
+  <p style="font-size:clamp(15px,2vw,18px);color:var(--muted);max-width:520px;margin:0 auto 40px;line-height:1.7;">
+    Cada dia que você vende sem a Bold Coin ativa é dinheiro que fica na mesa. Ative agora — é gratuito, é automático e começa hoje.
+  </p>
+  <div style="display:flex;flex-direction:column;gap:16px;align-items:center;">
+    <a href="#" class="btn-primary" style="font-size:18px;padding:20px 48px;">
+      🚀 Ativar Minha Bold Coin Agora
+    </a>
+    <div style="display:flex;gap:24px;flex-wrap:wrap;justify-content:center;margin-top:8px;">
+      <span style="font-size:13px;color:var(--muted);">✅ Gratuito</span>
+      <span style="font-size:13px;color:var(--muted);">✅ Automático</span>
+      <span style="font-size:13px;color:var(--muted);">✅ Sem risco</span>
+      <span style="font-size:13px;color:var(--muted);">✅ Começa hoje</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div style="margin-bottom:8px;">🪙 Bold Coin — Programa de Fidelidade Oficial Bold Life</div>
+  <div>Desenvolvido por <strong style="color:var(--gold)">RSo Soluções Digitais</strong> × Grupo Bold — 2026</div>
+</footer>
+
+<script>
+// PARTICLES
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+
+class Particle{
+  constructor(){this.reset();}
+  reset(){
+    this.x=Math.random()*canvas.width;
+    this.y=Math.random()*canvas.height;
+    this.size=Math.random()*1.5+.5;
+    this.speedX=(Math.random()-.5)*.3;
+    this.speedY=(Math.random()-.5)*.3;
+    this.opacity=Math.random()*.4+.1;
+    this.gold=Math.random()>.7;
+  }
+  update(){
+    this.x+=this.speedX;this.y+=this.speedY;
+    if(this.x<0||this.x>canvas.width||this.y<0||this.y>canvas.height)this.reset();
+  }
+  draw(){
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+    ctx.fillStyle=this.gold?`rgba(255,215,0,${this.opacity})`:`rgba(77,166,214,${this.opacity})`;
+    ctx.fill();
+  }
+}
+
+for(let i=0;i<120;i++)particles.push(new Particle());
+
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>{p.update();p.draw();});
+  requestAnimationFrame(animate);
+}
+animate();
+
+// SCROLL REVEAL
+const reveals=document.querySelectorAll('.reveal,.step,.earn-card,.spend-card');
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
+},{threshold:.15});
+reveals.forEach(el=>observer.observe(el));
+
+// STAGGER earn cards
+document.querySelectorAll('.earn-card').forEach((c,i)=>{
+  c.style.transitionDelay=i*.08+'s';
+});
+document.querySelectorAll('.spend-card').forEach((c,i)=>{
+  c.style.transitionDelay=i*.1+'s';
+});
+
+// PROGRESS BAR OBSERVER
+const promoObserver=new IntersectionObserver(entries=>{
+  if(entries[0].isIntersecting){
+    setTimeout(()=>{document.getElementById('promo-bar').style.width='64%';},300);
+  }
+},{threshold:.5});
+const promoEl=document.getElementById('promo-bar');
+if(promoEl)promoObserver.observe(promoEl.closest('section'));
+
+// CALCULATOR
+function calcBC(val){
+  val=Math.max(100,Math.min(10000,parseInt(val)||100));
+  let bonus=1;
+  if(val>=5000)bonus=1.6;
+  else if(val>=2000)bonus=1.4;
+  else if(val>=1000)bonus=1.2;
+  const bc=Math.floor((val/100)*10*bonus);
+  const reais=(bc*0.1).toFixed(2).replace('.',',');
+  const anual=(bc*12*0.1).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,'.').replace('.',',');
+  const bonusPct=Math.round((bonus-1)*100);
+  const barW=Math.min(100,bonusPct>0?bonusPct:5);
+  document.getElementById('res-bc').textContent=bc.toLocaleString('pt-BR')+' BC';
+  document.getElementById('res-val').textContent='R$'+reais;
+  document.getElementById('res-anual').textContent='R$'+anual;
+  document.getElementById('bonus-label').textContent=bonusPct>0?'+'+bonusPct+'% bônus':'Padrão';
+  document.getElementById('bonus-bar').style.width=barW+'%';
+  let msg='';
+  if(val<500)msg=`🌱 Vendendo R$${val.toLocaleString('pt-BR')}/mês você ganha <strong style="color:var(--gold)">${bc} BC = R$${reais}</strong> em crédito Bold por mês. Aumente suas vendas para ganhar bônus maiores!`;
+  else if(val<2000)msg=`🎉 Vendendo R$${val.toLocaleString('pt-BR')}/mês você ganha <strong style="color:var(--gold)">${bc} BC = R$${reais}</strong> em crédito Bold todo mês — além da sua comissão normal!`;
+  else if(val<5000)msg=`🚀 Incrível! Vendendo R$${val.toLocaleString('pt-BR')}/mês você acumula <strong style="color:var(--gold)">${bc} BC</strong> com bônus de escala — o equivalente a <strong>R$${reais}</strong> em produto grátis todo mês!`;
+  else msg=`⭐ TOP VENDEDOR! R$${val.toLocaleString('pt-BR')}/mês te rende <strong style="color:var(--gold)">${bc} BC</strong> com bônus máximo de 60% — <strong>R$${reais} em produtos Bold</strong> por mês. Você está no nível de elite da rede!`;
+  document.getElementById('calc-msg').innerHTML=msg;
+}
+
+const ci=document.getElementById('calc-input');
+const cs=document.getElementById('calc-slider');
+ci.addEventListener('input',()=>{cs.value=ci.value;calcBC(ci.value);});
+cs.addEventListener('input',()=>{ci.value=cs.value;calcBC(cs.value);});
+calcBC(1000);
+
+// LIVE COUNTERS
+let assoc=12847,coins=4293180;
+setInterval(()=>{
+  assoc+=Math.floor(Math.random()*3);
+  coins+=Math.floor(Math.random()*500+100);
+  document.getElementById('lv-associados').textContent=assoc.toLocaleString('pt-BR');
+  document.getElementById('lv-coins').textContent=coins.toLocaleString('pt-BR');
+  document.getElementById('lv-valor').textContent='R$'+(coins*0.1).toLocaleString('pt-BR',{maximumFractionDigits:0});
+},3000);
+
+// COUNTDOWN
+function updateCountdown(){
+  const now=new Date();
+  const end=new Date();
+  end.setDate(end.getDate()+(7-(end.getDay()||7)));
+  end.setHours(23,59,59,999);
+  const diff=end-now;
+  const d=Math.floor(diff/86400000);
+  const h=Math.floor((diff%86400000)/3600000);
+  const m=Math.floor((diff%3600000)/60000);
+  const s=Math.floor((diff%60000)/1000);
+  document.getElementById('cd-d').textContent=String(d).padStart(2,'0');
+  document.getElementById('cd-h').textContent=String(h).padStart(2,'0');
+  document.getElementById('cd-m').textContent=String(m).padStart(2,'0');
+  document.getElementById('cd-s').textContent=String(s).padStart(2,'0');
+}
+setInterval(updateCountdown,1000);
+updateCountdown();
+
+// OBJECTIONS TOGGLE
+function toggleObj(el){
+  const item=el.closest('.obj-item');
+  const isOpen=item.classList.contains('open');
+  document.querySelectorAll('.obj-item').forEach(i=>i.classList.remove('open'));
+  if(!isOpen)item.classList.add('open');
+}
+
+// FLOATING COINS on click
+document.addEventListener('click',e=>{
+  for(let i=0;i<3;i++){
+    const coin=document.createElement('div');
+    coin.className='floating-coin';
+    coin.textContent='🪙';
+    coin.style.left=(e.clientX+Math.random()*40-20)+'px';
+    coin.style.top=e.clientY+'px';
+    coin.style.animationDelay=(i*.1)+'s';
+    document.body.appendChild(coin);
+    setTimeout(()=>coin.remove(),4000);
+  }
+});
+</script>
+</body>
+</html>
