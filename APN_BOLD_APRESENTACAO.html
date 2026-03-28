@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bold Life — Apresentação Oficial 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap');
+:root{
+  --bg:#02040a;--surface:#0a0f1e;--surface2:#111827;
+  --bold-blue:#1a1f4b;--bold-light:#4da6d6;--cyan:#00d4ff;
+  --gold:#ffd700;--gold2:#ffaa00;--green:#00e676;
+  --red:#ff4444;--text:#f0f6ff;--muted:#8892a4;--border:#1e2a3a;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--text);}
+canvas#stars{position:fixed;inset:0;z-index:0;pointer-events:none;}
+
+/* SLIDES */
+.deck{position:relative;width:100vw;height:100vh;}
+.slide{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:60px 80px;text-align:center;
+  opacity:0;transform:scale(.96);
+  transition:opacity .55s ease,transform .55s ease;
+  pointer-events:none;z-index:1;
+}
+.slide.active{opacity:1;transform:scale(1);pointer-events:all;}
+.slide.out{opacity:0;transform:scale(1.04);}
+
+/* PROGRESS */
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--bold-light),var(--gold));transition:width .5s ease;z-index:100;}
+#slide-info{position:fixed;bottom:24px;right:28px;font-size:12px;color:var(--muted);z-index:100;letter-spacing:1px;}
+#dots-wrap{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:100;}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .3s;}
+.dot.on{background:var(--gold);width:20px;border-radius:3px;}
+#nav-hint{position:fixed;bottom:24px;left:28px;font-size:11px;color:var(--muted);z-index:100;}
+
+/* LOGO */
+.bold-logo{font-size:clamp(18px,2.5vw,28px);font-weight:900;letter-spacing:6px;color:var(--bold-light);margin-bottom:4px;}
+.bold-sub{font-size:clamp(10px,1.2vw,13px);letter-spacing:4px;color:var(--muted);text-transform:uppercase;}
+
+/* KEYFRAMES */
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes pulseGlow{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes revealUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+@keyframes revealScale{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+@keyframes lineGrow{from{width:0}to{width:100%}}
+@keyframes countUp{from{opacity:0}to{opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes orbit{from{transform:rotate(0deg) translateX(60px) rotate(0deg)}to{transform:rotate(360deg) translateX(60px) rotate(-360deg)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+.gold-txt{
+  background:linear-gradient(135deg,var(--gold2),var(--gold),#fff8c0,var(--gold));
+  background-size:200% auto;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;animation:shimmer 3s linear infinite;
+}
+.blue-txt{color:var(--bold-light);}
+.green-txt{color:var(--green);}
+
+/* SLIDE-SPECIFIC */
+/* S1 HERO */
+.s1-globe{width:160px;height:160px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#1a3a6e,#0a1a3e);
+  border:3px solid rgba(77,166,214,.4);position:relative;margin-bottom:32px;
+  box-shadow:0 0 80px rgba(77,166,214,.3),0 0 160px rgba(77,166,214,.1);
+  animation:floatY 5s ease-in-out infinite;}
+.s1-ring{position:absolute;border-radius:50%;border:1px solid rgba(77,166,214,.2);}
+.s1-ring-1{inset:-20px;animation:spin 12s linear infinite;}
+.s1-ring-2{inset:-40px;animation:spin 18s linear infinite reverse;}
+.s1-ring-3{inset:-60px;animation:spin 25s linear infinite;}
+.s1-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);position:absolute;top:50%;left:50%;
+  margin:-4px 0 0 -4px;box-shadow:0 0 10px var(--gold);}
+.s1-title{font-size:clamp(52px,8vw,110px);font-weight:900;letter-spacing:8px;line-height:1;margin-bottom:12px;}
+.s1-conectando{font-size:clamp(16px,2.5vw,28px);letter-spacing:10px;color:var(--muted);text-transform:uppercase;}
+.s1-year{font-size:clamp(13px,1.5vw,16px);color:var(--bold-light);letter-spacing:4px;margin-top:20px;
+  padding:8px 24px;border:1px solid rgba(77,166,214,.3);border-radius:50px;}
+
+/* S2 PILARES */
+.pillars{display:flex;gap:24px;margin-top:40px;flex-wrap:wrap;justify-content:center;}
+.pillar{flex:1;min-width:220px;max-width:300px;padding:28px;border-radius:20px;text-align:left;position:relative;overflow:hidden;}
+.pillar::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.pillar-1{background:rgba(77,166,214,.07);border:1px solid rgba(77,166,214,.2);}
+.pillar-1::before{background:var(--bold-light);}
+.pillar-2{background:rgba(255,215,0,.07);border:1px solid rgba(255,215,0,.2);}
+.pillar-2::before{background:var(--gold);}
+.pillar-3{background:rgba(0,230,118,.07);border:1px solid rgba(0,230,118,.2);}
+.pillar-3::before{background:var(--green);}
+.pillar-icon{font-size:32px;margin-bottom:12px;}
+.pillar-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+.pillar-text{font-size:14px;color:var(--muted);line-height:1.6;}
+
+/* S3 MARKET */
+.big-stat{font-size:clamp(80px,15vw,160px);font-weight:900;line-height:.9;margin:0;}
+.stat-row{display:flex;gap:32px;margin-top:40px;flex-wrap:wrap;justify-content:center;}
+.stat-box{padding:20px 28px;border-radius:16px;text-align:center;min-width:180px;}
+.stat-val{font-size:clamp(28px,4vw,48px);font-weight:900;line-height:1;}
+.stat-label{font-size:13px;color:var(--muted);margin-top:4px;}
+
+/* S4 QUOTE */
+.quote-mark{font-size:clamp(80px,12vw,140px);font-weight:900;color:var(--gold);opacity:.15;line-height:.7;align-self:flex-start;}
+.quote-text{font-size:clamp(22px,3.5vw,42px);font-weight:700;line-height:1.4;max-width:900px;font-style:italic;}
+.quote-author{font-size:clamp(16px,2vw,22px);margin-top:20px;font-weight:600;}
+.quote-title{font-size:clamp(12px,1.5vw,16px);color:var(--muted);margin-top:4px;}
+
+/* S5 PRODUCTS */
+.products-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:860px;width:100%;margin-top:32px;}
+.prod-card{padding:22px 16px;border-radius:16px;text-align:center;background:var(--surface);border:1px solid var(--border);transition:all .3s;}
+.prod-card:hover{border-color:var(--bold-light);transform:translateY(-4px);}
+.prod-icon{font-size:clamp(28px,4vw,40px);margin-bottom:10px;}
+.prod-name{font-size:clamp(12px,1.5vw,15px);font-weight:700;}
+.prod-sub{font-size:clamp(10px,1.2vw,12px);color:var(--muted);margin-top:3px;}
+
+/* S6 HOW */
+.how-flow{display:flex;align-items:center;gap:0;margin-top:36px;flex-wrap:wrap;justify-content:center;}
+.how-node{display:flex;flex-direction:column;align-items:center;gap:10px;min-width:140px;}
+.how-orb{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;border:2px solid;}
+.how-arrow{font-size:28px;color:var(--gold);margin:0 8px;padding-bottom:30px;}
+.how-label{font-size:clamp(11px,1.3vw,14px);font-weight:700;text-align:center;}
+.how-sub{font-size:clamp(10px,1.1vw,12px);color:var(--muted);text-align:center;max-width:120px;}
+
+/* S7 MATH */
+.math-cascade{display:flex;align-items:flex-end;gap:12px;margin-top:36px;justify-content:center;flex-wrap:wrap;}
+.casc-item{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.casc-bar{width:64px;border-radius:8px 8px 0 0;background:linear-gradient(to top,var(--gold2),var(--gold));
+  transition:height 1.5s cubic-bezier(.4,0,.2,1);box-shadow:0 0 20px rgba(255,215,0,.3);}
+.casc-val{font-size:clamp(14px,2vw,20px);font-weight:900;color:var(--gold);}
+.casc-label{font-size:clamp(10px,1.2vw,12px);color:var(--muted);}
+
+/* S8 CARGOS */
+.cargo-track{display:flex;align-items:center;gap:0;max-width:960px;width:100%;margin-top:36px;position:relative;}
+.cargo-track::before{content:'';position:absolute;top:40px;left:40px;right:40px;height:2px;
+  background:linear-gradient(90deg,var(--bold-light),var(--gold),var(--green));z-index:0;}
+.cargo-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;z-index:1;}
+.cargo-badge{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:26px;border:3px solid;background:var(--bg);}
+.cargo-c1{border-color:var(--bold-light);}
+.cargo-c2{border-color:#4dd0e1;}
+.cargo-c3{border-color:var(--gold);}
+.cargo-c4{border-color:#ff8a00;}
+.cargo-c5{border-color:var(--green);}
+.cargo-name{font-size:clamp(11px,1.4vw,15px);font-weight:700;text-align:center;}
+.cargo-income{font-size:clamp(13px,1.8vw,20px);font-weight:900;}
+.cargo-team{font-size:clamp(9px,1.1vw,12px);color:var(--muted);}
+
+/* S9 BIG INCOME */
+.income-hero{font-size:clamp(60px,12vw,130px);font-weight:900;line-height:.9;margin:16px 0;}
+.income-compare{display:flex;gap:32px;margin-top:32px;flex-wrap:wrap;justify-content:center;}
+.compare-box{padding:20px 28px;border-radius:16px;text-align:center;min-width:200px;}
+
+/* S10 AWARDS */
+.awards-grid{display:flex;gap:20px;margin-top:32px;flex-wrap:wrap;justify-content:center;}
+.award-card{padding:24px;border-radius:20px;text-align:center;min-width:180px;flex:1;max-width:220px;}
+.award-icon{font-size:clamp(36px,5vw,56px);margin-bottom:12px;}
+.award-title{font-size:clamp(14px,1.8vw,18px);font-weight:700;margin-bottom:6px;}
+.award-desc{font-size:clamp(11px,1.3vw,13px);color:var(--muted);line-height:1.5;}
+
+/* S11 WORLD */
+.destinations{display:flex;gap:16px;margin-top:32px;flex-wrap:wrap;justify-content:center;}
+.dest-chip{display:flex;align-items:center;gap:8px;padding:14px 22px;border-radius:50px;
+  background:var(--surface);border:1px solid var(--border);font-size:clamp(13px,1.8vw,17px);font-weight:700;
+  transition:all .3s;}
+.dest-chip:hover{border-color:var(--gold);transform:translateY(-3px);}
+.dest-flag{font-size:24px;}
+
+/* S12 TECH */
+.tech-trio{display:flex;gap:20px;margin-top:32px;flex-wrap:wrap;justify-content:center;}
+.tech-card{flex:1;min-width:220px;max-width:280px;padding:28px;border-radius:20px;text-align:center;
+  background:var(--surface);border:1px solid var(--border);transition:all .3s;}
+.tech-card:hover{transform:translateY(-6px);}
+.tech-icon{font-size:clamp(32px,4.5vw,52px);margin-bottom:12px;}
+.tech-name{font-size:clamp(14px,2vw,20px);font-weight:800;margin-bottom:8px;}
+.tech-desc{font-size:clamp(11px,1.4vw,14px);color:var(--muted);line-height:1.6;}
+
+/* S13 START */
+.steps-row{display:flex;gap:24px;margin-top:36px;flex-wrap:wrap;justify-content:center;}
+.start-step{flex:1;min-width:200px;max-width:260px;text-align:center;}
+.step-num-circle{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--gold2),var(--gold));
+  display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#000;
+  margin:0 auto 16px;box-shadow:0 0 24px rgba(255,215,0,.4);}
+.step-title{font-size:clamp(14px,2vw,18px);font-weight:700;margin-bottom:8px;}
+.step-desc{font-size:clamp(12px,1.5vw,14px);color:var(--muted);line-height:1.6;}
+
+/* S14 CTA */
+.cta-big{font-size:clamp(40px,7vw,86px);font-weight:900;line-height:1.05;margin:20px 0;}
+.cta-pill{display:inline-block;padding:16px 40px;border-radius:50px;
+  background:linear-gradient(135deg,var(--gold2),var(--gold));
+  color:#000;font-size:clamp(16px,2vw,22px);font-weight:800;margin-top:24px;
+  box-shadow:0 0 40px rgba(255,215,0,.5);}
+.live-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;border-radius:50px;
+  background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.3);
+  font-size:13px;font-weight:700;color:var(--green);margin-bottom:20px;}
+.blink-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:blink 1s infinite;}
+
+/* LINE DECORATIVE */
+.line-deco{width:80px;height:3px;background:linear-gradient(90deg,var(--bold-light),var(--gold));border-radius:2px;margin:16px auto;}
+
+/* SLIDE LABEL */
+.slide-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--bold-light);margin-bottom:12px;}
+
+/* SECTION TITLE */
+.sec-title{font-size:clamp(32px,5.5vw,64px);font-weight:900;line-height:1.05;margin-bottom:10px;}
+.sec-sub{font-size:clamp(14px,2vw,20px);color:var(--muted);max-width:800px;line-height:1.6;}
+
+/* ANIM CLASSES */
+.active .anim-1{animation:revealUp .6s .1s ease both;}
+.active .anim-2{animation:revealUp .6s .25s ease both;}
+.active .anim-3{animation:revealUp .6s .4s ease both;}
+.active .anim-4{animation:revealUp .6s .55s ease both;}
+.active .anim-5{animation:revealUp .6s .7s ease both;}
+.active .anim-6{animation:revealUp .6s .85s ease both;}
+.active .anim-scale{animation:revealScale .6s .2s ease both;}
+.active .anim-fade{animation:fadeIn .8s .3s ease both;}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div id="progress"></div>
+<div id="nav-hint">← → | Espaço | Clique</div>
+<div id="dots-wrap"></div>
+<div id="slide-info">1 / 14</div>
+
+<div class="deck" id="deck">
+
+<!-- ══════════════════════════════════════
+     SLIDE 1 — ABERTURA CINEMATOGRÁFICA
+══════════════════════════════════════ -->
+<div class="slide active" id="s1">
+  <div class="s1-globe anim-scale">
+    <div class="s1-ring s1-ring-1"></div>
+    <div class="s1-ring s1-ring-2"></div>
+    <div class="s1-ring s1-ring-3"></div>
+    <div class="s1-dot"></div>
+    <div style="font-size:60px;line-height:1;">🌐</div>
+  </div>
+  <h1 class="s1-title anim-1"><span class="gold-txt">BOLD</span> <span class="blue-txt">LIFE</span></h1>
+  <div class="s1-conectando anim-2">CONECTANDO PESSOAS</div>
+  <div class="s1-year anim-3">APRESENTAÇÃO OFICIAL 2026</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 2 — QUEM SOMOS / FILOSOFIA
+══════════════════════════════════════ -->
+<div class="slide" id="s2">
+  <div class="slide-label anim-1">Nossa Essência</div>
+  <h2 class="sec-title anim-2">Nascemos no <span class="gold-txt">Vale do Aço</span><br>para mudar o Brasil</h2>
+  <div class="line-deco anim-3"></div>
+  <p class="sec-sub anim-4" style="margin:12px auto 32px;">Somos uma empresa de Minas Gerais que acredita no poder das pessoas — juntas, conectadas, transformando vidas através do consumo inteligente e das vendas em rede.</p>
+  <div class="pillars anim-5">
+    <div class="pillar pillar-1">
+      <div class="pillar-icon">🎯</div>
+      <div class="pillar-label" style="color:var(--bold-light);">Missão</div>
+      <div class="pillar-text">Oferecer para as pessoas uma oportunidade real de melhorar de vida.</div>
+    </div>
+    <div class="pillar pillar-2">
+      <div class="pillar-icon">🌟</div>
+      <div class="pillar-label" style="color:var(--gold);">Visão</div>
+      <div class="pillar-text">Ser um dos maiores canais de educação, vendas e consumo do Brasil.</div>
+    </div>
+    <div class="pillar pillar-3">
+      <div class="pillar-icon">🏠</div>
+      <div class="pillar-label" style="color:var(--green);">Meta</div>
+      <div class="pillar-text">Chegar em todas as casas brasileiras proporcionando transformação de vida.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 3 — O MERCADO DE R$200 BILHÕES
+══════════════════════════════════════ -->
+<div class="slide" id="s3">
+  <div class="slide-label anim-1">O Maior Mercado do Mundo</div>
+  <div class="big-stat anim-2"><span class="gold-txt" id="counter-200">R$0</span></div>
+  <div style="font-size:clamp(18px,3vw,32px);color:var(--muted);margin-top:4px;" class="anim-3">Bilhões movimentados pelo Marketing Multinível</div>
+  <div class="line-deco anim-4"></div>
+  <div class="stat-row anim-5">
+    <div class="stat-box" style="background:rgba(77,166,214,.07);border:1px solid rgba(77,166,214,.2);">
+      <div class="stat-val" style="color:var(--bold-light);">27%</div>
+      <div class="stat-label">do PIB americano<br>vem desse mercado</div>
+    </div>
+    <div class="stat-box" style="background:rgba(255,215,0,.07);border:1px solid rgba(255,215,0,.2);">
+      <div class="stat-val" style="color:var(--gold);">20%</div>
+      <div class="stat-label">dos milionários americanos<br>construíram fortuna assim</div>
+    </div>
+    <div class="stat-box" style="background:rgba(0,230,118,.07);border:1px solid rgba(0,230,118,.2);">
+      <div class="stat-val" style="color:var(--green);">1 em 8</div>
+      <div class="stat-label">casas americanas<br>trabalham com MMN</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 4 — KIYOSAKI QUOTE
+══════════════════════════════════════ -->
+<div class="slide" id="s4" style="background:radial-gradient(ellipse at center,rgba(77,166,214,.06) 0%,transparent 70%);">
+  <div class="quote-mark anim-1">"</div>
+  <div class="quote-text anim-2">
+    As pessoas mais ricas do mundo<br>
+    <span class="gold-txt">constroem redes.</span><br>
+    Todas as outras procuram emprego.
+  </div>
+  <div class="quote-author anim-3" style="color:var(--bold-light);">Robert Kiyosaki</div>
+  <div class="quote-title anim-4">Autor de Pai Rico, Pai Pobre — Maior best-seller de finanças do mundo</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 5 — 30.000+ PRODUTOS
+══════════════════════════════════════ -->
+<div class="slide" id="s5">
+  <div class="slide-label anim-1">Nosso Portfólio</div>
+  <h2 class="sec-title anim-2">Mais de <span class="gold-txt">30.000</span> produtos<br>para você vender</h2>
+  <div class="line-deco anim-3"></div>
+  <div class="products-grid anim-4">
+    <div class="prod-card"><div class="prod-icon">👗</div><div class="prod-name">Moda</div><div class="prod-sub">Masculina, feminina, acessórios</div></div>
+    <div class="prod-card"><div class="prod-icon">💊</div><div class="prod-name">Saúde</div><div class="prod-sub">Suplementos, vitaminas, encapsulados</div></div>
+    <div class="prod-card"><div class="prod-icon">💄</div><div class="prod-name">Beleza</div><div class="prod-sub">Maquiagem, skincare, perfumaria</div></div>
+    <div class="prod-card"><div class="prod-icon">🏠</div><div class="prod-name">Eletrodomésticos</div><div class="prod-sub">Air fryer, cafeteira, mixer</div></div>
+    <div class="prod-card"><div class="prod-icon">🔧</div><div class="prod-name">Ferramentas</div><div class="prod-sub">Elétricas e manuais</div></div>
+    <div class="prod-card" style="border-color:rgba(255,215,0,.3);background:rgba(255,215,0,.04);">
+      <div class="prod-icon">✨</div>
+      <div class="prod-name" style="color:var(--gold);">E muito mais</div>
+      <div class="prod-sub">Novos produtos todo mês</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 6 — COMO FUNCIONA
+══════════════════════════════════════ -->
+<div class="slide" id="s6">
+  <div class="slide-label anim-1">O Modelo de Negócio</div>
+  <h2 class="sec-title anim-2">Simples. Poderoso. <span class="gold-txt">Comprovado.</span></h2>
+  <div class="line-deco anim-3"></div>
+  <div class="how-flow anim-4">
+    <div class="how-node">
+      <div class="how-orb" style="background:rgba(77,166,214,.1);border-color:var(--bold-light);">🤝</div>
+      <div class="how-label">Você se<br>associa</div>
+      <div class="how-sub">R$200 de ativação</div>
+    </div>
+    <div class="how-arrow">→</div>
+    <div class="how-node">
+      <div class="how-orb" style="background:rgba(255,215,0,.1);border-color:var(--gold);">🛍️</div>
+      <div class="how-label">Consome &<br>vende produtos</div>
+      <div class="how-sub">30.000+ itens</div>
+    </div>
+    <div class="how-arrow">→</div>
+    <div class="how-node">
+      <div class="how-orb" style="background:rgba(0,230,118,.1);border-color:var(--green);">👥</div>
+      <div class="how-label">Indica 5<br>pessoas</div>
+      <div class="how-sub">Sua rede cresce</div>
+    </div>
+    <div class="how-arrow">→</div>
+    <div class="how-node">
+      <div class="how-orb" style="background:rgba(255,215,0,.1);border-color:var(--gold);">💰</div>
+      <div class="how-label">5% de comissão</div>
+      <div class="how-sub">Até 5ª geração</div>
+    </div>
+    <div class="how-arrow">→</div>
+    <div class="how-node">
+      <div class="how-orb" style="background:rgba(255,120,0,.1);border-color:#ff8a00);">📈</div>
+      <div class="how-label">Rede se<br>multiplica</div>
+      <div class="how-sub">Até 3.905 pessoas</div>
+    </div>
+  </div>
+  <div class="anim-5" style="margin-top:24px;padding:16px 28px;background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.2);border-radius:14px;font-size:clamp(14px,1.8vw,18px);color:var(--text);">
+    ✅ <strong>Você não precisa vender para todo mundo.</strong> Precisa indicar 5 pessoas — e ensinar essas 5 a fazerem o mesmo.
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 7 — A MATEMÁTICA DO 5×5
+══════════════════════════════════════ -->
+<div class="slide" id="s7">
+  <div class="slide-label anim-1">O Poder da Duplicação</div>
+  <h2 class="sec-title anim-2">Você indica <span class="gold-txt">5 pessoas.</span><br>A rede faz o resto.</h2>
+  <div class="line-deco anim-3"></div>
+  <div class="math-cascade anim-4" id="cascade">
+    <div class="casc-item">
+      <div class="casc-bar" id="bar-1" style="height:0;background:rgba(77,166,214,.5);"></div>
+      <div class="casc-val">5</div>
+      <div class="casc-label">Você indica</div>
+    </div>
+    <div style="font-size:28px;color:var(--muted);padding-bottom:40px;">×</div>
+    <div class="casc-item">
+      <div class="casc-bar" id="bar-2" style="height:0;"></div>
+      <div class="casc-val">25</div>
+      <div class="casc-label">2ª Geração</div>
+    </div>
+    <div style="font-size:28px;color:var(--muted);padding-bottom:40px;">×</div>
+    <div class="casc-item">
+      <div class="casc-bar" id="bar-3" style="height:0;"></div>
+      <div class="casc-val">125</div>
+      <div class="casc-label">3ª Geração</div>
+    </div>
+    <div style="font-size:28px;color:var(--muted);padding-bottom:40px;">×</div>
+    <div class="casc-item">
+      <div class="casc-bar" id="bar-4" style="height:0;"></div>
+      <div class="casc-val">625</div>
+      <div class="casc-label">4ª Geração</div>
+    </div>
+    <div style="font-size:28px;color:var(--muted);padding-bottom:40px;">×</div>
+    <div class="casc-item">
+      <div class="casc-bar" id="bar-5" style="height:0;background:linear-gradient(to top,var(--gold2),var(--gold));"></div>
+      <div class="casc-val" style="color:var(--gold);">3.905</div>
+      <div class="casc-label">Total na rede</div>
+    </div>
+  </div>
+  <div class="anim-5" style="margin-top:24px;font-size:clamp(16px,2.2vw,24px);color:var(--muted);">
+    Indicando apenas <strong style="color:var(--gold);">5 pessoas</strong> — a rede cresce até <strong style="color:var(--gold);">3.905 empreendedores</strong>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 8 — CARGOS E GANHOS
+══════════════════════════════════════ -->
+<div class="slide" id="s8">
+  <div class="slide-label anim-1">Plano de Carreira</div>
+  <h2 class="sec-title anim-2">5 Cargos. 5 Níveis de <span class="gold-txt">Riqueza.</span></h2>
+  <div class="line-deco anim-3"></div>
+  <div class="cargo-track anim-4">
+    <div class="cargo-item">
+      <div class="cargo-badge cargo-c1">👤</div>
+      <div class="cargo-name">Líder</div>
+      <div class="cargo-income" style="color:var(--bold-light);">R$50</div>
+      <div class="cargo-team">5 pessoas</div>
+    </div>
+    <div class="cargo-item">
+      <div class="cargo-badge cargo-c2">⭐</div>
+      <div class="cargo-name">Supervisor</div>
+      <div class="cargo-income" style="color:#4dd0e1;">R$300</div>
+      <div class="cargo-team">30 pessoas</div>
+    </div>
+    <div class="cargo-item">
+      <div class="cargo-badge cargo-c3">🌟</div>
+      <div class="cargo-name">Coordenador</div>
+      <div class="cargo-income" style="color:var(--gold);">R$1.550</div>
+      <div class="cargo-team">155 pessoas</div>
+    </div>
+    <div class="cargo-item">
+      <div class="cargo-badge cargo-c4">💎</div>
+      <div class="cargo-name">Gerente</div>
+      <div class="cargo-income" style="color:#ff8a00;">R$7.800</div>
+      <div class="cargo-team">780 pessoas</div>
+    </div>
+    <div class="cargo-item">
+      <div class="cargo-badge cargo-c5">👑</div>
+      <div class="cargo-name">Diretor</div>
+      <div class="cargo-income" style="color:var(--green);">R$39.050</div>
+      <div class="cargo-team">3.905 pessoas</div>
+    </div>
+  </div>
+  <div class="anim-5" style="margin-top:24px;padding:14px 24px;background:rgba(0,230,118,.05);border:1px solid rgba(0,230,118,.2);border-radius:12px;font-size:clamp(13px,1.7vw,17px);">
+    💡 Todos os cargos partem de <strong style="color:var(--gold);">R$200 de ativação</strong> — único investimento necessário
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 9 — O NÚMERO QUE MUDA TUDO
+══════════════════════════════════════ -->
+<div class="slide" id="s9" style="background:radial-gradient(ellipse at center,rgba(0,230,118,.06) 0%,transparent 70%);">
+  <div class="slide-label anim-1">Renda Máxima — Nível Diretor</div>
+  <div class="income-hero anim-2">
+    <span class="gold-txt" id="income-counter">R$0</span>
+  </div>
+  <div style="font-size:clamp(18px,2.5vw,28px);color:var(--muted);" class="anim-3">por mês — todo mês</div>
+  <div class="line-deco anim-4"></div>
+  <div class="income-compare anim-5">
+    <div class="compare-box" style="background:rgba(255,68,68,.05);border:1px solid rgba(255,68,68,.2);">
+      <div style="font-size:clamp(22px,3vw,36px);font-weight:900;color:var(--red);">R$1.412</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:4px;">Salário médio brasileiro</div>
+    </div>
+    <div style="font-size:clamp(24px,3.5vw,40px);color:var(--muted);align-self:center;">→</div>
+    <div class="compare-box" style="background:rgba(255,215,0,.07);border:1px solid rgba(255,215,0,.3);">
+      <div style="font-size:clamp(22px,3vw,36px);font-weight:900;color:var(--gold);">R$39.050</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:4px;">Renda Bold Life — Diretor</div>
+    </div>
+    <div style="font-size:clamp(24px,3.5vw,40px);color:var(--muted);align-self:center;">=</div>
+    <div class="compare-box" style="background:rgba(0,230,118,.07);border:1px solid rgba(0,230,118,.3);">
+      <div style="font-size:clamp(22px,3vw,36px);font-weight:900;color:var(--green);">27×</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:4px;">mais que a média</div>
+    </div>
+  </div>
+  <div class="anim-6" style="margin-top:16px;font-size:clamp(13px,1.6vw,16px);color:var(--muted);">
+    Baseado em rede com consumo médio de R$200/associado por geração
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 10 — TRUMP QUOTE
+══════════════════════════════════════ -->
+<div class="slide" id="s10" style="background:radial-gradient(ellipse at center,rgba(255,215,0,.05) 0%,transparent 70%);">
+  <div class="quote-mark anim-1">"</div>
+  <div class="quote-text anim-2" style="font-size:clamp(20px,3.2vw,40px);">
+    É comprovado que o Marketing de Rede<br>é uma receita <span class="gold-txt">viável e gratificante.</span>
+  </div>
+  <div class="quote-author anim-3" style="color:var(--gold);">Donald Trump</div>
+  <div class="quote-title anim-4">Empresário e ex-presidente dos Estados Unidos</div>
+  <div class="anim-5" style="margin-top:32px;display:flex;gap:16px;flex-wrap:wrap;justify-content:center;">
+    <div style="padding:12px 20px;background:rgba(77,166,214,.07);border:1px solid rgba(77,166,214,.2);border-radius:12px;font-size:clamp(12px,1.5vw,15px);">
+      <strong style="color:var(--bold-light);">Robert Kiyosaki:</strong><br><span style="color:var(--muted);">"As pessoas mais ricas constroem redes"</span>
+    </div>
+    <div style="padding:12px 20px;background:rgba(255,215,0,.07);border:1px solid rgba(255,215,0,.2);border-radius:12px;font-size:clamp(12px,1.5vw,15px);">
+      <strong style="color:var(--gold);">T. Harv Eker:</strong><br><span style="color:var(--muted);">"A melhor opção para uma vida abundante"</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 11 — PREMIAÇÕES / CRUZEIRO
+══════════════════════════════════════ -->
+<div class="slide" id="s11">
+  <div class="slide-label anim-1">Reconhecimento & Prêmios</div>
+  <h2 class="sec-title anim-2">Você vende. <span class="gold-txt">A Bold te leva</span><br>para o mundo.</h2>
+  <div class="line-deco anim-3"></div>
+  <div class="awards-grid anim-4">
+    <div class="award-card" style="background:rgba(77,166,214,.07);border:1px solid rgba(77,166,214,.2);">
+      <div class="award-icon">🚢</div>
+      <div class="award-title" style="color:var(--bold-light);">Cruzeiro Bold Life</div>
+      <div class="award-desc">1 viagem por ano 100% paga pela empresa. All inclusive. Sem custo nenhum.</div>
+    </div>
+    <div class="award-card" style="background:rgba(255,215,0,.07);border:1px solid rgba(255,215,0,.2);">
+      <div class="award-icon">✈️</div>
+      <div class="award-title" style="color:var(--gold);">Viagens Internacionais</div>
+      <div class="award-desc">Metas de pontuação durante o ano abrem qualificação para destinos ao redor do mundo.</div>
+    </div>
+    <div class="award-card" style="background:rgba(0,230,118,.07);border:1px solid rgba(0,230,118,.2);">
+      <div class="award-icon">🏆</div>
+      <div class="award-title" style="color:var(--green);">Prêmios de Campanha</div>
+      <div class="award-desc">Lançamentos de premiações durante o ano com metas e qualificações especiais.</div>
+    </div>
+  </div>
+  <div class="destinations anim-5">
+    <div class="dest-chip"><span class="dest-flag">🇫🇷</span> França</div>
+    <div class="dest-chip"><span class="dest-flag">🇯🇵</span> Japão</div>
+    <div class="dest-chip"><span class="dest-flag">🇮🇹</span> Itália</div>
+    <div class="dest-chip"><span class="dest-flag">🇨🇳</span> China</div>
+    <div class="dest-chip"><span class="dest-flag">🇮🇳</span> Índia</div>
+    <div class="dest-chip"><span class="dest-flag">🇦🇺</span> Austrália</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 12 — ECOSSISTEMA DIGITAL
+══════════════════════════════════════ -->
+<div class="slide" id="s12">
+  <div class="slide-label anim-1">Tecnologia Bold Life</div>
+  <h2 class="sec-title anim-2">Seu negócio na <span class="gold-txt">palma da mão.</span><br>3 apps. 1 ecossistema.</h2>
+  <div class="line-deco anim-3"></div>
+  <div class="tech-trio anim-4">
+    <div class="tech-card" style="border-color:rgba(0,230,118,.3);">
+      <div class="tech-icon">📦</div>
+      <div class="tech-name" style="color:var(--green);">Bold Gestão</div>
+      <div class="tech-desc">Controle de estoque, pedidos, comissões e rede em tempo real. Seu escritório no celular.</div>
+    </div>
+    <div class="tech-card" style="border-color:rgba(77,166,214,.3);">
+      <div class="tech-icon">🛍️</div>
+      <div class="tech-name" style="color:var(--bold-light);">Bold Store</div>
+      <div class="tech-desc">Sua loja digital. Catálogo completo vinculado ao CPF. Vende para todo o Brasil.</div>
+    </div>
+    <div class="tech-card" style="border-color:rgba(255,215,0,.3);">
+      <div class="tech-icon">🧠</div>
+      <div class="tech-name" style="color:var(--gold);">Bold Intelligence</div>
+      <div class="tech-desc">Mission Control da rede. Corrida de metas ao vivo. IA de insights. Dashboard completo.</div>
+    </div>
+  </div>
+  <div class="anim-5" style="margin-top:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center;">
+    <div style="padding:10px 20px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.25);border-radius:50px;font-size:clamp(12px,1.6vw,16px);">🪙 + <strong style="color:var(--gold);">Bold Coin</strong> — a moeda interna que recompensa cada venda</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 13 — COMO COMEÇAR
+══════════════════════════════════════ -->
+<div class="slide" id="s13">
+  <div class="slide-label anim-1">É Simples Começar</div>
+  <h2 class="sec-title anim-2">3 passos para <span class="gold-txt">mudar sua vida</span></h2>
+  <div class="line-deco anim-3"></div>
+  <div class="steps-row anim-4">
+    <div class="start-step">
+      <div class="step-num-circle">1</div>
+      <div class="step-title">Ative sua conta</div>
+      <div class="step-desc">R$200 de ativação. Único investimento. Acesso imediato a 30.000+ produtos e todos os recursos da rede.</div>
+    </div>
+    <div class="start-step">
+      <div class="step-num-circle">2</div>
+      <div class="step-title">Consuma e venda</div>
+      <div class="step-desc">Escolha os produtos, venda para amigos e familiares. Use o app para gerenciar tudo de forma simples.</div>
+    </div>
+    <div class="start-step">
+      <div class="step-num-circle">3</div>
+      <div class="step-title">Indique e multiplique</div>
+      <div class="step-desc">Indique 5 pessoas e ensine o mesmo. A rede cresce, suas comissões crescem. Até 3.905 na equipe.</div>
+    </div>
+  </div>
+  <div class="anim-5" style="margin-top:28px;display:flex;gap:16px;flex-wrap:wrap;justify-content:center;">
+    <div style="padding:14px 24px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.3);border-radius:14px;text-align:center;">
+      <div style="font-size:clamp(20px,3vw,30px);font-weight:900;color:var(--gold);">R$200</div>
+      <div style="font-size:12px;color:var(--muted);">Ativação única</div>
+    </div>
+    <div style="padding:14px 24px;background:rgba(0,230,118,.05);border:1px solid rgba(0,230,118,.2);border-radius:14px;text-align:center;">
+      <div style="font-size:clamp(20px,3vw,30px);font-weight:900;color:var(--green);">5%</div>
+      <div style="font-size:12px;color:var(--muted);">Comissão até 5ª geração</div>
+    </div>
+    <div style="padding:14px 24px;background:rgba(77,166,214,.05);border:1px solid rgba(77,166,214,.2);border-radius:14px;text-align:center;">
+      <div style="font-size:clamp(20px,3vw,30px);font-weight:900;color:var(--bold-light);">3.905</div>
+      <div style="font-size:12px;color:var(--muted);">Potencial de equipe</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 14 — CHAMADA FINAL
+══════════════════════════════════════ -->
+<div class="slide" id="s14" style="background:radial-gradient(ellipse at 50% 50%,rgba(77,166,214,.07) 0%,transparent 70%);">
+  <div class="live-pill anim-1"><span class="blink-dot"></span> A sua oportunidade está aqui</div>
+  <div class="cta-big anim-2">
+    É Hoje.<br>
+    É Agora.<br>
+    <span class="gold-txt">É Você.</span>
+  </div>
+  <p class="sec-sub anim-3" style="margin:0 auto;">
+    A Bold Life não vende sonho. Entrega estrutura, produto real e tecnologia para quem decide agir. A única decisão que você precisa tomar é: <strong style="color:var(--gold);">quando começa?</strong>
+  </p>
+  <div class="cta-pill anim-4">🚀 Quero fazer parte da Bold Life</div>
+  <div class="anim-5" style="margin-top:24px;display:flex;gap:16px;flex-wrap:wrap;justify-content:center;">
+    <div style="font-size:clamp(11px,1.4vw,14px);color:var(--muted);">✅ R$200 de ativação</div>
+    <div style="font-size:clamp(11px,1.4vw,14px);color:var(--muted);">✅ 30.000+ produtos</div>
+    <div style="font-size:clamp(11px,1.4vw,14px);color:var(--muted);">✅ 3 apps inclusos</div>
+    <div style="font-size:clamp(11px,1.4vw,14px);color:var(--muted);">✅ Suporte da equipe</div>
+    <div style="font-size:clamp(11px,1.4vw,14px);color:var(--muted);">✅ Viagens internacionais</div>
+  </div>
+  <div style="margin-top:24px;" class="anim-6">
+    <div class="bold-logo">BOLD LIFE</div>
+    <div class="bold-sub">CONECTANDO PESSOAS</div>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<script>
+const TOTAL=14;
+let cur=1;
+
+// ── STARS ──
+const cv=document.getElementById('stars');
+const cx=cv.getContext('2d');
+function rsz(){cv.width=innerWidth;cv.height=innerHeight;}rsz();addEventListener('resize',rsz);
+const stars=[];
+for(let i=0;i<200;i++)stars.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*1.2+.2,a:Math.random()*.5+.1,v:Math.random()*.002+.001,p:Math.random()*Math.PI*2});
+function drawStars(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  stars.forEach(s=>{
+    s.p+=s.v;const a=s.a*(Math.sin(s.p)*.4+.6);
+    cx.beginPath();cx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    cx.fillStyle=`rgba(255,255,255,${a})`;cx.fill();
+  });
+  requestAnimationFrame(drawStars);
+}
+drawStars();
+
+// ── DOTS ──
+const dotsWrap=document.getElementById('dots-wrap');
+for(let i=1;i<=TOTAL;i++){
+  const d=document.createElement('div');
+  d.className='dot'+(i===1?' on':'');
+  d.onclick=()=>go(i);
+  dotsWrap.appendChild(d);
+}
+
+function go(n){
+  document.getElementById('s'+cur).classList.remove('active');
+  document.getElementById('s'+cur).classList.add('out');
+  setTimeout(()=>document.getElementById('s'+cur).classList.remove('out'),600);
+  cur=n;
+  const slide=document.getElementById('s'+cur);
+  slide.classList.add('active');
+  document.querySelectorAll('.dot').forEach((d,i)=>d.className='dot'+(i===cur-1?' on':''));
+  document.getElementById('slide-info').textContent=cur+' / '+TOTAL;
+  document.getElementById('progress').style.width=((cur/TOTAL)*100)+'%';
+  onSlideEnter(cur);
+}
+
+function onSlideEnter(n){
+  if(n===3)animCounter('counter-200',0,200,2000,'R$','B');
+  if(n===7)animBars();
+  if(n===9)animIncome();
+}
+
+// ── NAV ──
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' '){e.preventDefault();if(cur<TOTAL)go(cur+1);}
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();if(cur>1)go(cur-1);}
+});
+let tx=0;
+document.addEventListener('touchstart',e=>tx=e.touches[0].clientX);
+document.addEventListener('touchend',e=>{
+  const d=tx-e.changedTouches[0].clientX;
+  if(Math.abs(d)>50){if(d>0&&cur<TOTAL)go(cur+1);else if(d<0&&cur>1)go(cur-1);}
+});
+document.getElementById('deck').addEventListener('click',e=>{
+  if(!e.target.closest('#dots-wrap')&&cur<TOTAL)go(cur+1);
+});
+
+// ── PROGRESS ──
+document.getElementById('progress').style.width=(1/TOTAL*100)+'%';
+
+// ── COUNTER ──
+function animCounter(id,from,to,dur,pre,suf){
+  const el=document.getElementById(id);if(!el)return;
+  const start=performance.now();
+  function upd(now){
+    const p=Math.min((now-start)/dur,1);
+    const e=1-Math.pow(1-p,3);
+    el.textContent=pre+Math.floor(from+(to-from)*e)+(suf||'');
+    if(p<1)requestAnimationFrame(upd);
+    else el.textContent=pre+to+(suf||'');
+  }
+  requestAnimationFrame(upd);
+}
+
+// ── INCOME COUNTER ──
+function animIncome(){
+  const el=document.getElementById('income-counter');if(!el)return;
+  const start=performance.now();const dur=2500;const target=39050;
+  function upd(now){
+    const p=Math.min((now-start)/dur,1);
+    const e=1-Math.pow(1-p,4);
+    const v=Math.floor(e*target);
+    el.textContent='R$'+v.toLocaleString('pt-BR');
+    if(p<1)requestAnimationFrame(upd);
+    else el.textContent='R$39.050';
+  }
+  requestAnimationFrame(upd);
+}
+
+// ── BARS SLIDE 7 ──
+let barsAnimated=false;
+function animBars(){
+  if(barsAnimated)return;barsAnimated=true;
+  const heights=[30,60,100,150,220];
+  const ids=['bar-1','bar-2','bar-3','bar-4','bar-5'];
+  ids.forEach((id,i)=>{
+    setTimeout(()=>{
+      const b=document.getElementById(id);
+      if(b)b.style.height=heights[i]+'px';
+    },i*200);
+  });
+}
+
+// ── SLIDE 1 INITIAL ANIM ──
+setTimeout(()=>{
+  document.getElementById('progress').style.width=(1/TOTAL*100)+'%';
+},100);
+</script>
+</body>
+</html>
