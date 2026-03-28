@@ -683,12 +683,77 @@ function submit(){
   document.getElementById('suc-end').textContent=end;
   document.getElementById('suc-data').textContent=data;
 
-  // Save to localStorage
+  // ── CONFIG ──
+  const GAS_URL = 'COLE_AQUI_O_URL_DO_GAS'; // substitua após publicar o script
+  const WHATSAPP_NUM = '5531997035583';
+
+  // Monta objeto de dados
+  const payload = {
+    dataHora: data,
+    nome: g('f-nome'),
+    cpf: g('f-cpf'),
+    nascimento: g('f-nasc'),
+    genero: g('f-genero'),
+    whatsapp: g('f-tel'),
+    tel2: g('f-tel2'),
+    email: g('f-email'),
+    cep: g('f-cep'),
+    estado: g('f-estado'),
+    cidade: g('f-cidade'),
+    bairro: g('f-bairro'),
+    rua: g('f-rua'),
+    numero: g('f-num'),
+    complemento: g('f-comp'),
+    patrNome: g('f-patr-nome'),
+    patrCpf: g('f-patr-cpf'),
+    patrTel: g('f-patr-tel'),
+    patrCargo: g('f-patr-cargo'),
+    origem: g('f-origem'),
+    objetivo: getObjLabel(),
+    pagamento: getPagLabel(),
+    observacoes: g('f-obs')
+  };
+
+  // ── 1. SALVAR NO GOOGLE SHEETS ──
+  if(GAS_URL !== 'COLE_AQUI_O_URL_DO_GAS'){
+    fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    }).catch(()=>{});
+  }
+
+  // ── 2. SALVAR NO LOCALSTORAGE (backup offline) ──
   try{
     const saved=JSON.parse(localStorage.getItem('bold_ativacoes')||'[]');
-    saved.push({nome:g('f-nome'),cpf:g('f-cpf'),tel:g('f-tel'),email:g('f-email'),patr:g('f-patr-nome'),obj:getObjLabel(),pag:getPagLabel(),end,data});
+    saved.push(payload);
     localStorage.setItem('bold_ativacoes',JSON.stringify(saved));
   }catch(e){}
+
+  // ── 3. WHATSAPP ──
+  const msg =
+`🟡 *NOVO CADASTRO — BOLD LIFE*
+━━━━━━━━━━━━━━━━━━━━
+👤 *Nome:* ${payload.nome}
+🪪 *CPF:* ${payload.cpf}
+🎂 *Nascimento:* ${payload.nascimento}
+📱 *WhatsApp:* ${payload.whatsapp}
+📧 *E-mail:* ${payload.email}
+━━━━━━━━━━━━━━━━━━━━
+🏠 *Endereço:* ${end}
+━━━━━━━━━━━━━━━━━━━━
+🤝 *Patrocinador:* ${payload.patrNome}
+🎯 *Objetivo:* ${payload.objetivo}
+💳 *Pagamento:* ${payload.pagamento}
+━━━━━━━━━━━━━━━━━━━━
+📅 *Data:* ${data}
+💰 *Valor:* R$ 200,00
+✅ *Status:* Aguardando Ativação`;
+
+  setTimeout(()=>{
+    window.open('https://wa.me/'+WHATSAPP_NUM+'?text='+encodeURIComponent(msg),'_blank');
+  }, 1200);
 
   document.getElementById('steps-bar').style.display='none';
   document.getElementById('form-wrap').style.display='none';
