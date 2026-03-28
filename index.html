@@ -129,7 +129,8 @@ footer{border-top:1px solid var(--border);text-align:center;padding:28px 20px;fo
 
 /* LAYOUT COM SIDEBAR */
 .layout{display:flex;min-height:calc(100vh - 64px);}
-.sidebar{width:224px;flex-shrink:0;background:var(--s1);border-right:1px solid var(--border);position:sticky;top:64px;height:calc(100vh - 64px);overflow-y:auto;z-index:50;transition:transform .3s;}
+.sidebar{width:224px;flex-shrink:0;background:var(--s1);border-right:1px solid var(--border);position:sticky;top:64px;height:calc(100vh - 64px);overflow-y:auto;z-index:50;transition:transform .3s;scrollbar-width:none;-ms-overflow-style:none;}
+.sidebar::-webkit-scrollbar{display:none;}
 .sidebar-inner{padding:16px 8px;}
 .sb-brand{display:flex;align-items:center;gap:10px;padding:12px;margin-bottom:8px;border-bottom:1px solid var(--border);}
 .sb-brand-icon{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#1a1f4b,var(--blue));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#fff;flex-shrink:0;}
