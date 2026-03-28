@@ -22,7 +22,9 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:0;}
 
 /* NAV */
 nav{position:sticky;top:0;z-index:100;background:rgba(2,4,10,.95);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}
-.nav-inner{max-width:1200px;margin:0 auto;padding:0 20px;height:64px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.nav-inner{width:100%;padding:0 20px;height:64px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.nav-left{width:224px;flex-shrink:0;display:flex;align-items:center;}
+@media(max-width:900px){.nav-left{width:auto;}}
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
 .logo-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--bold-dark,#1a1f4b),var(--blue));display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;flex-shrink:0;}
 .logo-text{font-size:16px;font-weight:900;letter-spacing:2px;color:var(--text);}
@@ -162,10 +164,12 @@ footer{border-top:1px solid var(--border);text-align:center;padding:28px 20px;fo
 <!-- NAV -->
 <nav>
   <div class="nav-inner">
-    <a class="logo" href="#">
-      <div class="logo-icon">BL</div>
-      <div class="logo-text">BOLD <span>LIFE</span></div>
-    </a>
+    <div class="nav-left">
+      <a class="logo" href="#">
+        <div class="logo-icon">BL</div>
+        <div class="logo-text">BOLD <span>LIFE</span></div>
+      </a>
+    </div>
     <div style="display:flex;align-items:center;gap:10px;">
       <div class="nav-live"><span class="live-dot"></span> Todos os materiais online</div>
       <button class="sb-toggle" onclick="toggleSidebar()" title="Menu lateral">☰</button>
